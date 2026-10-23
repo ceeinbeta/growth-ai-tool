@@ -14,13 +14,109 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      members: {
+        Row: {
+          created_at: string
+          role: string
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          role: string
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          role?: string
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "members_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          audience: string | null
+          category: string | null
+          created_at: string
+          description: string
+          id: string
+          name: string
+          one_liner: string | null
+          stage: string
+          url: string
+          workspace_id: string
+        }
+        Insert: {
+          audience?: string | null
+          category?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          name: string
+          one_liner?: string | null
+          stage: string
+          url: string
+          workspace_id: string
+        }
+        Update: {
+          audience?: string | null
+          category?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+          one_liner?: string | null
+          stage?: string
+          url?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workspaces: {
+        Row: {
+          created_at: string
+          id: string
+          max_products: number
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          max_products?: number
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          max_products?: number
+          name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_workspace_member: { Args: { ws: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

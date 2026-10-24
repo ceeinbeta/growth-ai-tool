@@ -216,7 +216,9 @@ function VisibilityPage({ productId, productName }: { productId: string; product
         )}
         <div className="ml-auto">
           {running ? (
-            <Button disabled>Check running…</Button>
+            <Button disabled>
+              {progress ? `${progress.finished} of ${progress.total} runs finished` : "Check running…"}
+            </Button>
           ) : (
             <Button onClick={() => setConfirming(true)} disabled={!connected.length || !questions.length}>
               Run a check
@@ -239,12 +241,17 @@ function VisibilityPage({ productId, productName }: { productId: string; product
           </span>
         ))}
       </div>
-      {budget && (
+      {budget?.scope === "platform" && (
         <p className="mt-2 text-sm text-muted-foreground">
           Spent this month {usd(budget.spent_usd)} of ${budget.budget_usd} (estimated)
           {budget.spent_usd >= budget.budget_usd * 0.8 && (
             <span className="ml-2 font-medium text-amber-600">Near the monthly budget.</span>
           )}
+        </p>
+      )}
+      {budget?.scope === "product" && (
+        <p className="mt-2 text-sm text-muted-foreground">
+          This product's estimated spend this month: {usd(budget.own_spend_usd)} — {budget.status}.
         </p>
       )}
 
@@ -256,6 +263,9 @@ function VisibilityPage({ productId, productName }: { productId: string; product
           <p className="mt-1 text-sm text-muted-foreground">
             This will make about {callCount} calls, estimated cost about {usd(estimate)}. Costs are estimates from
             published prices, not exact bills.
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Also uses about {callCount + 1} small Lovable AI calls to read the answers.
           </p>
           <label className="mt-3 flex items-center gap-2 text-sm">
             Runs per question

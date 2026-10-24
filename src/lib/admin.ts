@@ -46,8 +46,8 @@ export const inviteRowSchema = z.object({
 });
 export type InviteRow = z.infer<typeof inviteRowSchema>;
 
-async function callAdmin<T>(name: 'admin_summary' | 'admin_list_waitlist' | 'admin_list_invites', schema: z.ZodType<T>, args?: Record<string, unknown>): Promise<T> {
-  const { data, error } = await supabase.rpc(name, args);
+async function callAdmin<T>(name: 'admin_summary' | 'admin_list_waitlist' | 'admin_list_invites', schema: z.ZodType<T>): Promise<T> {
+  const { data, error } = await supabase.rpc(name);
   if (error) throw error;
   return schema.parse(data);
 }

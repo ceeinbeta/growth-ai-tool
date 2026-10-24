@@ -212,6 +212,7 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('ai search visi
     expect(summary.error).toBeNull();
     expect(summary.data).toMatchObject({ visibility_monthly_budget_usd: 20 });
     expect(typeof (summary.data as Record<string, unknown>)['visibility_spend_this_month']).toBe('number');
+    expect(typeof (summary.data as Record<string, unknown>)['visibility_reading_calls_24h']).toBe('number');
   });
 
   it('rejects admin_set_setting for non-admins on the new key too', async () => {

@@ -6,13 +6,13 @@ import { homedir } from 'node:os';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/integrations/supabase/types';
 
-function keyedClient(key: string, token?: string) {
+function keyedClient(key: string, token?: string): SupabaseClient<Database> {
   const url = process.env['SUPABASE_URL'];
   if (!url || !key) throw new Error('Missing test configuration');
-  return createClient<Database>(url, key, {
+  const client = createClient<Database>(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
     global: {
-      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
       fetch: (input, init) => {
         const headers = new Headers(init?.headers);
         if (key.startsWith('sb_')) headers.delete('Authorization');
@@ -22,6 +22,7 @@ function keyedClient(key: string, token?: string) {
       },
     },
   });
+  return client as SupabaseClient<Database>;
 }
 function adminClient() {
   const key = process.env['SUPABASE_SERVICE_ROLE_KEY'];

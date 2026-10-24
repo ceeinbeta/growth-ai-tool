@@ -11,9 +11,10 @@ vi.mock('@tanstack/react-router', () => ({
 }));
 vi.mock('@tanstack/react-query', () => ({
   queryOptions: (opts: unknown) => opts,
-  useQuery: (opts: { queryKey: string[] }) => ({
-    data: opts.queryKey[0] === 'is-app-admin' ? adminFlag : { workspace: null, products: [] },
-  }),
+  useQuery: (opts: { queryKey: string[] }) => {
+    console.log('useQuery called with', opts.queryKey, 'adminFlag=', adminFlag);
+    return { data: opts.queryKey[0] === 'is-app-admin' ? adminFlag : { workspace: null, products: [] } };
+  },
   useQueryClient: () => ({ cancelQueries: vi.fn(), clear: vi.fn() }),
 }));
 vi.mock('@/integrations/supabase/client', () => ({ supabase: { auth: { signOut: vi.fn() } } }));

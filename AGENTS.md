@@ -18,6 +18,9 @@
 
 
 ## Growloop architecture
+- Website collection uses one server-only handler at /api/collect and a /api/public/collect alias used by the static snippet because published-site authentication only bypasses the public prefix.
+- Database collection locks visitor and product before inserting events to enforce rolling limits and distinct custom names atomically across workers.
+- Tracking reads use member-scoped RLS and a security-invoker aggregate RPC so measured totals cannot bypass workspace access.
 - Signed-in pages live under src/routes/_authenticated (client-only gate, redirects to /auth); / just redirects. Why: session is in localStorage.
 - Product limits are enforced by a DB trigger raising 'product_limit_reached'; the UI maps it to a friendly message. Why: users must not bypass plan limits.
 - Workspace/membership rows are only created by the auth.users trigger; clients get SELECT only. Why: users must not edit plan limits or memberships.

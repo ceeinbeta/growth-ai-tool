@@ -73,6 +73,67 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_runs: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_runs_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audits: {
+        Row: {
+          created_at: string
+          funnel_context: Json
+          id: string
+          model: string
+          page_copy: Json
+          product_id: string
+        }
+        Insert: {
+          created_at?: string
+          funnel_context: Json
+          id?: string
+          model: string
+          page_copy: Json
+          product_id: string
+        }
+        Update: {
+          created_at?: string
+          funnel_context?: Json
+          id?: string
+          model?: string
+          page_copy?: Json
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audits_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       competitors: {
         Row: {
           created_at: string
@@ -170,6 +231,44 @@ export type Database = {
           },
         ]
       }
+      funnel_steps: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          label: string
+          match: string
+          position: number
+          product_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          label: string
+          match: string
+          position: number
+          product_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          label?: string
+          match?: string
+          position?: number
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "funnel_steps_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       install_checks: {
         Row: {
           created_at: string
@@ -189,6 +288,60 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "install_checks_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leaks: {
+        Row: {
+          area: string
+          audit_id: string
+          created_at: string
+          fix: string
+          id: string
+          impact: string
+          issue: string
+          product_id: string
+          rewrite: string
+          status: string
+        }
+        Insert: {
+          area: string
+          audit_id: string
+          created_at?: string
+          fix: string
+          id?: string
+          impact: string
+          issue: string
+          product_id: string
+          rewrite?: string
+          status?: string
+        }
+        Update: {
+          area?: string
+          audit_id?: string
+          created_at?: string
+          fix?: string
+          id?: string
+          impact?: string
+          issue?: string
+          product_id?: string
+          rewrite?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leaks_audit_id_product_id_fkey"
+            columns: ["audit_id", "product_id"]
+            isOneToOne: false
+            referencedRelation: "audits"
+            referencedColumns: ["id", "product_id"]
+          },
+          {
+            foreignKeyName: "leaks_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
@@ -424,9 +577,28 @@ export type Database = {
         Args: { payload: Json; pid: string }
         Returns: boolean
       }
+      funnel_summary: { Args: { days?: number; pid: string }; Returns: Json }
       is_workspace_member: { Args: { ws: string }; Returns: boolean }
+      replace_funnel_steps: {
+        Args: { pid: string; steps: Json }
+        Returns: undefined
+      }
+      reserve_ai_run: {
+        Args: { feature: string; pid: string }
+        Returns: string
+      }
       reserve_install_check: { Args: { pid: string }; Returns: undefined }
       reserve_profile_run: { Args: { pid: string }; Returns: string }
+      save_page_audit: {
+        Args: {
+          copy: Json
+          findings: Json
+          funnel: Json
+          model_name: string
+          pid: string
+        }
+        Returns: string
+      }
       tracking_summary: { Args: { pid: string }; Returns: Json }
     }
     Enums: {

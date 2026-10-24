@@ -1,3 +1,9 @@
+# Slice 3 tracking fixes
+- [ ] Enforce Origin precedence and cover hostname cases with unit tests.
+- [ ] Revoke authenticated writes to tracking tables and verify signed-in reads.
+- [ ] Show private-address warning only on preview addresses.
+- [ ] Rerun all tests; keep app unpublished.
+
 # Slice 3
 - [x] Add privacy-respecting snippet, public collection, real events and atomic limits.
 - [x] Add Integrations and measured seven-day Overview totals.

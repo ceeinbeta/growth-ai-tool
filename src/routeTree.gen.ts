@@ -21,6 +21,7 @@ import { Route as ApiCollectRouteImport } from './routes/api/collect'
 import { Route as AuthenticatedProductsNewRouteImport } from './routes/_authenticated/products.new'
 import { Route as ApiPublicCollectRouteImport } from './routes/api/public/collect'
 import { Route as ApiPublicWaitlistRouteImport } from './routes/api/public/waitlist'
+import { Route as ApiPublicJobsSovScheduledRouteImport } from './routes/api/public/jobs/sov-scheduled'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -84,6 +85,12 @@ const ApiPublicWaitlistRoute = ApiPublicWaitlistRouteImport.update({
   path: '/api/public/waitlist',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicJobsSovScheduledRoute =
+  ApiPublicJobsSovScheduledRouteImport.update({
+    id: '/api/public/jobs/sov-scheduled',
+    path: '/api/public/jobs/sov-scheduled',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/products/new': typeof AuthenticatedProductsNewRoute
   '/api/public/collect': typeof ApiPublicCollectRoute
   '/api/public/waitlist': typeof ApiPublicWaitlistRoute
+  '/api/public/jobs/sov-scheduled': typeof ApiPublicJobsSovScheduledRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -110,6 +118,7 @@ export interface FileRoutesByTo {
   '/products/new': typeof AuthenticatedProductsNewRoute
   '/api/public/collect': typeof ApiPublicCollectRoute
   '/api/public/waitlist': typeof ApiPublicWaitlistRoute
+  '/api/public/jobs/sov-scheduled': typeof ApiPublicJobsSovScheduledRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -125,6 +134,7 @@ export interface FileRoutesById {
   '/_authenticated/products/new': typeof AuthenticatedProductsNewRoute
   '/api/public/collect': typeof ApiPublicCollectRoute
   '/api/public/waitlist': typeof ApiPublicWaitlistRoute
+  '/api/public/jobs/sov-scheduled': typeof ApiPublicJobsSovScheduledRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -140,6 +150,7 @@ export interface FileRouteTypes {
     | '/products/new'
     | '/api/public/collect'
     | '/api/public/waitlist'
+    | '/api/public/jobs/sov-scheduled'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -153,6 +164,7 @@ export interface FileRouteTypes {
     | '/products/new'
     | '/api/public/collect'
     | '/api/public/waitlist'
+    | '/api/public/jobs/sov-scheduled'
   id:
     | '__root__'
     | '/'
@@ -167,6 +179,7 @@ export interface FileRouteTypes {
     | '/_authenticated/products/new'
     | '/api/public/collect'
     | '/api/public/waitlist'
+    | '/api/public/jobs/sov-scheduled'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -177,6 +190,7 @@ export interface RootRouteChildren {
   ApiCollectRoute: typeof ApiCollectRoute
   ApiPublicCollectRoute: typeof ApiPublicCollectRoute
   ApiPublicWaitlistRoute: typeof ApiPublicWaitlistRoute
+  ApiPublicJobsSovScheduledRoute: typeof ApiPublicJobsSovScheduledRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -265,6 +279,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWaitlistRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/jobs/sov-scheduled': {
+      id: '/api/public/jobs/sov-scheduled'
+      path: '/api/public/jobs/sov-scheduled'
+      fullPath: '/api/public/jobs/sov-scheduled'
+      preLoaderRoute: typeof ApiPublicJobsSovScheduledRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -295,6 +316,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCollectRoute: ApiCollectRoute,
   ApiPublicCollectRoute: ApiPublicCollectRoute,
   ApiPublicWaitlistRoute: ApiPublicWaitlistRoute,
+  ApiPublicJobsSovScheduledRoute: ApiPublicJobsSovScheduledRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

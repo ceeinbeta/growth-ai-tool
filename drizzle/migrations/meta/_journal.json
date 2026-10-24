@@ -99,6 +99,13 @@
       "when": 1792866960189,
       "tag": "0013_sov_resumable_and_hardening",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1792867850536,
+      "tag": "0014_drop_old_sov_budget_info_overload",
+      "breakpoints": true
     }
   ]
 }

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const PROFILE_LIMIT_MESSAGE = "You have used today's 5 profile checks for this product. Try again tomorrow.";
-export const PLATFORM_PROFILE_LIMIT_MESSAGE = "Profiling is paused for today. Try again tomorrow.";
+export const PLATFORM_PROFILE_LIMIT_MESSAGE = "AI checks are paused for today. Try again tomorrow.";
 export function profileReservationErrorMessage(message: string) {
   if (message.includes("platform_profile_run_limit_reached")) return PLATFORM_PROFILE_LIMIT_MESSAGE;
   if (message.includes("profile_run_limit_reached")) return PROFILE_LIMIT_MESSAGE;

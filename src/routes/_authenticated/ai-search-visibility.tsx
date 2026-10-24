@@ -8,9 +8,9 @@ import { useActiveProduct } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { engineChoiceKey, readEngineChoice, engineFailedAllRuns } from "@/lib/sov-engine-choice";
+import { engineChoiceKey, readEngineChoice, engineFailedAllRuns, defaultEngineChoice } from "@/lib/sov-engine-choice";
 import { estimateCheckCost, usd, ENGINES, type EngineId } from "@/lib/engine-prices";
-import { shareOfVoice, questionStats, youPercent, type SovRunRow, type SovMentionRow } from "@/lib/sov";
+import { shareOfVoice, questionStats, youPercent, usableSovRuns, type SovRunRow, type SovMentionRow } from "@/lib/sov";
 import { getSovEngineStatus, testEngineConnection, startSovCheck, advanceSovCheckFn, setSovSchedule } from "@/lib/sov.functions";
 import { relativeTime } from "@/lib/admin";
 
@@ -53,7 +53,7 @@ const sovDataQuery = (productId: string) =>
       if (!checkIds.length) {
         return { checks: [], questions: questions.data ?? [], schedule: schedule.data ?? null, runs: [], mentions: [], fixes: [] };
       }
-      const runs = await supabase.from("sov_runs").select("id, check_id, engine, question, status").in("check_id", checkIds);
+      const runs = await supabase.from("sov_runs").select("id, check_id, engine, question, status, answer_excerpt").in("check_id", checkIds);
       if (runs.error) throw runs.error;
       const runIds = (runs.data ?? []).map((r) => r.id);
       const [mentions, fixes] = await Promise.all([
@@ -68,7 +68,7 @@ const sovDataQuery = (productId: string) =>
         checks: checks.data ?? [],
         questions: questions.data ?? [],
         schedule: schedule.data ?? null,
-        runs: runs.data ?? [],
+        runs: usableSovRuns(runs.data ?? []),
         mentions: mentions.data ?? [],
         fixes: fixes.data ?? [],
       };
@@ -123,6 +123,12 @@ function VisibilityPage({ productId, productName }: { productId: string; product
     const next = checked ? [...chosenEngines, id] : chosenEngines.filter((engine) => engine !== id);
     setEngineChoice(next);
     try { localStorage.setItem(engineChoiceKey(productId), JSON.stringify(next)); } catch { /* Storage is optional. */ }
+  }
+
+  function openConfirmation() {
+    const failed = connected.filter((id) => testResults[id]?.ok === false || engineFailedAllRuns(id, lastCheckRuns));
+    setEngineChoice(defaultEngineChoice(connected, engineChoice, failed));
+    setConfirming(true);
   }
 
   // While a check is running, drive it forward: one advance at a time, about
@@ -240,7 +246,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
               {progress ? `${progress.finished} of ${progress.total} runs finished` : "Check running…"}
             </Button>
           ) : (
-            <Button onClick={() => setConfirming(true)} disabled={!connected.length || !questions.length}>
+            <Button onClick={openConfirmation} disabled={!connected.length || !questions.length}>
               Run a check
             </Button>
           )}
@@ -286,10 +292,8 @@ function VisibilityPage({ productId, productName }: { productId: string; product
               <label key={e.id} className="flex flex-wrap items-center gap-2 text-sm">
                 <Checkbox checked={chosenEngines.includes(e.id)} onCheckedChange={(checked) => toggleEngine(e.id, checked === true)} />
                 {e.label}
-                {testResults[e.id]?.ok === false ? (
-                  <span className="text-xs text-muted-foreground">Failed its last test</span>
-                ) : engineFailedAllRuns(e.id, lastCheckRuns) ? (
-                  <span className="text-xs text-muted-foreground">Every run failed in the last check</span>
+                {testResults[e.id]?.ok === false || engineFailedAllRuns(e.id, lastCheckRuns) ? (
+                  <span className="text-xs text-muted-foreground">Failed last time. Tick to try again.</span>
                 ) : null}
               </label>
             ))}
@@ -362,9 +366,11 @@ function VisibilityPage({ productId, productName }: { productId: string; product
             <p className="mt-1 text-xs text-muted-foreground">
               {latestRuns.filter((r) => r.status === "done").length} of {latestRuns.length} runs succeeded.
             </p>
-            {latestRuns.length > 0 && !youShare && (
+            {engineFilter !== "all" && !latestRuns.some((r) => r.engine === engineFilter && r.status === "done") ? (
+              <p className="mt-4 text-sm">No usable answers in this check</p>
+            ) : latestRuns.some((r) => r.status === "done" && (engineFilter === "all" || r.engine === engineFilter)) && !youShare && (
               <p className="mt-4 text-sm">
-                No engine recommended {productName} in these runs. That is common for a new product.
+                {productName} was not recommended in these usable answers. That is common for a new product.
               </p>
             )}
             <div className="mt-4 space-y-3">
@@ -410,7 +416,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
                             ? "—"
                             : e.mentioned === 0
                               ? `0 of ${e.total} runs`
-                              : `${e.mentioned} of ${e.total} runs, avg rank ${e.avgRank!.toFixed(1)}`}
+                              : `${e.mentioned} of ${e.total} runs, avg rank ${e.avgRank?.toFixed(1)}`}
                         </td>
                       ))}
                     </tr>
@@ -467,6 +473,29 @@ function VisibilityPage({ productId, productName }: { productId: string; product
             </section>
           )}
         </>
+      )}
+
+      {checks.length > 0 && (
+        <section className="mt-6 border-t pt-6">
+          <h2 className="text-lg">Checks — measured successful runs</h2>
+          <ul className="mt-3 space-y-4">
+            {checks.map((check) => {
+              const runs = (data?.runs ?? []).filter((run) => run.check_id === check.id);
+              return (
+                <li key={check.id} className="border-b pb-3 text-sm">
+                  <p className="font-medium">{new Date(check.started_at).toLocaleString()} — {check.status}</p>
+                  <ul className="mt-1 space-y-1 text-muted-foreground">
+                    {(check.engines as EngineId[] ?? []).map((engine) => {
+                      const engineRuns = runs.filter((run) => run.engine === engine);
+                      const succeeded = engineRuns.filter((run) => run.status === "done").length;
+                      return <li key={engine}>{ENGINES.find((e) => e.id === engine)?.label ?? engine}: {succeeded} of {engineRuns.length} runs succeeded{!succeeded && check.status !== "running" ? " — No usable answers in this check" : ""}</li>;
+                    })}
+                  </ul>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
       )}
 
       <section className="mt-6 rounded-xl border bg-card p-6">

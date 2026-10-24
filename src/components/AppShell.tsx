@@ -4,6 +4,7 @@ import { createContext, useContext, useState } from "react";
 import { Check, ChevronsUpDown, LayoutGrid, Droplets, Search, Lightbulb, Plug, Plus, LogOut, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/Logo";
+import { ProductLogo } from "@/components/ProductLogo";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,14 +20,6 @@ const Ctx = createContext<ActiveCtx>({ data: undefined, active: null, setActive:
 export const useActiveProduct = () => useContext(Ctx);
 
 export const stageLabel = (s: Product["stage"]) => (s === "live" ? "Live" : "Pre-launch");
-
-function Tile({ name }: { name: string }) {
-  return (
-    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm bg-primary font-display text-sm font-bold text-primary-foreground">
-      {name.charAt(0).toUpperCase()}
-    </span>
-  );
-}
 
 export function AppShell() {
   const { user } = useRouteContext({ from: "/_authenticated" });
@@ -66,7 +59,7 @@ export function AppShell() {
           <div className="px-3 pt-5">
             <DropdownMenu>
               <DropdownMenuTrigger className="flex w-full items-center gap-3 rounded-lg border bg-card px-3 py-2 text-left hover:bg-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                {active ? <Tile name={active.name} /> : <span className="flex h-8 w-8 items-center justify-center rounded-sm bg-sunken text-muted-foreground"><Plus className="h-4 w-4" /></span>}
+                {active ? <ProductLogo name={active.name} path={active.logo_path} /> : <span className="flex h-8 w-8 items-center justify-center rounded-sm bg-sunken text-muted-foreground"><Plus className="h-4 w-4" /></span>}
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-semibold">{active?.name ?? "No product yet"}</span>
                   <span className="block text-xs text-muted-foreground">{active ? stageLabel(active.stage) : "Add one to start"}</span>
@@ -80,7 +73,7 @@ export function AppShell() {
                     onSelect={() => setActive(p.id)}
                     className={`gap-3 ${p.id === active?.id ? "bg-selected" : ""}`}
                   >
-                    <Tile name={p.name} />
+                    <ProductLogo name={p.name} path={p.logo_path} />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-medium">{p.name}</span>
                       <span className="block text-xs text-muted-foreground">{stageLabel(p.stage)}</span>

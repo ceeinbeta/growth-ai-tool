@@ -1,7 +1,32 @@
 import { it, expect, describe } from 'vitest';
 import { createClient } from '@supabase/supabase-js';
+import { readFileSync } from 'node:fs';
+import { homedir } from 'node:os';
 import type { Database } from '../integrations/supabase/types';
 describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('atomic tracking database limits', () => {
+  it('keeps authenticated tracking reads while denying all client writes', async () => {
+    const minted = JSON.parse(readFileSync(`${homedir()}/.cache/lovable-auth/session.json`, 'utf8'));
+    const url = process.env['SUPABASE_URL'], key = process.env['SUPABASE_PUBLISHABLE_KEY'];
+    if (!url || !key) throw new Error('Missing test configuration');
+    const member = createClient<Database>(url, key, { auth: { persistSession: false, autoRefreshToken: false }, global: { headers: { Authorization: `Bearer ${minted.session.access_token}` } } });
+    const product = await member.from('products').select('id').limit(1).single();
+    if (!product.data) throw new Error('Missing member product');
+    const pid = product.data.id;
+    expect((await member.from('events').select('id').eq('product_id', pid).limit(1)).error).toBeNull();
+    expect((await member.from('tracking_event_names').select('name').eq('product_id', pid).limit(1)).error).toBeNull();
+    expect((await member.rpc('tracking_summary', { pid })).error).toBeNull();
+    // Target an impossible UUID for update/delete so a regressed grant cannot change real data.
+    const missing = '00000000-0000-0000-0000-000000000000';
+    const event = { product_id: missing, visitor_id: 'v'.repeat(36), name: 'pageview', path: '/permission-check' };
+    for (const result of [
+      await member.from('events').insert(event),
+      await member.from('events').update({ path: '/permission-check' }).eq('product_id', missing),
+      await member.from('events').delete().eq('product_id', missing),
+      await member.from('tracking_event_names').insert({ product_id: missing, name: 'permission_check' }),
+      await member.from('tracking_event_names').update({ name: 'permission_check' }).eq('product_id', missing),
+      await member.from('tracking_event_names').delete().eq('product_id', missing),
+    ]) expect(result.error?.message).toMatch(/permission denied for table (events|tracking_event_names)/);
+  });
   it('enforces 60 per visitor, 5000 per product and 20 custom names', async () => {
     const url = process.env['SUPABASE_URL'], key = process.env['SUPABASE_SERVICE_ROLE_KEY'];
     if (!url || !key) throw new Error('Missing test configuration');

@@ -101,7 +101,7 @@ function AdminContent() {
             <div className="rounded-lg border bg-card p-5">
               <div className="flex items-center gap-2">
                 <p className="text-sm text-muted-foreground">AI runs in the last 24 hours</p>
-                {s.ai_runs_last_24h >= s.platform_ai_runs_per_day * 0.8 && <Badge className="bg-amber-soft text-amber-foreground">Near the cap</Badge>}
+                {s.ai_runs_last_24h >= s.platform_ai_runs_per_day * 0.8 && <Badge variant="outline">Near the cap</Badge>}
               </div>
               <p className="mt-1 text-3xl font-extrabold">{s.ai_runs_last_24h} of {s.platform_ai_runs_per_day}</p>
               <SettingEditor label="Daily AI run cap" settingKey="platform_ai_runs_per_day" value={s.platform_ai_runs_per_day} onSaved={refresh} onError={setError} />
@@ -218,7 +218,7 @@ function AdminContent() {
 
 function StatusPill({ row }: { row: WaitlistRow }) {
   if (row.has_account) return <Badge className="bg-selected text-primary">Has account</Badge>;
-  if (row.on_allow_list || row.invited_at) return <Badge className="bg-amber-soft text-amber-foreground">Invited</Badge>;
+  if (row.on_allow_list || row.invited_at) return <Badge variant="outline">Invited</Badge>;
   return <Badge variant="secondary">Not invited</Badge>;
 }
 

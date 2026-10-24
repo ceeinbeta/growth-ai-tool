@@ -1,3 +1,9 @@
+# Slice 4
+- [ ] Add ordered measured funnels, customization, and benchmarks.
+- [ ] Add copy audits, status-only leaks, and shared AI reservations.
+- [ ] Add Overview link and indexing restrictions.
+- [ ] Run all tests and signed-in verification with temporary-row cleanup; do not publish.
+
 # Invite-only signup
 - [x] Restrict new accounts with a private email allow-list; preserve existing sign-in and workspace creation.
 - [x] Add atomic platform-wide profiling limit and friendly error messages.

@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { ArrowRight, ChartNoAxesColumn, Droplets, ScanText, Search, MessageCircle, Target, Check } from 'lucide-react';
 import { PublicShell } from '@/components/PublicShell';
@@ -8,6 +8,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { getPublicOrigin } from '@/lib/public-origin.functions';
 import { publicHead } from '@/lib/public-head';
 import { CONTACT_EMAIL, GROWLOOP_TRACKING_KEY } from '@/lib/public-config';
+import { supabase } from '@/integrations/supabase/client';
+import { hasSignInParams, landingRedirectTarget } from '@/lib/auth-redirect';
 import loopImage from '@/assets/growloop-loop.jpg';
 
 export const Route = createFileRoute('/')({
@@ -35,6 +37,22 @@ const faqs: [string, string][] = [
 ];
 
 export function LandingPage() {
+  const navigate = useNavigate();
+  // Safety net: a one-time sign-in link that lands here (with a code or
+  // token in the address) sends a signed-in visitor on to the app.
+  useEffect(() => {
+    if (!hasSignInParams(window.location.search, window.location.hash)) return;
+    let active = true;
+    const go = (hasSession: boolean) => {
+      const target = landingRedirectTarget(window.location.search, window.location.hash, hasSession);
+      if (active && target) void navigate({ to: target, replace: true });
+    };
+    void supabase.auth.getSession().then(({ data }) => go(!!data.session));
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) go(true);
+    });
+    return () => { active = false; listener.subscription.unsubscribe(); };
+  }, [navigate]);
   useEffect(() => {
     if (!GROWLOOP_TRACKING_KEY) return;
     const script = document.createElement('script');

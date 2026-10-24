@@ -1,7 +1,7 @@
 # Slice 5
-- [ ] Add public home and privacy pages, current-host metadata, and crawler rules.
-- [ ] Add private consented waitlist with same-origin validation and atomic rate limits.
-- [ ] Run all tests and public/signed-in checks; remove temporary data; do not publish.
+- [x] Add public home and privacy pages, current-host metadata, and crawler rules.
+- [x] Add private consented waitlist with same-origin validation and atomic rate limits.
+- [x] Run all tests and public/signed-in checks; remove temporary data; do not publish.
 
 # Slice 4
 - [x] Add ordered measured funnels, customization, and benchmarks.

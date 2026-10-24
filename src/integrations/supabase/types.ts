@@ -542,6 +542,63 @@ export type Database = {
           },
         ]
       }
+      waitlist_signups: {
+        Row: {
+          consent_at: string
+          consent_text: string
+          created_at: string
+          email: string
+          id: string
+          invited_at: string | null
+          stage: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          website: string | null
+        }
+        Insert: {
+          consent_at: string
+          consent_text: string
+          created_at?: string
+          email: string
+          id?: string
+          invited_at?: string | null
+          stage?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          website?: string | null
+        }
+        Update: {
+          consent_at?: string
+          consent_text?: string
+          created_at?: string
+          email?: string
+          id?: string
+          invited_at?: string | null
+          stage?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
+      waitlist_submissions: {
+        Row: {
+          created_at: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
       workspaces: {
         Row: {
           created_at: string
@@ -599,6 +656,7 @@ export type Database = {
         }
         Returns: string
       }
+      submit_waitlist: { Args: { entry: Json }; Returns: boolean }
       tracking_summary: { Args: { pid: string }; Returns: Json }
     }
     Enums: {

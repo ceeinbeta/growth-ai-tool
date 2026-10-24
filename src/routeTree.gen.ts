@@ -12,12 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as AuthenticatedConversionLeaksRouteImport } from './routes/_authenticated/conversion-leaks'
 import { Route as AuthenticatedIntegrationsRouteImport } from './routes/_authenticated/integrations'
 import { Route as AuthenticatedOverviewRouteImport } from './routes/_authenticated/overview'
 import { Route as ApiCollectRouteImport } from './routes/api/collect'
 import { Route as AuthenticatedProductsNewRouteImport } from './routes/_authenticated/products.new'
 import { Route as ApiPublicCollectRouteImport } from './routes/api/public/collect'
+import { Route as ApiPublicWaitlistRouteImport } from './routes/api/public/waitlist'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -31,6 +33,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedConversionLeaksRoute =
@@ -66,79 +73,98 @@ const ApiPublicCollectRoute = ApiPublicCollectRouteImport.update({
   path: '/api/public/collect',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicWaitlistRoute = ApiPublicWaitlistRouteImport.update({
+  id: '/api/public/waitlist',
+  path: '/api/public/waitlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/privacy': typeof PrivacyRoute
   '/conversion-leaks': typeof AuthenticatedConversionLeaksRoute
   '/integrations': typeof AuthenticatedIntegrationsRoute
   '/overview': typeof AuthenticatedOverviewRoute
   '/api/collect': typeof ApiCollectRoute
   '/products/new': typeof AuthenticatedProductsNewRoute
   '/api/public/collect': typeof ApiPublicCollectRoute
+  '/api/public/waitlist': typeof ApiPublicWaitlistRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/privacy': typeof PrivacyRoute
   '/conversion-leaks': typeof AuthenticatedConversionLeaksRoute
   '/integrations': typeof AuthenticatedIntegrationsRoute
   '/overview': typeof AuthenticatedOverviewRoute
   '/api/collect': typeof ApiCollectRoute
   '/products/new': typeof AuthenticatedProductsNewRoute
   '/api/public/collect': typeof ApiPublicCollectRoute
+  '/api/public/waitlist': typeof ApiPublicWaitlistRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/privacy': typeof PrivacyRoute
   '/_authenticated/conversion-leaks': typeof AuthenticatedConversionLeaksRoute
   '/_authenticated/integrations': typeof AuthenticatedIntegrationsRoute
   '/_authenticated/overview': typeof AuthenticatedOverviewRoute
   '/api/collect': typeof ApiCollectRoute
   '/_authenticated/products/new': typeof AuthenticatedProductsNewRoute
   '/api/public/collect': typeof ApiPublicCollectRoute
+  '/api/public/waitlist': typeof ApiPublicWaitlistRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
+    | '/privacy'
     | '/conversion-leaks'
     | '/integrations'
     | '/overview'
     | '/api/collect'
     | '/products/new'
     | '/api/public/collect'
+    | '/api/public/waitlist'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/privacy'
     | '/conversion-leaks'
     | '/integrations'
     | '/overview'
     | '/api/collect'
     | '/products/new'
     | '/api/public/collect'
+    | '/api/public/waitlist'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/privacy'
     | '/_authenticated/conversion-leaks'
     | '/_authenticated/integrations'
     | '/_authenticated/overview'
     | '/api/collect'
     | '/_authenticated/products/new'
     | '/api/public/collect'
+    | '/api/public/waitlist'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  PrivacyRoute: typeof PrivacyRoute
   ApiCollectRoute: typeof ApiCollectRoute
   ApiPublicCollectRoute: typeof ApiPublicCollectRoute
+  ApiPublicWaitlistRoute: typeof ApiPublicWaitlistRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -162,6 +188,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/conversion-leaks': {
@@ -206,6 +239,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCollectRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/waitlist': {
+      id: '/api/public/waitlist'
+      path: '/api/public/waitlist'
+      fullPath: '/api/public/waitlist'
+      preLoaderRoute: typeof ApiPublicWaitlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -230,8 +270,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  PrivacyRoute: PrivacyRoute,
   ApiCollectRoute: ApiCollectRoute,
   ApiPublicCollectRoute: ApiPublicCollectRoute,
+  ApiPublicWaitlistRoute: ApiPublicWaitlistRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

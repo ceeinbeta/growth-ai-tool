@@ -6,6 +6,7 @@ import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { signInLinkErrorMessage } from "@/lib/auth-errors";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -45,7 +46,7 @@ function AuthPage() {
       options: { emailRedirectTo: window.location.origin },
     });
     setBusy(false);
-    if (error) return setError("We couldn't send the link. Please try again in a minute.");
+    if (error) return setError(signInLinkErrorMessage(error));
     setSent(true);
   }
 

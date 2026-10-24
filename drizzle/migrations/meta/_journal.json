@@ -29,6 +29,13 @@
       "when": 1792837007907,
       "tag": "0003_restrict_tracking_client_writes",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792837985966,
+      "tag": "0004_invite_only_signup_and_shared_profile_limit",
+      "breakpoints": true
     }
   ]
 }

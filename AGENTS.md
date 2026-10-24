@@ -13,6 +13,9 @@
 - AI profiling uses one authenticated RPC with RLS product reads and privileged usage/reservation writes; keys and providers stay in server-only modules.
 - Database triggers preserve field edit ownership and serialize item caps; atomic profile replacement preserves founder-owned content under concurrent edits.
 - Rolling profile-run reservations are separate from per-call usage so a malformed-output retry counts as one run.
+- Profile reservations acquire one shared transaction advisory lock before product locks and enforce both rolling limits in the same RPC; concurrent workers cannot bypass the shared cost safeguard.
+- Invite-only signup uses a private service-role-only allow-list and an app-owned BEFORE INSERT auth lifecycle trigger; existing sign-in and the AFTER INSERT workspace trigger remain independent.
+- Invitation and shared-limit database tests create auth fixtures through the admin API and explicitly clean temporary users, invitations, workspaces, and reservations in finally blocks; tests must never send real emails or call AI.
 - Managed auth deletion uses an application lifecycle cleanup trigger for memberships instead of a disallowed direct auth foreign key.
 - Active product storage is initialized only in the client-only authenticated shell to avoid a first-product flash.
 

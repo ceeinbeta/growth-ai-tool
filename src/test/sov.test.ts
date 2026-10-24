@@ -10,6 +10,7 @@ import {
   sovErrorMessage,
   engineErrorMessage,
   youPercent,
+  usableSovRuns,
   type SovRunRow,
   type SovMentionRow,
 } from "@/lib/sov";
@@ -31,6 +32,19 @@ describe("engine prices", () => {
     const sonar = engineById("perplexity")!;
     // 2000 in + 800 out at $1/1M + $12/1k request = 0.002 + 0.0008 + 0.012
     expect(estimateRunCost(sonar)).toBeCloseTo(0.0148, 6);
+  });
+
+  it("uses the measured OpenAI average including 1.93 searches", () => {
+    const engine = engineById("openai");
+    if (!engine) throw new Error("Missing OpenAI engine");
+    expect(estimateRunCost(engine)).toBeCloseTo(19542 * 0.1 / 1_000_000 + 1189 * 0.5 / 1_000_000 + 1.93 * 10 / 1000, 8);
+    expect(estimateRunCost(engine)).toBeCloseTo(0.0219, 4);
+  });
+
+  it("uses the measured Claude average including 1.5 searches", () => {
+    const engine = engineById("claude");
+    if (!engine) throw new Error("Missing Claude engine");
+    expect(estimateRunCost(engine)).toBeCloseTo(11866 * 0.1 / 1_000_000 + 1318 * 0.5 / 1_000_000 + 1.5 * 10 / 1000, 8);
   });
 
   it("estimates a check as questions x runs x engines", () => {
@@ -105,6 +119,13 @@ const mention = (run_id: string, name: string, rank: number, kind: SovMentionRow
 });
 
 describe("share of voice math", () => {
+  it("excludes legacy empty answers without changing stored input rows", () => {
+    const original = [{ ...run("empty", "openai", "q"), answer_excerpt: "" }, { ...run("usable", "claude", "q"), answer_excerpt: "A tool" }];
+    const usable = usableSovRuns(original);
+    expect(original[0]?.status).toBe("done");
+    expect(usable[0]?.status).toBe("failed");
+    expect(shareOfVoice(usable, [mention("usable", "PDFeye", 1, "you")])[0]?.runs).toBe(1);
+  });
   it("computes percentages over successful runs only", () => {
     const runs = [run("r1", "openai", "q"), run("r2", "openai", "q"), run("r3", "openai", "q"), run("r4", "openai", "q", "failed")];
     const mentions = [
@@ -157,9 +178,12 @@ describe("error copy", () => {
   });
 
   it("maps engine failures to plain messages without key material", () => {
-    expect(engineErrorMessage(401, "invalid api key sk-abc")).toContain("Check it in Project Settings");
+    expect(engineErrorMessage(401, "invalid api key sk-abc")).toContain("Check the key in Project Settings");
     expect(engineErrorMessage(401, "invalid api key sk-abc")).not.toContain("sk-abc");
     expect(engineErrorMessage(429, "")).toContain("Rate limited");
     expect(engineErrorMessage(402, "insufficient_quota")).toContain("out of credit");
+  });
+  it.each([401, 403])("does not assume a single cause for HTTP %s", (status) => {
+    expect(engineErrorMessage(status, "")).toBe("The key was rejected or the account has no API credit. Check the key in Project Settings → Secrets and your balance with the provider.");
   });
 });

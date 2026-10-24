@@ -23,8 +23,12 @@ describe("visibility dialog interactions", () => {
     fireEvent.click(testButton);
     await screen.findByText("The key was rejected.");
     fireEvent.click(screen.getByRole("button", { name: "Run a check" }));
-    expect(screen.getByText("Failed its last test")).toBeInTheDocument();
-    expect(within(screen.getByRole("group", { name: "Engines" })).getByRole("checkbox", { name: /OpenAI/ })).not.toBeDisabled();
+    expect(screen.getByText("Failed last time. Tick to try again.")).toBeInTheDocument();
+    const engine = within(screen.getByRole("group", { name: "Engines" })).getByRole("checkbox", { name: /OpenAI/ });
+    expect(engine).not.toBeDisabled();
+    expect(engine).not.toBeChecked();
+    fireEvent.click(engine);
+    expect(engine).toBeChecked();
   });
   it("updates call estimates, remembers selection and submits only chosen engines", async () => {
     state.start.mockResolvedValue({ ok: true });
@@ -48,5 +52,16 @@ describe("visibility dialog interactions", () => {
     fireEvent.click(testButton);
     await screen.findByText("Test passed just now");
     expect(screen.getAllByText("Connected")).toHaveLength(2);
+  });
+  it("defaults an engine off after all its last runs failed, but allows retry", () => {
+    state.runs = [{ id: "r", check_id: "last", engine: "openai", status: "failed" }];
+    localStorage.setItem("growloop:sov-engines:choice-test", '["openai","claude"]');
+    render(<state.component />);
+    fireEvent.click(screen.getByRole("button", { name: "Run a check" }));
+    const engine = screen.getByRole("checkbox", { name: /OpenAI/ });
+    expect(engine).not.toBeChecked();
+    fireEvent.click(engine);
+    expect(engine).toBeChecked();
+    expect(screen.getByText(/This will make about 6 calls/)).toBeInTheDocument();
   });
 });

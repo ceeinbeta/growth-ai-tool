@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { engineChoiceKey, readEngineChoice, validateEngineChoice, engineFailedAllRuns } from "@/lib/sov-engine-choice";
+import { engineChoiceKey, readEngineChoice, validateEngineChoice, engineFailedAllRuns, defaultEngineChoice } from "@/lib/sov-engine-choice";
 
 describe("visibility engine choices", () => {
+  it("defaults failed engines off even if remembered, keeping healthy preferences", () => {
+    expect(defaultEngineChoice(["openai", "claude", "perplexity"], null, ["perplexity"])).toEqual(["openai", "claude"]);
+    expect(defaultEngineChoice(["openai", "claude"], ["openai", "claude"], ["openai"])).toEqual(["claude"]);
+    expect(defaultEngineChoice(["openai", "claude"], ["claude"], [])).toEqual(["claude"]);
+  });
   it("defaults to all engines only when no valid preference exists", () => {
     expect(readEngineChoice(null)).toBeNull();
     expect(readEngineChoice('[]')).toEqual([]);

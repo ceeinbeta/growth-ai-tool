@@ -11,10 +11,10 @@ function PublicAccountLink({ footer = false }: { footer?: boolean }) {
     let mounted = true;
     const update = () => supabase.auth.getSession().then(({ data }) => { if (mounted) setSignedIn(!!data.session); });
     void update();
-    // Root owns the identity-change listener; refresh this affordance after its
-    // router invalidation remounts or on return from an external sign-in flow.
+    // Root owns the single auth listener and announces identity transitions.
     window.addEventListener('focus', update);
-    return () => { mounted = false; window.removeEventListener('focus', update); };
+    window.addEventListener('growloop:auth-changed', update);
+    return () => { mounted = false; window.removeEventListener('focus', update); window.removeEventListener('growloop:auth-changed', update); };
   }, []);
   return <Button asChild variant={footer ? 'link' : 'outline'}><Link to={signedIn ? '/overview' : '/auth'}>{signedIn ? 'Open Growloop' : 'Sign in'}</Link></Button>;
 }

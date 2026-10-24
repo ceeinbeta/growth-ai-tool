@@ -8,19 +8,16 @@ export const WAITLIST_MAX_BYTES = 2048;
 const campaign = z.string().trim().max(80).regex(/^[a-zA-Z0-9 ._~-]*$/, 'Use a plain, short campaign value.').optional();
 export const waitlistSchema = z.object({
   email: z.string().trim().email('Enter a valid email address.').max(255).transform(s => s.toLowerCase()),
-  website: z.string().trim().max(255).optional().transform(s => s ? normalizeWebsite(s) : null)
-    .refine(s => s !== null || s === undefined, WEBSITE_ERROR),
+  website: z.string().trim().max(255).optional().refine(s => !s || normalizeWebsite(s) !== null, WEBSITE_ERROR)
+    .transform(s => s ? normalizeWebsite(s) : null),
   stage: z.enum(['live', 'prelaunch', 'idea']).optional(),
   consent: z.literal(true, { errorMap: () => ({ message: 'Please agree to receive beta emails.' }) }),
   utm_source: campaign, utm_medium: campaign, utm_campaign: campaign,
   company: z.string().max(200).optional(),
 }).strict();
 
-// Empty websites are optional; validate a supplied value before normalization.
-export const waitlistInputSchema = waitlistSchema.omit({ website: true }).extend({
-  website: z.string().trim().max(255).optional().refine(s => !s || normalizeWebsite(s) !== null, WEBSITE_ERROR)
-    .transform(s => s ? normalizeWebsite(s) : null),
-});
+export const waitlistInputSchema = waitlistSchema;
+export type WaitlistEntry = { email: string; website: string | null; stage: string | null; utm_source: string | null; utm_medium: string | null; utm_campaign: string | null; consent_text: string };
 export function campaignFromSearch(search: string) {
   const params = new URLSearchParams(search);
   const result: Record<string, string> = {};

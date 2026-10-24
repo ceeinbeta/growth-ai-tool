@@ -1,6 +1,6 @@
-import { WAITLIST_CONSENT, WAITLIST_LIMIT, WAITLIST_MAX_BYTES, WAITLIST_SUCCESS, isSameOrigin, waitlistInputSchema } from './waitlist';
+import { WAITLIST_CONSENT, WAITLIST_LIMIT, WAITLIST_MAX_BYTES, WAITLIST_SUCCESS, isSameOrigin, waitlistInputSchema, type WaitlistEntry } from './waitlist';
 
-type SaveEntry = (entry: Record<string, unknown>) => Promise<boolean>;
+type SaveEntry = (entry: WaitlistEntry) => Promise<boolean>;
 export async function handleWaitlist(request: Request, save: SaveEntry): Promise<Response> {
   const json = (message: string, status = 200) => Response.json({ message }, { status, headers: { 'Cache-Control': 'no-store' } });
   if (!isSameOrigin(request)) return json('This form must be submitted from Growloop.', 403);
@@ -24,8 +24,8 @@ export async function handleWaitlist(request: Request, save: SaveEntry): Promise
     if (input && typeof input === 'object' && 'company' in input && typeof input.company === 'string' && input.company.trim()) return json(WAITLIST_SUCCESS);
     const parsed = waitlistInputSchema.safeParse(input);
     if (!parsed.success) return json(parsed.error.issues[0]?.message ?? 'Please check your details.', 400);
-    const { consent: _consent, company: _company, ...entry } = parsed.data;
-    const accepted = await save({ ...entry, consent_text: WAITLIST_CONSENT });
+    const entry = parsed.data;
+    const accepted = await save({ email: entry.email, website: entry.website, stage: entry.stage ?? null, utm_source: entry.utm_source ?? null, utm_medium: entry.utm_medium ?? null, utm_campaign: entry.utm_campaign ?? null, consent_text: WAITLIST_CONSENT });
     return json(accepted ? WAITLIST_SUCCESS : WAITLIST_LIMIT, accepted ? 200 : 429);
   } catch {
     return json('We couldn’t save your details. Please try again.', 400);

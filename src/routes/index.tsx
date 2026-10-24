@@ -38,7 +38,7 @@ export function LandingPage() {
   useEffect(() => {
     if (!GROWLOOP_TRACKING_KEY) return;
     const script = document.createElement('script');
-    script.async = true; script.src = `${window.location.origin}/t.js`; script.dataset.key = GROWLOOP_TRACKING_KEY;
+    script.async = true; script.src = `${window.location.origin}/t.js`; script.dataset['key'] = GROWLOOP_TRACKING_KEY;
     document.head.append(script);
     return () => script.remove();
   }, []);
@@ -68,12 +68,12 @@ export function LandingPage() {
       <div className="mt-8 grid gap-5 md:grid-cols-3">{next.map(({ icon: Icon, title, text }) => <article key={title} className="rounded-md border p-6"><div className="mb-6 flex items-center justify-between gap-3"><Icon className="h-6 w-6 text-muted-foreground" /><span className="rounded-full bg-sunken px-3 py-1 text-xs font-medium text-muted-foreground">Coming next</span></div><h3 className="text-lg">{title}</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">{text}</p></article>)}</div>
     </div></section>
     <section className="mx-auto max-w-6xl px-6 py-16 md:px-10 md:py-20"><h2 className="text-3xl">How Growloop works</h2>
-      <ol className="mt-10 grid gap-8 sm:grid-cols-2 md:grid-cols-4">{[
+      <ol className="mt-10 grid gap-8 sm:grid-cols-2 md:grid-cols-4">{([
         ['Diagnose', 'See where visitors drop off and check the copy behind that step.'],
         ['Act', 'Review the suggested fix and make the change yourself.'],
         ['Measure', 'Follow real visits, signups or waitlist joins.'],
         ['Learn', 'Use what you measured to decide what to work on next.'],
-      ].map(([title, text], i) => <li key={title}><span className="text-sm font-semibold text-primary">0{i + 1}</span><h3 className="mt-3 text-xl">{title}</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">{text}</p></li>)}</ol>
+      ] as const).map(([title, text], i) => <li key={title}><span className="text-sm font-semibold text-primary">0{i + 1}</span><h3 className="mt-3 text-xl">{title}</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">{text}</p></li>)}</ol>
     </section>
     <section className="border-y bg-selected"><div className="mx-auto max-w-6xl px-6 py-16 md:px-10"><h2 className="text-3xl">Our rules</h2><div className="mt-8 grid gap-8 md:grid-cols-3">{[
       ['You approve everything.', 'Growloop drafts, you post. Nothing is sent or published without your yes.'],

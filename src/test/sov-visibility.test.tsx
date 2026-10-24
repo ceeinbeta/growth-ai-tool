@@ -77,7 +77,7 @@ describe("visibility dialog interactions", () => {
     render(<state.component />);
     expect(screen.getAllByText("OpenAI: 0 of 1 runs succeeded — No usable answers in this check")).toHaveLength(2);
     expect(screen.getByText("Claude: 1 of 1 runs succeeded")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "OpenAI", exact: true }));
+    fireEvent.click(screen.getByRole("button", { name: /^OpenAI$/ }));
     expect(screen.getByText("No usable answers in this check", { exact: true })).toBeInTheDocument();
     expect(screen.queryByText(/was not recommended in these usable answers/)).toBeNull();
   });

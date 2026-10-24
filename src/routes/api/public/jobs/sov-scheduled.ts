@@ -23,7 +23,7 @@ export const Route = createFileRoute("/api/public/jobs/sov-scheduled")({
           .eq("status", "running")
           .lt("started_at", staleBefore);
         for (const check of stale ?? []) {
-          await admin.rpc("finish_sov_check", { check_id: check.id, new_status: "failed", final_cost: null });
+          await admin.rpc("finish_sov_check", { check_id: check.id, new_status: "failed", final_cost: null as unknown as number });
         }
 
         const engines = connectedEngines();
@@ -71,7 +71,7 @@ export const Route = createFileRoute("/api/public/jobs/sov-scheduled")({
             runsPerQuestion,
             engines as EngineId[],
           ).catch(async () => {
-            await admin.rpc("finish_sov_check", { check_id: reserved.data as string, new_status: "failed", final_cost: null });
+            await admin.rpc("finish_sov_check", { check_id: reserved.data as string, new_status: "failed", final_cost: null as unknown as number });
           });
         }
         return Response.json({ success: true, ran });

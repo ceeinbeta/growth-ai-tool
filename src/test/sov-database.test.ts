@@ -138,8 +138,8 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('ai search visi
         const mine = await client.from('sov_checks').select('id').eq('product_id', otherProduct.data!.id);
         expect(mine.data).toHaveLength(0);
         const anon = await anonClient().from('sov_checks').select('id').eq('product_id', otherProduct.data!.id);
-        expect(anon.data).toHaveLength(0);
-        await a.rpc('finish_sov_check', { check_id: reserved.data as string, new_status: 'failed', final_cost: null });
+        expect(anon.data ?? []).toHaveLength(0);
+        await a.rpc('finish_sov_check', { check_id: reserved.data as string, new_status: 'failed', final_cost: null as unknown as number });
       } finally {
         await a.from('products').delete().eq('id', otherProduct.data!.id);
         await a.from('workspaces').delete().eq('id', otherWs.data!.id);

@@ -137,7 +137,7 @@ export const startSovCheck = createServerFn({ method: "POST" })
     // The page polls for status; run the check to completion here.
     void executeSovCheck(checkId, { id: product.id, name: product.name, url: product.url, aliases: product.aliases ?? [] }, data.runsPerQuestion, data.engines).catch(
       async () => {
-        await admin.rpc("finish_sov_check", { check_id: checkId, new_status: "failed", final_cost: null });
+        await admin.rpc("finish_sov_check", { check_id: checkId, new_status: "failed", final_cost: null as unknown as number });
       },
     );
     return { ok: true, checkId, error: null };

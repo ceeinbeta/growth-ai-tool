@@ -382,6 +382,32 @@ export type Database = {
           },
         ]
       }
+      logo_fetches: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "logo_fetches_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       members: {
         Row: {
           created_at: string
@@ -419,8 +445,10 @@ export type Database = {
           created_at: string
           description: string
           id: string
+          logo_path: string | null
           name: string
           one_liner: string | null
+          profile_confirmed_at: string | null
           profile_edited_fields: string[]
           profile_source: string | null
           profiled_at: string | null
@@ -436,8 +464,10 @@ export type Database = {
           created_at?: string
           description: string
           id?: string
+          logo_path?: string | null
           name: string
           one_liner?: string | null
+          profile_confirmed_at?: string | null
           profile_edited_fields?: string[]
           profile_source?: string | null
           profiled_at?: string | null
@@ -453,8 +483,10 @@ export type Database = {
           created_at?: string
           description?: string
           id?: string
+          logo_path?: string | null
           name?: string
           one_liner?: string | null
+          profile_confirmed_at?: string | null
           profile_edited_fields?: string[]
           profile_source?: string | null
           profiled_at?: string | null
@@ -904,11 +936,16 @@ export type Database = {
         Args: { pid: string; profile: Json }
         Returns: undefined
       }
+      can_access_logo_object: {
+        Args: { object_name: string }
+        Returns: boolean
+      }
       can_access_product: { Args: { pid: string }; Returns: boolean }
       collect_tracking_event: {
         Args: { payload: Json; pid: string }
         Returns: boolean
       }
+      delete_product_as_owner: { Args: { pid: string }; Returns: undefined }
       finish_sov_check: {
         Args: { check_id: string; final_cost: number; new_status: string }
         Returns: undefined
@@ -925,6 +962,7 @@ export type Database = {
         Returns: string
       }
       reserve_install_check: { Args: { pid: string }; Returns: undefined }
+      reserve_logo_fetch: { Args: { pid: string }; Returns: undefined }
       reserve_profile_run: { Args: { pid: string }; Returns: string }
       reserve_sov_check: {
         Args: {
@@ -949,6 +987,7 @@ export type Database = {
       sov_month_spend: { Args: { p_exclude_check?: string }; Returns: Json }
       submit_waitlist: { Args: { entry: Json }; Returns: boolean }
       tracking_summary: { Args: { pid: string }; Returns: Json }
+      unique_visitors: { Args: { days: number; pid: string }; Returns: number }
     }
     Enums: {
       [_ in never]: never

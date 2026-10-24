@@ -10,6 +10,7 @@ import {
   type InviteRow, type WaitlistRow,
 } from '@/lib/admin';
 import { Button } from '@/components/ui/button';
+import { BlockSkeleton } from '@/components/States';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
@@ -39,7 +40,7 @@ export const Route = createFileRoute('/_authenticated/admin')({
 
 function AdminPage() {
   const { data: isAdmin, isLoading } = useQuery(isAdminQuery);
-  if (isLoading) return <p className="text-sm text-muted-foreground">Loading…</p>;
+  if (isLoading) return <BlockSkeleton rows={4} />;
   if (!isAdmin) {
     return (
       <div className="mx-auto max-w-3xl">
@@ -86,7 +87,7 @@ function AdminContent() {
       <p className="mt-2 text-sm text-muted-foreground">Invite people into the beta and keep an eye on limits. Growloop never sends emails for you.</p>
       {error && <p role="alert" className="mt-4 rounded-sm bg-danger-soft p-3 text-sm text-destructive">{error}</p>}
 
-      {!s ? <p className="mt-8 text-sm text-muted-foreground">Loading…</p> : (
+      {!s ? <BlockSkeleton rows={4} /> : (
         <>
           <section aria-label="Summary" className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="rounded-lg border bg-card p-5">

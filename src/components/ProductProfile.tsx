@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { LoaderCircle, Plus, RefreshCw, X, Check } from "lucide-react";
+import { LoaderCircle, Plus, RefreshCw, X, Check, ThumbsUp } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -58,7 +59,7 @@ export function ProductProfile({ product }: { product: Product }) {
     }
   }, [product.id]);
 
-  async function mutate(work: () => PromiseLike<{ error: { message: string } | null }>) {
+  async function mutate(work: () => PromiseLike<{ error: { message: string } | null }>, toastOnSave = false) {
     setEditing(true); setError("");
     try {
       const result = await work();
@@ -67,6 +68,7 @@ export function ProductProfile({ product }: { product: Product }) {
         throw new Error(msg);
       }
       await refresh();
+      if (toastOnSave) toast.success("Saved");
     } finally { setEditing(false); }
   }
   async function saveSummary(field: SummaryField, value: string) {
@@ -79,13 +81,17 @@ export function ProductProfile({ product }: { product: Product }) {
     const value = (kind === "competitor" ? competitor : question).trim();
     if (!value) return;
     try {
-      await mutate(() => kind === "competitor" ? supabase.from("competitors").insert({ product_id: product.id, name: value, source: "user" }) : supabase.from("sov_questions").insert({ product_id: product.id, question: value, source: "user" }));
+      await mutate(() => kind === "competitor" ? supabase.from("competitors").insert({ product_id: product.id, name: value, source: "user" }) : supabase.from("sov_questions").insert({ product_id: product.id, question: value, source: "user" }), true);
       if (kind === "competitor") setCompetitor(""); else setQuestion("");
     } catch (e) { setError(e instanceof Error ? e.message : "Couldn't add this item."); }
   }
   async function remove(table: "competitors" | "sov_questions", id: string) {
-    try { await mutate(() => supabase.from(table).delete().eq("id", id).eq("product_id", product.id)); }
+    try { await mutate(() => supabase.from(table).delete().eq("id", id).eq("product_id", product.id), true); }
     catch (e) { setError(e instanceof Error ? e.message : "Couldn't remove this item."); }
+  }
+  async function confirmProfile() {
+    try { await mutate(() => supabase.from("products").update({ profile_confirmed_at: new Date().toISOString() }).eq("id", product.id), true); }
+    catch (e) { setError(e instanceof Error ? e.message : "Couldn't save this change."); }
   }
   const disabled = busy || editing;
   return <section aria-label="Product profile" className="mt-8 rounded-lg border bg-card p-5 sm:p-6">
@@ -110,6 +116,7 @@ export function ProductProfile({ product }: { product: Product }) {
         {(data?.questions.length ?? 0) >= 10 && <p className="mt-2 text-xs text-muted-foreground">10 questions used. Remove one to add another.</p>}
       </div>
     </>}
+    {product.profiled_at && !busy && (product.profile_confirmed_at ? <p className="mt-5 flex items-center gap-2 text-sm text-primary"><Check className="h-4 w-4" />You confirmed this profile.</p> : <Button className="mt-5 mr-3" disabled={disabled} onClick={() => void confirmProfile()}><ThumbsUp className="mr-2 h-4 w-4" />Looks right</Button>)}
     {!busy && <Button variant="outline" className="mt-5" disabled={editing} onClick={() => product.profiled_at ? setConfirm(true) : void run()}><RefreshCw className="mr-2 h-4 w-4" />{error ? "Try again" : product.profiled_at ? "Run the profile again" : "Profile this product"}</Button>}
     <AlertDialog open={confirm} onOpenChange={setConfirm}><AlertDialogContent><AlertDialogTitle>Run the profile again?</AlertDialogTitle><AlertDialogDescription>This replaces AI-written fields and items. Anything you added or edited stays.</AlertDialogDescription><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => void run()}>Run profile</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
   </section>;

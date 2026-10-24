@@ -4,6 +4,8 @@ Disallow: /overview
 Disallow: /products
 Disallow: /conversion-leaks
 Disallow: /integrations
+Disallow: /admin
+Disallow: /ai-search-visibility
 Disallow: /api/
 Allow: /$
 Allow: /privacy
@@ -15,6 +17,8 @@ Disallow: /overview
 Disallow: /products
 Disallow: /conversion-leaks
 Disallow: /integrations
+Disallow: /admin
+Disallow: /ai-search-visibility
 Disallow: /api/
 Allow: /$
 Allow: /privacy
@@ -26,6 +30,8 @@ Disallow: /overview
 Disallow: /products
 Disallow: /conversion-leaks
 Disallow: /integrations
+Disallow: /admin
+Disallow: /ai-search-visibility
 Disallow: /api/
 Allow: /$
 Allow: /privacy
@@ -37,6 +43,8 @@ Disallow: /overview
 Disallow: /products
 Disallow: /conversion-leaks
 Disallow: /integrations
+Disallow: /admin
+Disallow: /ai-search-visibility
 Disallow: /api/
 Allow: /$
 Allow: /privacy
@@ -48,6 +56,8 @@ Disallow: /overview
 Disallow: /products
 Disallow: /conversion-leaks
 Disallow: /integrations
+Disallow: /admin
+Disallow: /ai-search-visibility
 Disallow: /api/
 Allow: /$
 Allow: /privacy

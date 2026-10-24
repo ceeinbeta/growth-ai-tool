@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useActiveProduct } from "@/components/AppShell";
@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { estimateCheckCost, usd, ENGINES, type EngineId } from "@/lib/engine-prices";
 import { shareOfVoice, questionStats, youPercent, type SovRunRow, type SovMentionRow } from "@/lib/sov";
-import { getSovEngineStatus, testEngineConnection, startSovCheck, setSovSchedule } from "@/lib/sov.functions";
+import { getSovEngineStatus, testEngineConnection, startSovCheck, advanceSovCheckFn, setSovSchedule } from "@/lib/sov.functions";
 import { relativeTime } from "@/lib/admin";
 
 export const Route = createFileRoute("/_authenticated/ai-search-visibility")({
@@ -85,6 +85,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
   const statusFn = useServerFn(getSovEngineStatus);
   const testFn = useServerFn(testEngineConnection);
   const startFn = useServerFn(startSovCheck);
+  const advanceFn = useServerFn(advanceSovCheckFn);
   const scheduleFn = useServerFn(setSovSchedule);
 
   const { data: engineStatus } = useQuery({
@@ -98,6 +99,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [testMessages, setTestMessages] = useState<Record<string, string>>({});
+  const [progress, setProgress] = useState<{ finished: number; total: number } | null>(null);
 
   const checks = data?.checks ?? [];
   const latestDone = checks.find((c) => c.status === "done" || c.status === "stopped");
@@ -106,6 +108,36 @@ function VisibilityPage({ productId, productName }: { productId: string; product
   const connected = (engineStatus?.engines ?? []).filter((e) => e.connected).map((e) => e.id);
   const estimate = estimateCheckCost(Math.min(questions.length, 10), runsPerQuestion, connected);
   const callCount = Math.min(questions.length, 10) * runsPerQuestion * connected.length;
+
+  // While a check is running, drive it forward: one advance at a time, about
+  // every second, until it finishes. Resumes automatically after a reload,
+  // because the running check is read back from the database.
+  useEffect(() => {
+    if (!running) {
+      setProgress(null);
+      return;
+    }
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const step = async () => {
+      try {
+        const result = await advanceFn({ data: { checkId: running.id } });
+        if (cancelled) return;
+        setProgress({ finished: result.finished, total: result.total });
+        qc.invalidateQueries({ queryKey: ["sov-data", productId] });
+        if (result.status !== "running") return;
+      } catch {
+        if (cancelled) return;
+      }
+      timer = setTimeout(step, 1000);
+    };
+    void step();
+    return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [running?.id]);
 
   const latestRuns = useMemo(
     () => (data?.runs ?? []).filter((r) => r.check_id === latestDone?.id) as unknown as SovRunRow[],

@@ -1,0 +1,2 @@
+REVOKE ALL ON public.sov_checks, public.sov_runs, public.sov_mentions, public.sov_fixes, public.sov_schedule FROM PUBLIC, anon;
+REVOKE INSERT, UPDATE, DELETE ON public.sov_checks, public.sov_runs, public.sov_mentions, public.sov_fixes, public.sov_schedule FROM authenticated;

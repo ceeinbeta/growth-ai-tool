@@ -52,7 +52,6 @@ export function AppShell() {
   }
 
   const soon = [
-    { label: "AI search visibility", icon: Search },
     { label: "Opportunities", icon: Lightbulb },
   ];
 
@@ -110,6 +109,7 @@ export function AppShell() {
               <LayoutGrid className="h-4 w-4" /> Overview
             </Link>
             <Link to="/conversion-leaks" className="flex items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium text-foreground hover:bg-sunken" activeProps={{ className: "bg-selected" }}><Droplets className="h-4 w-4" /> Conversion leaks</Link>
+            <Link to="/ai-search-visibility" className="flex items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium text-foreground hover:bg-sunken" activeProps={{ className: "bg-selected" }}><Search className="h-4 w-4" /> AI search visibility</Link>
             {soon.map(({ label, icon: Icon }) => (
               <span key={label} aria-disabled="true" className="flex cursor-default items-center gap-3 px-3 py-2 text-sm text-muted-foreground">
                 <Icon className="h-4 w-4" /> <span className="flex-1">{label}</span>

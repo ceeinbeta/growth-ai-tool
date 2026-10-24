@@ -413,6 +413,7 @@ export type Database = {
       }
       products: {
         Row: {
+          aliases: string[]
           audience: string | null
           category: string | null
           created_at: string
@@ -429,6 +430,7 @@ export type Database = {
           workspace_id: string
         }
         Insert: {
+          aliases?: string[]
           audience?: string | null
           category?: string | null
           created_at?: string
@@ -445,6 +447,7 @@ export type Database = {
           workspace_id: string
         }
         Update: {
+          aliases?: string[]
           audience?: string | null
           category?: string | null
           created_at?: string
@@ -517,6 +520,131 @@ export type Database = {
           },
         ]
       }
+      sov_checks: {
+        Row: {
+          engines: string[]
+          estimated_cost_usd: number | null
+          finished_at: string | null
+          id: string
+          note: string | null
+          product_id: string
+          runs_per_question: number
+          started_at: string
+          status: string
+        }
+        Insert: {
+          engines: string[]
+          estimated_cost_usd?: number | null
+          finished_at?: string | null
+          id?: string
+          note?: string | null
+          product_id: string
+          runs_per_question: number
+          started_at?: string
+          status?: string
+        }
+        Update: {
+          engines?: string[]
+          estimated_cost_usd?: number | null
+          finished_at?: string | null
+          id?: string
+          note?: string | null
+          product_id?: string
+          runs_per_question?: number
+          started_at?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sov_checks_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sov_fixes: {
+        Row: {
+          check_id: string
+          created_at: string
+          id: string
+          product_id: string
+          text: Json
+        }
+        Insert: {
+          check_id: string
+          created_at?: string
+          id?: string
+          product_id: string
+          text: Json
+        }
+        Update: {
+          check_id?: string
+          created_at?: string
+          id?: string
+          product_id?: string
+          text?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sov_fixes_check_id_fkey"
+            columns: ["check_id"]
+            isOneToOne: false
+            referencedRelation: "sov_checks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sov_fixes_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sov_mentions: {
+        Row: {
+          id: string
+          kind: string
+          name: string
+          product_id: string
+          rank: number
+          run_id: string
+        }
+        Insert: {
+          id?: string
+          kind: string
+          name: string
+          product_id: string
+          rank: number
+          run_id: string
+        }
+        Update: {
+          id?: string
+          kind?: string
+          name?: string
+          product_id?: string
+          rank?: number
+          run_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sov_mentions_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sov_mentions_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "sov_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sov_questions: {
         Row: {
           active: boolean
@@ -547,6 +675,104 @@ export type Database = {
             foreignKeyName: "sov_questions_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sov_runs: {
+        Row: {
+          answer_excerpt: string | null
+          check_id: string
+          cited_hosts: string[] | null
+          cost_usd: number | null
+          created_at: string
+          engine: string
+          error: string | null
+          id: string
+          input_tokens: number | null
+          output_tokens: number | null
+          product_id: string
+          question: string
+          run_index: number
+          search_calls: number | null
+          status: string
+        }
+        Insert: {
+          answer_excerpt?: string | null
+          check_id: string
+          cited_hosts?: string[] | null
+          cost_usd?: number | null
+          created_at?: string
+          engine: string
+          error?: string | null
+          id?: string
+          input_tokens?: number | null
+          output_tokens?: number | null
+          product_id: string
+          question: string
+          run_index: number
+          search_calls?: number | null
+          status?: string
+        }
+        Update: {
+          answer_excerpt?: string | null
+          check_id?: string
+          cited_hosts?: string[] | null
+          cost_usd?: number | null
+          created_at?: string
+          engine?: string
+          error?: string | null
+          id?: string
+          input_tokens?: number | null
+          output_tokens?: number | null
+          product_id?: string
+          question?: string
+          run_index?: number
+          search_calls?: number | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sov_runs_check_id_fkey"
+            columns: ["check_id"]
+            isOneToOne: false
+            referencedRelation: "sov_checks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sov_runs_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sov_schedule: {
+        Row: {
+          enabled: boolean
+          per_week: number
+          product_id: string
+          updated_at: string
+        }
+        Insert: {
+          enabled?: boolean
+          per_week?: number
+          product_id: string
+          updated_at?: string
+        }
+        Update: {
+          enabled?: boolean
+          per_week?: number
+          product_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sov_schedule_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: true
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
@@ -683,6 +909,10 @@ export type Database = {
         Args: { payload: Json; pid: string }
         Returns: boolean
       }
+      finish_sov_check: {
+        Args: { check_id: string; final_cost: number; new_status: string }
+        Returns: undefined
+      }
       funnel_summary: { Args: { days?: number; pid: string }; Returns: Json }
       is_app_admin: { Args: never; Returns: boolean }
       is_workspace_member: { Args: { ws: string }; Returns: boolean }
@@ -696,6 +926,15 @@ export type Database = {
       }
       reserve_install_check: { Args: { pid: string }; Returns: undefined }
       reserve_profile_run: { Args: { pid: string }; Returns: string }
+      reserve_sov_check: {
+        Args: {
+          p_engines: string[]
+          p_estimated_cost: number
+          p_runs_per_question: number
+          pid: string
+        }
+        Returns: string
+      }
       save_page_audit: {
         Args: {
           copy: Json
@@ -706,6 +945,7 @@ export type Database = {
         }
         Returns: string
       }
+      sov_budget_info: { Args: never; Returns: Json }
       submit_waitlist: { Args: { entry: Json }; Returns: boolean }
       tracking_summary: { Args: { pid: string }; Returns: Json }
     }

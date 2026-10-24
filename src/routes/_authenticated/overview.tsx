@@ -4,6 +4,7 @@ import { stageLabel, useActiveProduct } from "@/components/AppShell";
 import { ProductProfile } from "@/components/ProductProfile";
 import { TrackingOverview } from "@/components/TrackingOverview";
 import { OpenLeaks } from "@/components/OpenLeaks";
+import { SovLine } from "@/components/SovLine";
 
 export const Route = createFileRoute("/_authenticated/overview")({
   head: () => ({
@@ -58,6 +59,7 @@ function Overview() {
       <p className="mt-4 whitespace-pre-line text-foreground">{active.description}</p>
 
       <OpenLeaks productId={active.id} />
+      <SovLine productId={active.id} />
       <TrackingOverview key={`tracking-${active.id}`} product={active} />
 
       <ProductProfile key={active.id} product={active} />

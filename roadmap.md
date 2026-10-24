@@ -1,3 +1,9 @@
+# Slice 6
+- [ ] Add founder-only admin tables, settings, and admin-checked invitation RPCs.
+- [ ] Add Admin sidebar item and page with summary, waitlist, invites, and invite message dialog.
+- [ ] Make the shared AI run cap read from settings with a 100 fallback.
+- [ ] Run all tests with temporary-data cleanup; do not publish.
+
 # Slice 5
 - [x] Add public home and privacy pages, current-host metadata, and crawler rules.
 - [x] Add private consented waitlist with same-origin validation and atomic rate limits.

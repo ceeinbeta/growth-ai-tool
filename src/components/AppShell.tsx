@@ -1,7 +1,7 @@
 import { Link, Outlet, useNavigate, useRouteContext } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createContext, useContext, useState } from "react";
-import { Check, ChevronsUpDown, LayoutGrid, Droplets, Search, Lightbulb, Plug, Plus, LogOut } from "lucide-react";
+import { Check, ChevronsUpDown, LayoutGrid, Droplets, Search, Lightbulb, Plug, Plus, LogOut, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/Logo";
 import {
@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { getStoredActive, setStoredActive, workspaceQuery, type Product, type WorkspaceData } from "@/lib/workspace";
+import { isAdminQuery } from "@/lib/admin";
 
 type ActiveCtx = { data: WorkspaceData | undefined; active: Product | null; setActive: (id: string) => void };
 const Ctx = createContext<ActiveCtx>({ data: undefined, active: null, setActive: () => {} });
@@ -30,6 +31,7 @@ function Tile({ name }: { name: string }) {
 export function AppShell() {
   const { user } = useRouteContext({ from: "/_authenticated" });
   const { data } = useQuery(workspaceQuery);
+  const { data: isAdmin } = useQuery(isAdminQuery);
   const [activeId, setActiveId] = useState<string | null>(() => getStoredActive());
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -115,6 +117,9 @@ export function AppShell() {
               </span>
             ))}
             <Link to="/integrations" className="flex items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium text-foreground hover:bg-sunken" activeProps={{ className: "bg-selected" }}><Plug className="h-4 w-4" /> Integrations</Link>
+            {isAdmin && (
+              <Link to="/admin" className="flex items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium text-foreground hover:bg-sunken" activeProps={{ className: "bg-selected" }}><ShieldCheck className="h-4 w-4" /> Admin</Link>
+            )}
           </nav>
 
           <div className="mt-auto border-t px-5 py-4">

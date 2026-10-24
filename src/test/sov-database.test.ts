@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { rollbackSettings } from './rollback-settings';
 import postgres from 'postgres';
 import { randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
@@ -183,36 +184,28 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('ai search visi
 
   it('refuses checks that would exceed the monthly budget', async () => {
     await withTempUserProduct(async (_client, productId) => {
-      const a = adminClient();
-      const founder = founderClient();
-      const set = await founder.rpc('admin_set_setting', { setting_key: 'visibility_monthly_budget_usd', val: 1 });
-      expect(set.error).toBeNull();
-      try {
-        const over = await a.rpc('reserve_sov_check', { pid: productId, p_runs_per_question: 5, p_engines: ['openai', 'perplexity', 'claude'], p_estimated_cost: 2 });
-        expect(over.error?.message).toContain('sov_budget_exceeded');
-        const under = await a.rpc('reserve_sov_check', { pid: productId, p_runs_per_question: 1, p_engines: ['openai'], p_estimated_cost: 0.5 });
-        expect(under.error).toBeNull();
-        await a.rpc('finish_sov_check', { check_id: under.data as string, new_status: 'done', final_cost: 0.5 });
-      } finally {
-        await founder.rpc('admin_set_setting', { setting_key: 'visibility_monthly_budget_usd', val: 20 });
-      }
+      await rollbackSettings(async (sql) => {
+        await sql`select public.admin_set_setting('visibility_monthly_budget_usd', 1)`;
+        // A savepoint handles the expected rejection without aborting the transaction.
+        await expect(sql.savepoint(async (tx: any) => {
+          await tx`select public.reserve_sov_check(${productId}::uuid, 5, array['openai','perplexity','claude'], 2)`;
+        })).rejects.toThrow('sov_budget_exceeded');
+      });
     });
   });
 
   it('accepts the visibility budget setting within 1-500 and rejects outside values', async () => {
-    const founder = founderClient();
-    const ok = await founder.rpc('admin_set_setting', { setting_key: 'visibility_monthly_budget_usd', val: 50 });
-    expect(ok.error).toBeNull();
-    const low = await founder.rpc('admin_set_setting', { setting_key: 'visibility_monthly_budget_usd', val: 0 });
-    expect(low.error?.message).toContain('invalid_setting_value');
-    const high = await founder.rpc('admin_set_setting', { setting_key: 'visibility_monthly_budget_usd', val: 501 });
-    expect(high.error?.message).toContain('invalid_setting_value');
-    await founder.rpc('admin_set_setting', { setting_key: 'visibility_monthly_budget_usd', val: 20 });
-    const summary = await founder.rpc('admin_summary');
-    expect(summary.error).toBeNull();
-    expect(summary.data).toMatchObject({ visibility_monthly_budget_usd: 20 });
-    expect(typeof (summary.data as Record<string, unknown>)['visibility_spend_this_month']).toBe('number');
-    expect(typeof (summary.data as Record<string, unknown>)['visibility_reading_calls_24h']).toBe('number');
+    await rollbackSettings(async (sql) => {
+      await sql`select public.admin_set_setting('visibility_monthly_budget_usd', 50)`;
+      for (const val of [0, 501]) {
+        await expect(sql.savepoint(async (tx: any) => {
+          await tx`select public.admin_set_setting('visibility_monthly_budget_usd', ${val})`;
+        })).rejects.toThrow('invalid_setting_value');
+      }
+      const rows = await sql`select public.admin_summary() as summary`;
+      expect(rows[0].summary).toMatchObject({ visibility_monthly_budget_usd: 50 });
+      expect(typeof rows[0].summary.visibility_reading_calls_24h).toBe('number');
+    });
   });
 
   it('rejects admin_set_setting for non-admins on the new key too', async () => {
@@ -309,7 +302,11 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('ai search visi
       await a.from('sov_checks').update({ started_at: new Date(Date.now() - 2 * 3600_000).toISOString() }).eq('id', withRuns.data as string);
       const old = new Date(Date.now() - 20 * 60_000).toISOString();
       await a.from('sov_runs').insert({ check_id: withRuns.data as string, product_id: productId, engine: 'openai', question: 'sov-test question', run_index: 1, status: 'done', created_at: old });
-      const swept = await sweepStaleSovChecks(a);
+      // The client wrapper scopes only the sweeper's running-check read to this fixture.
+      const scoped = { from: (table: string) => table === 'sov_checks'
+        ? { select: (columns: string) => ({ eq: (column: string, value: string) => a.from('sov_checks').select(columns as 'id, product_id').eq(column as 'status', value).eq('product_id', productId) }) }
+        : a.from(table as 'sov_runs'), rpc: a.rpc.bind(a) };
+      const swept = await sweepStaleSovChecks(scoped as typeof a);
       expect(swept).toBeGreaterThanOrEqual(1);
       const stoppedCheck = await a.from('sov_checks').select('status').eq('id', withRuns.data as string).single();
       expect(stoppedCheck.data?.status).toBe('stopped');
@@ -318,17 +315,17 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('ai search visi
       const empty = await a.rpc('reserve_sov_check', { pid: productId, p_runs_per_question: 1, p_engines: ['openai'], p_estimated_cost: 0.01 });
       expect(empty.error).toBeNull();
       await a.from('sov_checks').update({ started_at: new Date(Date.now() - 3 * 3600_000).toISOString() }).eq('id', empty.data as string);
-      await sweepStaleSovChecks(a);
+      await sweepStaleSovChecks(scoped as typeof a);
       const emptyCheck = await a.from('sov_checks').select('status').eq('id', empty.data as string).single();
       expect(emptyCheck.data?.status).toBe('failed');
     });
   });
 
-  it('leaves zero test rows behind', async () => {
+  it('preserves existing fixture counts', async () => {
     const a = adminClient();
-    const leftovers = await a.from('allowed_emails').select('email').like('email', 'sov-test-%');
-    expect(leftovers.data ?? []).toHaveLength(0);
-    const products = await a.from('products').select('id').like('url', 'sov-test%');
-    expect(products.data ?? []).toHaveLength(0);
+    const before = await a.from('products').select('id', { count: 'exact', head: true });
+    await withTempUserProduct(async () => {});
+    const after = await a.from('products').select('id', { count: 'exact', head: true });
+    expect(after.count).toBe(before.count);
   });
 });

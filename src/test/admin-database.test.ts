@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { rollbackSettings } from './rollback-settings';
 import postgres from 'postgres';
 import { randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
@@ -185,21 +186,18 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('admin invitati
   });
 
   it('enforces the seat limit excluding admins, and raising it allows invites again', async () => {
-    const founder = founderClient(), first = tempEmail(), second = tempEmail();
-    try {
-      // Occupy one seat so the limit can be set to the exact used count (minimum valid limit is 1).
-      expect((await founder.rpc('admin_invite_email', { addr: first })).error).toBeNull();
-      const summary = await founder.rpc('admin_summary');
-      if (summary.error) throw summary.error;
-      const used = (summary.data as { invited_count: number }).invited_count;
-      expect((await founder.rpc('admin_set_setting', { setting_key: 'beta_seat_limit', val: used })).error).toBeNull();
-      expect((await founder.rpc('admin_invite_email', { addr: second })).error?.message).toContain('beta_seat_limit_reached');
-      expect((await founder.rpc('admin_set_setting', { setting_key: 'beta_seat_limit', val: used + 1 })).error).toBeNull();
-      expect((await founder.rpc('admin_invite_email', { addr: second })).error).toBeNull();
-    } finally {
-      await founder.rpc('admin_set_setting', { setting_key: 'beta_seat_limit', val: 20 });
-      await adminClient().from('allowed_emails').delete().in('email', [first, second]);
-    }
+    await rollbackSettings(async (sql) => {
+      const first = tempEmail(), second = tempEmail();
+      await sql`select public.admin_invite_email(${first}, null)`;
+      const rows = await sql`select public.admin_summary() as summary`;
+      const used = rows[0].summary.invited_count;
+      await sql`select public.admin_set_setting('beta_seat_limit', ${used})`;
+      await expect(sql.savepoint(async (tx: any) => {
+        await tx`select public.admin_invite_email(${second}, null)`;
+      })).rejects.toThrow('beta_seat_limit_reached');
+      await sql`select public.admin_set_setting('beta_seat_limit', ${used + 1})`;
+      await sql`select public.admin_invite_email(${second}, null)`;
+    });
   });
 
   it('rejects unknown settings and out-of-range values', async () => {
@@ -211,44 +209,26 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('admin invitati
     for (const val of [9, 1001]) {
       expect((await founder.rpc('admin_set_setting', { setting_key: 'platform_ai_runs_per_day', val })).error?.message).toContain('invalid_setting_value');
     }
-    expect((await founder.rpc('admin_set_setting', { setting_key: 'beta_seat_limit', val: 20 })).error).toBeNull();
   });
 
   it('makes the shared AI run cap follow the setting with a 100 fallback', async () => {
-    const a = adminClient(), founder = founderClient();
     await withTempProduct(async (productId) => {
-      const summary = await founder.rpc('admin_summary');
-      if (summary.error) throw summary.error;
-      const used = (summary.data as { ai_runs_last_24h: number }).ai_runs_last_24h;
-      const target = Math.max(used, 10);
-      try {
-        // Fill the rolling window up to the cap with temporary reservations, staying under the
-        // per-product limit of 5 profile runs so the platform cap is what fires.
-        if (target > used) {
-          const filler = target - used;
-          const profileFiller = Math.min(filler, 4);
-          if (profileFiller > 0) {
-            expect((await a.from('profile_runs').insert(Array.from({ length: profileFiller }, () => ({ product_id: productId })))).error).toBeNull();
-          }
-          if (filler > profileFiller) {
-            expect((await a.from('audit_runs').insert(Array.from({ length: filler - profileFiller }, () => ({ product_id: productId })))).error).toBeNull();
-          }
+      await rollbackSettings(async (sql) => {
+        const rows = await sql`select public.admin_summary() as summary`;
+        const used = rows[0].summary.ai_runs_last_24h;
+        const target = Math.max(used, 10);
+        const filler = target - used;
+        for (let i = 0; i < filler; i++) {
+          await sql`insert into public.audit_runs(product_id) values (${productId}::uuid)`;
         }
-        expect((await founder.rpc('admin_set_setting', { setting_key: 'platform_ai_runs_per_day', val: target })).error).toBeNull();
-        const blocked = await a.rpc('reserve_ai_run', { pid: productId, feature: 'profile-product' });
-        expect(blocked.error?.message).toContain('platform_profile_run_limit_reached');
-
-        // With the setting row missing, the cap falls back to 100 and reservations work again.
-        expect((await a.from('app_settings').delete().eq('key', 'platform_ai_runs_per_day')).error).toBeNull();
-        const reserved = await a.rpc('reserve_ai_run', { pid: productId, feature: 'profile-product' });
-        expect(reserved.error).toBeNull();
-        expect(reserved.data).toBeTruthy();
-      } finally {
-        await a.from('profile_runs').delete().eq('product_id', productId);
-        await a.from('audit_runs').delete().eq('product_id', productId);
-        await a.from('app_settings').delete().eq('key', 'platform_ai_runs_per_day');
-        await a.from('app_settings').insert({ key: 'platform_ai_runs_per_day', value: 100 });
-      }
+        await sql`select public.admin_set_setting('platform_ai_runs_per_day', ${target})`;
+        await expect(sql.savepoint(async (tx: any) => {
+          await tx`select public.reserve_ai_run(${productId}::uuid, 'profile-product')`;
+        })).rejects.toThrow('platform_profile_run_limit_reached');
+        await sql`delete from public.app_settings where key='platform_ai_runs_per_day'`;
+        const reserved = await sql`select public.reserve_ai_run(${productId}::uuid, 'profile-product') as id`;
+        expect(reserved[0].id).toBeTruthy();
+      });
     });
   });
 

@@ -8,7 +8,7 @@ export type SetupFacts = {
   lastCheck: { date: string; usableRuns: number; pct: number } | null;
 };
 
-export type ChecklistItem = { key: string; title: string; done: boolean; result?: string; to: string; action: string; soon?: boolean };
+export type ChecklistItem = { key: string; title: string; done: boolean; result?: string | undefined; to: string; action: string; soon?: boolean };
 
 export const VISITOR_GOAL = 100;
 

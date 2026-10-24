@@ -257,7 +257,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
                 Test connection
               </Button>
             )}
-            {testResults[e.id] && <span className="basis-full text-muted-foreground">{testResults[e.id].text}</span>}
+            {testResults[e.id] && <span className="basis-full text-muted-foreground">{testResults[e.id]?.text}</span>}
           </span>
         ))}
       </div>

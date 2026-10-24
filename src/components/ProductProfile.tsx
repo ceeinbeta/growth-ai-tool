@@ -16,7 +16,7 @@ import { workspaceQuery, type Product } from "@/lib/workspace";
 function Editable({ label, value, disabled, save, multiline = false }: { label: string; value: string; disabled: boolean; save: (v: string) => Promise<void>; multiline?: boolean }) {
   const [draft, setDraft] = useState(value);
   const [status, setStatus] = useState("");
-  useEffect(() => { setDraft(value); setStatus(""); }, [value]);
+  useEffect(() => { setDraft(value); }, [value]);
   async function blur() {
     if (draft.trim() === value) return;
     setStatus("Saving…");

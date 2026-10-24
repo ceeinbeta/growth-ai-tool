@@ -16,6 +16,8 @@ export type Product = {
   profiled_at: string | null;
   profile_source: string | null;
   profile_edited_fields: string[];
+  logo_path: string | null;
+  profile_confirmed_at: string | null;
 };
 
 export type WorkspaceData = {
@@ -36,7 +38,7 @@ export const workspaceQuery = queryOptions({
     if (!ws) return { workspace: null, products: [] };
     const { data: products, error: pErr } = await supabase
       .from("products")
-      .select("id, tracking_key, workspace_id, name, url, description, stage, created_at, one_liner, audience, category, profiled_at, profile_source, profile_edited_fields")
+      .select("id, tracking_key, workspace_id, name, url, description, stage, created_at, one_liner, audience, category, profiled_at, profile_source, profile_edited_fields, logo_path, profile_confirmed_at")
       .eq("workspace_id", ws.id)
       .order("created_at");
     if (pErr) throw pErr;

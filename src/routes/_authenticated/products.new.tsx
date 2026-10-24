@@ -1,14 +1,15 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { z } from "zod";
+import { useServerFn } from "@tanstack/react-start";
+import { productSchema as schema } from "@/lib/product-form";
+import { refreshLogo } from "@/lib/product.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useActiveProduct } from "@/components/AppShell";
-import { normalizeWebsite, WEBSITE_ERROR } from "@/lib/website";
 import { workspaceQuery } from "@/lib/workspace";
 
 export const Route = createFileRoute("/_authenticated/products/new")({
@@ -28,23 +29,13 @@ export const Route = createFileRoute("/_authenticated/products/new")({
 
 export const LIMIT_MESSAGE = "Your plan includes 3 products. Remove one to add another.";
 
-const schema = z.object({
-  name: z.string().trim().min(1, "Enter a product name.").max(80, "Keep the name under 80 characters."),
-  url: z.string().transform((v, ctx) => {
-    const n = normalizeWebsite(v);
-    if (!n) { ctx.addIssue({ code: "custom", message: WEBSITE_ERROR }); return z.NEVER; }
-    return n;
-  }),
-  description: z.string().trim().min(1, "Say what it does and who it's for.").max(1000, "Keep this under 1000 characters."),
-  stage: z.enum(["live", "prelaunch"], { message: "Choose a stage." }),
-});
-
 type Errors = Partial<Record<"name" | "url" | "description" | "stage" | "form", string>>;
 
 function NewProduct() {
   const { data, setActive } = useActiveProduct();
   const qc = useQueryClient();
   const navigate = useNavigate();
+  const fetchLogo = useServerFn(refreshLogo);
   const [form, setForm] = useState({ name: "", url: "", description: "", stage: "" });
   const [errors, setErrors] = useState<Errors>({});
   const [busy, setBusy] = useState(false);
@@ -78,6 +69,7 @@ function NewProduct() {
     }
     await qc.invalidateQueries({ queryKey: workspaceQuery.queryKey });
     setActive(row.id);
+    void fetchLogo({ data: { productId: row.id } }).then(() => qc.invalidateQueries({ queryKey: workspaceQuery.queryKey })).catch(() => {});
     qc.setQueryData(["profile-auto-start", row.id], true);
     navigate({ to: "/overview" });
   }

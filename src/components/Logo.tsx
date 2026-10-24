@@ -9,7 +9,7 @@ export function Logo({ className = "" }: { className?: string }) {
           strokeWidth="3"
           strokeLinecap="round"
         />
-        <circle cx="18.4" cy="5.6" r="1.9" className="fill-signal" />
+        <circle cx="18.4" cy="5.6" r="2.73" className="fill-signal" />
       </svg>
       <span className="font-display text-xl font-extrabold tracking-tight text-foreground">growloop</span>
     </span>

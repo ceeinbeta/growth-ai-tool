@@ -77,6 +77,7 @@ function NewProduct() {
     }
     await qc.invalidateQueries({ queryKey: workspaceQuery.queryKey });
     setActive(row.id);
+    qc.setQueryData(["profile-auto-start", row.id], true);
     navigate({ to: "/overview" });
   }
 

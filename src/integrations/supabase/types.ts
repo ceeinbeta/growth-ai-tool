@@ -14,6 +14,79 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_usage: {
+        Row: {
+          cost_usd: number | null
+          created_at: string
+          feature: string
+          id: string
+          input_tokens: number | null
+          model: string
+          output_tokens: number | null
+          product_id: string
+        }
+        Insert: {
+          cost_usd?: number | null
+          created_at?: string
+          feature: string
+          id?: string
+          input_tokens?: number | null
+          model: string
+          output_tokens?: number | null
+          product_id: string
+        }
+        Update: {
+          cost_usd?: number | null
+          created_at?: string
+          feature?: string
+          id?: string
+          input_tokens?: number | null
+          model?: string
+          output_tokens?: number | null
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_usage_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      competitors: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          product_id: string
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          product_id: string
+          source?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          product_id?: string
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "competitors_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       members: {
         Row: {
           created_at: string
@@ -52,6 +125,9 @@ export type Database = {
           id: string
           name: string
           one_liner: string | null
+          profile_edited_fields: string[]
+          profile_source: string | null
+          profiled_at: string | null
           stage: string
           url: string
           workspace_id: string
@@ -64,6 +140,9 @@ export type Database = {
           id?: string
           name: string
           one_liner?: string | null
+          profile_edited_fields?: string[]
+          profile_source?: string | null
+          profiled_at?: string | null
           stage: string
           url: string
           workspace_id: string
@@ -76,6 +155,9 @@ export type Database = {
           id?: string
           name?: string
           one_liner?: string | null
+          profile_edited_fields?: string[]
+          profile_source?: string | null
+          profiled_at?: string | null
           stage?: string
           url?: string
           workspace_id?: string
@@ -86,6 +168,88 @@ export type Database = {
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profile_ai_state: {
+        Row: {
+          blocked: boolean
+          message: string | null
+          model: string
+          updated_at: string
+        }
+        Insert: {
+          blocked?: boolean
+          message?: string | null
+          model: string
+          updated_at?: string
+        }
+        Update: {
+          blocked?: boolean
+          message?: string | null
+          model?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profile_runs: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_runs_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sov_questions: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          product_id: string
+          question: string
+          source: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          product_id: string
+          question: string
+          source?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          product_id?: string
+          question?: string
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sov_questions_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
@@ -116,7 +280,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_product_profile: {
+        Args: { pid: string; profile: Json }
+        Returns: undefined
+      }
+      can_access_product: { Args: { pid: string }; Returns: boolean }
       is_workspace_member: { Args: { ws: string }; Returns: boolean }
+      reserve_profile_run: { Args: { pid: string }; Returns: string }
     }
     Enums: {
       [_ in never]: never

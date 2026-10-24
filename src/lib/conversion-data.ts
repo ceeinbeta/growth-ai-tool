@@ -11,7 +11,7 @@ export const conversionQuery = (id: string, days = 30) => queryOptions({
       supabase.from('events').select('id', { count: 'exact', head: true }).eq('product_id', id),
     ]);
     for (const r of [summary, steps, audit, events]) if (r.error) throw r.error;
-    const leaks = audit.data ? await supabase.from('leaks').select('*').eq('audit_id', audit.data.id).order('created_at') : { data: [], error: null };
+    const leaks = audit.data ? await supabase.from('leaks').select('*').eq('audit_id', audit.data.id).order('created_at').order('id') : { data: [], error: null };
     if (leaks.error) throw leaks.error;
     return { summary: funnelSummarySchema.parse(summary.data), steps: steps.data ?? [], audit: audit.data, leaks: leaks.data ?? [], hasEvents: (events.count ?? 0) > 0 };
   },

@@ -1,3 +1,9 @@
+# Slice 7
+- [x] Add visibility tables, budget setting, atomic check reservation, and admin summary fields.
+- [x] Add engine price file, provider calls, extraction/fix generation, and check orchestration.
+- [x] Add visibility page, nav item, Overview line, Admin budget card, and scheduled checks.
+- [ ] Run all tests with temporary-data cleanup; do not publish.
+
 # Slice 6
 - [x] Add founder-only admin tables, settings, and admin-checked invitation RPCs.
 - [x] Add Admin sidebar item and page with summary, waitlist, invites, and invite message dialog.

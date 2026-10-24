@@ -23,7 +23,7 @@
 ## Growloop architecture
 - Funnel aggregation uses security-invoker ordered first-match chains and computed defaults; step edits use an atomic member-scoped replacement RPC to avoid reorder collisions.
 - Page audits read products and measured funnels as the caller, then reserve and save findings atomically through server-only privileged functions; clients have only column-level leak-status update rights.
-- Every shared-data write test uses temporary rows with finally cleanup or rollback, never the founder's real product rows, to keep dashboards free of test data.
+- Every shared-data write test uses temporary rows with finally cleanup or rollback, never the founder's real product rows; test files run serially so shared reservation-cap fixtures cannot interfere.
 - Website collection uses one server-only handler at /api/collect and a /api/public/collect alias used by the static snippet because published-site authentication only bypasses the public prefix.
 - Collection checks the Origin header when present and only falls back to the body hostname when absent; this prevents a copied tracking key from bypassing origin checks through a forged body.
 - Authenticated tracking-table access is read-only; collection writes stay privileged so clients cannot forge events through the Data API.

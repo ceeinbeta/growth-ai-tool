@@ -1,0 +1,1 @@
+REVOKE INSERT, UPDATE, DELETE ON TABLE public.events, public.tracking_event_names FROM authenticated;

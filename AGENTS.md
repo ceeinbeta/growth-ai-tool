@@ -19,6 +19,8 @@
 
 ## Growloop architecture
 - Website collection uses one server-only handler at /api/collect and a /api/public/collect alias used by the static snippet because published-site authentication only bypasses the public prefix.
+- Collection checks the Origin header when present and only falls back to the body hostname when absent; this prevents a copied tracking key from bypassing origin checks through a forged body.
+- Authenticated tracking-table access is read-only; collection writes stay privileged so clients cannot forge events through the Data API.
 - Database collection locks visitor and product before inserting events to enforce rolling limits and distinct custom names atomically across workers.
 - Tracking reads use member-scoped RLS and a security-invoker aggregate RPC so measured totals cannot bypass workspace access.
 - Signed-in pages live under src/routes/_authenticated (client-only gate, redirects to /auth); / just redirects. Why: session is in localStorage.

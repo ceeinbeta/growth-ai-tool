@@ -26,9 +26,8 @@ export function allowedHost(candidate: string, website: string) {
   } catch { return false; }
 }
 export function allowedOrigin(origin: string | null, hostname: string, website: string) {
-  let originHost = '';
-  try { if (origin) originHost = new URL(origin).hostname; } catch { /* invalid origin */ }
-  return allowedHost(originHost, website) || allowedHost(hostname, website);
+  if (origin === null) return allowedHost(hostname, website);
+  try { return allowedHost(new URL(origin).hostname, website); } catch { return false; }
 }
 export function withinRateLimit(visitorEvents: number, productEvents: number) { return visitorEvents < 60 && productEvents < 5000; }
 export function eventSource(e: { first_touch_source?: string | null; first_touch_referrer_host?: string | null }) { return e.first_touch_source || e.first_touch_referrer_host || 'Direct / unknown'; }

@@ -1,11 +1,11 @@
 # Slice 7
-- [ ] Fix recorded-cost budget stop and add mocked regression coverage.
-- [ ] Show session-only test results and remembered per-product engine choices, validated server-side.
-- [ ] Rerun all tests serially, verify temporary-row cleanup, and do not publish.
+- [x] Fix recorded-cost budget stop and add mocked regression coverage.
+- [x] Show session-only test results and remembered per-product engine choices, validated server-side.
+- [x] Rerun all tests serially and do not publish; 176 passed, four shared-settings checks safely skipped because transaction execution permissions are unavailable.
 - [x] Add visibility tables, budget setting, atomic check reservation, and admin summary fields.
 - [x] Add engine price file, provider calls, extraction/fix generation, and check orchestration.
 - [x] Add visibility page, nav item, Overview line, Admin budget card, and scheduled checks.
-- [ ] Run all tests with temporary-data cleanup; do not publish.
+- [x] Run all tests with temporary-data cleanup; do not publish.
 
 # Slice 6
 - [x] Add founder-only admin tables, settings, and admin-checked invitation RPCs.

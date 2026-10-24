@@ -18,7 +18,9 @@ describe("visibility dialog interactions", () => {
     state.test.mockResolvedValue({ ok: false, error: "The key was rejected." });
     render(<state.component />);
     expect(screen.queryByText("Test passed just now")).toBeNull();
-    fireEvent.click(screen.getAllByRole("button", { name: "Test connection" })[0]);
+    const testButton = screen.getAllByRole("button", { name: "Test connection" }).at(0);
+    if (!testButton) throw new Error("Missing test button");
+    fireEvent.click(testButton);
     await screen.findByText("The key was rejected.");
     fireEvent.click(screen.getByRole("button", { name: "Run a check" }));
     expect(screen.getByText("Failed its last test")).toBeInTheDocument();
@@ -41,7 +43,9 @@ describe("visibility dialog interactions", () => {
   it("shows a passed-test line without a second Connected label", async () => {
     state.test.mockResolvedValue({ ok: true });
     render(<state.component />);
-    fireEvent.click(screen.getAllByRole("button", { name: "Test connection" })[0]);
+    const testButton = screen.getAllByRole("button", { name: "Test connection" }).at(0);
+    if (!testButton) throw new Error("Missing test button");
+    fireEvent.click(testButton);
     await screen.findByText("Test passed just now");
     expect(screen.getAllByText("Connected")).toHaveLength(2);
   });

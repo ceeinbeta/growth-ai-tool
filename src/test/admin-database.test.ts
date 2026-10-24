@@ -221,10 +221,17 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('admin invitati
       const used = (summary.data as { ai_runs_last_24h: number }).ai_runs_last_24h;
       const target = Math.max(used, 10);
       try {
-        // Fill the rolling window up to the cap with temporary reservations on the temp product.
+        // Fill the rolling window up to the cap with temporary reservations, staying under the
+        // per-product limit of 5 profile runs so the platform cap is what fires.
         if (target > used) {
-          const filler = Array.from({ length: target - used }, () => ({ product_id: productId }));
-          expect((await a.from('profile_runs').insert(filler)).error).toBeNull();
+          const filler = target - used;
+          const profileFiller = Math.min(filler, 4);
+          if (profileFiller > 0) {
+            expect((await a.from('profile_runs').insert(Array.from({ length: profileFiller }, () => ({ product_id: productId })))).error).toBeNull();
+          }
+          if (filler > profileFiller) {
+            expect((await a.from('audit_runs').insert(Array.from({ length: filler - profileFiller }, () => ({ product_id: productId })))).error).toBeNull();
+          }
         }
         expect((await founder.rpc('admin_set_setting', { setting_key: 'platform_ai_runs_per_day', val: target })).error).toBeNull();
         const blocked = await a.rpc('reserve_ai_run', { pid: productId, feature: 'profile-product' });
@@ -237,6 +244,7 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('admin invitati
         expect(reserved.data).toBeTruthy();
       } finally {
         await a.from('profile_runs').delete().eq('product_id', productId);
+        await a.from('audit_runs').delete().eq('product_id', productId);
         await a.from('app_settings').delete().eq('key', 'platform_ai_runs_per_day');
         await a.from('app_settings').insert({ key: 'platform_ai_runs_per_day', value: 100 });
       }

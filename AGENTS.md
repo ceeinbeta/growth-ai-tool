@@ -29,8 +29,10 @@
 - Authenticated tracking-table access is read-only; collection writes stay privileged so clients cannot forge events through the Data API.
 - Database collection locks visitor and product before inserting events to enforce rolling limits and distinct custom names atomically across workers.
 - Tracking reads use member-scoped RLS and a security-invoker aggregate RPC so measured totals cannot bypass workspace access.
-- Signed-in pages live under src/routes/_authenticated (client-only gate, redirects to /auth); / just redirects. Why: session is in localStorage.
+- Signed-in pages live under src/routes/_authenticated (client-only gate, redirects to /auth); home and privacy are public SSR pages. Why: private sessions live in browser storage while public pages must be crawlable.
 - Product limits are enforced by a DB trigger raising 'product_limit_reached'; the UI maps it to a friendly message. Why: users must not bypass plan limits.
 - Workspace/membership rows are only created by the auth.users trigger; clients get SELECT only. Why: users must not edit plan limits or memberships.
 - Website input normalization lives in src/lib/website.ts with tests. Why: one rule for storage format.
 - Install checks fetch only the saved website host over https with per-hop redirect re-validation (src/lib/install-check.ts) and a server-only reserve_install_check RPC for the hourly cap. Why: prevents the server fetch from reaching internal addresses or being abused.
+- Waitlist submissions use a bounded same-origin handler and service-only atomic save/reservation RPC; public roles have no storage access. Why: consent, duplicate privacy and platform limits cannot be bypassed by clients.
+- Public pages derive canonical URLs from the current request origin; contact and optional landing tracking are centralized in public-config. Why: preview and published hosts must self-reference without enabling tracking by default.

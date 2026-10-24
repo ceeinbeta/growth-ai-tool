@@ -18,6 +18,7 @@ import { Route as AuthenticatedOverviewRouteImport } from './routes/_authenticat
 import { Route as ApiCollectRouteImport } from './routes/api/collect'
 import { Route as AuthenticatedProductsNewRouteImport } from './routes/_authenticated/products.new'
 import { Route as ApiPublicCollectRouteImport } from './routes/api/public/collect'
+import { Route as ApiPublicWaitlistRouteImport } from './routes/api/public/waitlist'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -66,6 +67,11 @@ const ApiPublicCollectRoute = ApiPublicCollectRouteImport.update({
   path: '/api/public/collect',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicWaitlistRoute = ApiPublicWaitlistRouteImport.update({
+  id: '/api/public/waitlist',
+  path: '/api/public/waitlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -76,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/api/collect': typeof ApiCollectRoute
   '/products/new': typeof AuthenticatedProductsNewRoute
   '/api/public/collect': typeof ApiPublicCollectRoute
+  '/api/public/waitlist': typeof ApiPublicWaitlistRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByTo {
   '/api/collect': typeof ApiCollectRoute
   '/products/new': typeof AuthenticatedProductsNewRoute
   '/api/public/collect': typeof ApiPublicCollectRoute
+  '/api/public/waitlist': typeof ApiPublicWaitlistRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,6 +106,7 @@ export interface FileRoutesById {
   '/api/collect': typeof ApiCollectRoute
   '/_authenticated/products/new': typeof AuthenticatedProductsNewRoute
   '/api/public/collect': typeof ApiPublicCollectRoute
+  '/api/public/waitlist': typeof ApiPublicWaitlistRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
     | '/api/collect'
     | '/products/new'
     | '/api/public/collect'
+    | '/api/public/waitlist'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/api/collect'
     | '/products/new'
     | '/api/public/collect'
+    | '/api/public/waitlist'
   id:
     | '__root__'
     | '/'
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/api/collect'
     | '/_authenticated/products/new'
     | '/api/public/collect'
+    | '/api/public/waitlist'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -139,6 +151,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ApiCollectRoute: typeof ApiCollectRoute
   ApiPublicCollectRoute: typeof ApiPublicCollectRoute
+  ApiPublicWaitlistRoute: typeof ApiPublicWaitlistRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -206,6 +219,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCollectRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/waitlist': {
+      id: '/api/public/waitlist'
+      path: '/api/public/waitlist'
+      fullPath: '/api/public/waitlist'
+      preLoaderRoute: typeof ApiPublicWaitlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -232,6 +252,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ApiCollectRoute: ApiCollectRoute,
   ApiPublicCollectRoute: ApiPublicCollectRoute,
+  ApiPublicWaitlistRoute: ApiPublicWaitlistRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

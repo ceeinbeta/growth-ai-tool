@@ -66,7 +66,7 @@ function AdminContent() {
     void qc.invalidateQueries({ queryKey: ['admin-invites'] });
   };
 
-  async function run(action: () => Promise<unknown>) {
+  async function run(action: () => PromiseLike<unknown>) {
     setError('');
     try {
       await action();
@@ -252,7 +252,7 @@ function SettingEditor({ label, settingKey, value, onSaved, onError }: {
   );
 }
 
-function DirectInvite({ invites, onInvite }: { invites: InviteRow[]; onInvite: (addr: string, note?: string) => Promise<void> }) {
+function DirectInvite({ invites, onInvite }: { invites: InviteRow[]; onInvite: (addr: string, note?: string) => PromiseLike<unknown> }) {
   const [email, setEmail] = useState('');
   const [note, setNote] = useState('');
   const [error, setError] = useState('');

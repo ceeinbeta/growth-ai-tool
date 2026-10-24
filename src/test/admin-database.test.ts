@@ -150,7 +150,7 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('admin invitati
 
       expect((await founder.rpc('admin_invite_email', { addr: email, note: 'updated note' })).error).toBeNull();
       expect((await a.from('allowed_emails').select('note').eq('email', email).single()).data?.note).toBe('updated note');
-      expect((await founder.rpc('admin_invite_email', { addr: email, note: null })).error).toBeNull();
+      expect((await founder.rpc('admin_invite_email', { addr: email, note: null as unknown as string })).error).toBeNull();
       expect((await a.from('allowed_emails').select('note').eq('email', email).single()).data?.note).toBe('updated note');
     } finally {
       await a.from('allowed_emails').delete().eq('email', email);

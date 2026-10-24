@@ -29,7 +29,11 @@ function matchesName(mention: string, candidate: string): boolean {
   const m = normalizeName(mention);
   const c = normalizeName(candidate);
   if (!m || !c) return false;
-  return m === c || m.includes(c) || c.includes(m);
+  if (m === c || m.includes(c) || c.includes(m)) return true;
+  // Ignore spacing: "Small PDF" matches "Smallpdf".
+  const mFlat = m.replace(/\s+/g, "");
+  const cFlat = c.replace(/\s+/g, "");
+  return mFlat === cFlat || mFlat.includes(cFlat) || cFlat.includes(mFlat);
 }
 
 export type MentionKind = "you" | "competitor" | "other";

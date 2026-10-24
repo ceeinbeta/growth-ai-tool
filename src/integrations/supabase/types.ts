@@ -413,6 +413,7 @@ export type Database = {
       }
       products: {
         Row: {
+          aliases: string[]
           audience: string | null
           category: string | null
           created_at: string
@@ -429,6 +430,7 @@ export type Database = {
           workspace_id: string
         }
         Insert: {
+          aliases?: string[]
           audience?: string | null
           category?: string | null
           created_at?: string
@@ -445,6 +447,7 @@ export type Database = {
           workspace_id: string
         }
         Update: {
+          aliases?: string[]
           audience?: string | null
           category?: string | null
           created_at?: string

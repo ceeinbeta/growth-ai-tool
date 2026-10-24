@@ -1,0 +1,2 @@
+ALTER TABLE public.products ADD COLUMN aliases text[] NOT NULL DEFAULT '{}';
+COMMENT ON COLUMN public.products.aliases IS 'Other names the product is known by, used to match AI answers to this product.';

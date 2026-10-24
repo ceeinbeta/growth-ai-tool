@@ -143,7 +143,7 @@ function Checklist({ items, onProfile }: { items: ChecklistItem[]; onProfile: ()
   );
 }
 
-function Tile({ label, value, source, empty }: { label: string; value?: string; source: string; empty?: React.ReactNode }) {
+function Tile({ label, value, source, empty }: { label: string; value: string | undefined; source: string; empty: React.ReactNode }) {
   return (
     <div className="rounded-lg border bg-card p-4">
       <p className="text-sm text-muted-foreground">{label}</p>

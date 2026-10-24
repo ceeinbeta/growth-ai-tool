@@ -3,6 +3,7 @@ import { useServerFn } from '@tanstack/react-start';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { verifyTracking } from '@/lib/verify-tracking.functions';
+import { isAfter } from '@/lib/install-check';
 
 type Result = { snippet: { status: string; message: string }; eventsLast24h: number; lastEventAt: string | null };
 type Listen = 'idle' | 'waiting' | 'received' | 'timeout';
@@ -26,18 +27,18 @@ export function InstallCheck({ productId }: { productId: string }) {
 
   async function run() {
     clearInterval(timer.current);
-    const clickedAt = new Date().toISOString();
+    const clickedAt = Date.now();
     setBusy(true); setError(''); setListen('idle');
     try {
       const r = await verify({ data: { productId } });
       if (!r.ok) { setResult(null); setError(r.error); return; }
       setResult(r);
-      if (r.lastEventAt && r.lastEventAt > clickedAt) { setListen('received'); return; }
+      if (isAfter(r.lastEventAt, clickedAt)) { setListen('received'); return; }
       setListen('waiting');
       const started = Date.now();
       timer.current = setInterval(async () => {
-        const { data } = await supabase.from('events').select('id').eq('product_id', productId).gt('created_at', clickedAt).limit(1);
-        if (data?.length) { clearInterval(timer.current); setListen('received'); }
+        const { data } = await supabase.from('events').select('created_at').eq('product_id', productId).order('created_at', { ascending: false }).limit(1);
+        if (isAfter(data?.[0]?.created_at, clickedAt)) { clearInterval(timer.current); setListen('received'); }
         else if (Date.now() - started >= 60000) { clearInterval(timer.current); setListen('timeout'); }
       }, 3000);
     } catch { setError("We couldn't run the check. Please try again."); }

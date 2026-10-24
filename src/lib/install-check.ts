@@ -42,18 +42,36 @@ export type SnippetResult =
   | { status: 'not_found' }
   | { status: 'unreachable'; reason: string };
 
+/**
+ * The script host counts as ours when it equals the app host, or when both are
+ * *.lovable.app addresses: the preview and published addresses both serve this app.
+ */
+export function isAppHost(host: string, appHost: string) {
+  const h = host.toLowerCase(), a = appHost.toLowerCase();
+  return h === a || (h.endsWith('.lovable.app') && a.endsWith('.lovable.app'));
+}
+
 export function classifyHtml(html: string, key: string, appHost: string): SnippetResult {
   const tags = html.match(/<script\b[^>]*>/gi) ?? [];
   const ours = tags.filter(t => t.includes(key));
   if (ours.length || html.includes(key)) {
-    const ownDomain = ours.some(t => {
+    const tagMatch = ours.some(t => {
       const src = t.match(/\ssrc\s*=\s*["']?([^"'\s>]+)/i)?.[1];
-      try { return !!src && new URL(src).hostname.toLowerCase() === appHost.toLowerCase(); } catch { return false; }
+      try { return !!src && isAppHost(new URL(src).hostname, appHost); } catch { return false; }
     });
-    return { status: 'found', ownDomain };
+    // Framework page data (e.g. Next.js) holds the script address as text, sometimes with escaped slashes.
+    const textMatch = [...html.matchAll(/\\?\/\\?\/([a-z0-9.-]+)\\?\/t\.js/gi)].some(m => isAppHost(m[1] ?? '', appHost));
+    return { status: 'found', ownDomain: tagMatch || textMatch };
   }
   if (/gl_[a-zA-Z0-9_-]{24,}/.test(html)) return { status: 'different_key' };
   return { status: 'not_found' };
+}
+
+/** True when the event time is strictly after the reference time, whatever ISO format each uses. */
+export function isAfter(eventAt: string | null | undefined, reference: string | number) {
+  if (!eventAt) return false;
+  const e = Date.parse(eventAt), r = typeof reference === 'number' ? reference : Date.parse(reference);
+  return Number.isFinite(e) && Number.isFinite(r) && e > r;
 }
 
 export function unreachableReason(error: unknown): string {

@@ -263,7 +263,7 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('ai search visi
         expect(scoped['budget_usd']).toBeUndefined();
         expect(scoped['spent_usd']).toBeUndefined();
 
-        const founder = await founderClient().rpc('sov_budget_info', { p_product_id: undefined });
+        const founder = await founderClient().rpc('sov_budget_info', {});
         expect(founder.error).toBeNull();
         const platform = founder.data as Record<string, unknown>;
         expect(platform['scope']).toBe('platform');
@@ -271,7 +271,7 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('ai search visi
         expect(typeof platform['spent_usd']).toBe('number');
 
         // The mid-run spend figure excludes the check's own reserved estimate.
-        const withAll = await a.rpc('sov_month_spend', { p_exclude_check: undefined });
+        const withAll = await a.rpc('sov_month_spend', {});
         const without = await a.rpc('sov_month_spend', { p_exclude_check: reserved.data as string });
         expect(Number((withAll.data as Record<string, unknown>)['spent_usd']) - Number((without.data as Record<string, unknown>)['spent_usd'])).toBeCloseTo(0.25);
       } finally {

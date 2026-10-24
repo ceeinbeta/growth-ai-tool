@@ -124,7 +124,7 @@ export const startSovCheck = createServerFn({ method: "POST" })
 
     const estimate = estimateCheckCost(questions.length, data.runsPerQuestion, data.engines);
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
-    const { data: budget } = await admin.rpc("sov_month_spend", { p_exclude_check: undefined });
+    const { data: budget } = await admin.rpc("sov_month_spend", {});
     const reserved = await admin.rpc("reserve_sov_check", {
       pid: data.productId,
       p_runs_per_question: data.runsPerQuestion,

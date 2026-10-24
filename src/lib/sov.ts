@@ -17,7 +17,7 @@ export function normalizeName(value: string): string {
   return value
     .toLowerCase()
     .replace(/https?:\/\//g, " ")
-    .replace(/\b(inc|llc|ltd|gmbh|app|the)\b/g, " ")
+    .replace(/\b(inc|llc|ltd|gmbh|app|the|www)\b/g, " ")
     .replace(/\.(com|io|co|net|org|app|dev|ai|so|sh)\b/g, " ")
     .replace(/[^a-z0-9]+/g, " ")
     .trim();

@@ -56,7 +56,7 @@ describe("name matching", () => {
 
   it("normalizes case, punctuation and suffixes", () => {
     expect(normalizeName("PDFeye, Inc.")).toBe("pdfeye");
-    expect(normalizeName("https://www.PdfEye.net/")).toBe("pdfeye net");
+    expect(normalizeName("https://www.PdfEye.net/")).toBe("pdfeye");
     expect(normalizeName("The Example App")).toBe("example");
   });
 

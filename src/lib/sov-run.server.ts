@@ -232,7 +232,7 @@ export async function advanceSovCheck(checkId: string): Promise<SovProgress> {
   const questions = (questionRows ?? []).map((q) => q.question as string);
   const tasks = buildTasks(questions, (check.engines as EngineId[]) ?? [], check.runs_per_question);
 
-  const { data: rows } = await admin.from("sov_runs").select("id, engine, question, run_index, status").eq("check_id", checkId);
+  const { data: rows } = await admin.from("sov_runs").select("id, engine, question, run_index, status, cost_usd").eq("check_id", checkId);
   const existing = new Map((rows ?? []).map((r) => [`${r.engine}${r.question}${r.run_index}`, r]));
   const finishedCount = (rows ?? []).filter((r) => r.status === "done" || r.status === "failed").length;
 
@@ -249,7 +249,7 @@ export async function advanceSovCheck(checkId: string): Promise<SovProgress> {
   // Mid-run budget stop: real month total (excluding this check's reservation)
   // plus this check's actual spend so far must stay under the cap.
   const { budget, spent } = await monthSpendExcluding(admin, checkId);
-  const thisCheckSpent = (rows ?? []).reduce((sum, r) => sum + Number((r as { cost_usd?: number }).cost_usd ?? 0), 0);
+  const thisCheckSpent = (rows ?? []).reduce((sum, r) => sum + Number(r.cost_usd ?? 0), 0);
   const budgetHit = spent + thisCheckSpent >= budget;
 
   if (budgetHit) {

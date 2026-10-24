@@ -7,6 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useActiveProduct } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { engineChoiceKey, readEngineChoice, engineFailedAllRuns } from "@/lib/sov-engine-choice";
 import { estimateCheckCost, usd, ENGINES, type EngineId } from "@/lib/engine-prices";
 import { shareOfVoice, questionStats, youPercent, type SovRunRow, type SovMentionRow } from "@/lib/sov";
 import { getSovEngineStatus, testEngineConnection, startSovCheck, advanceSovCheckFn, setSovSchedule } from "@/lib/sov.functions";
@@ -98,7 +100,8 @@ function VisibilityPage({ productId, productName }: { productId: string; product
   const [confirming, setConfirming] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [testMessages, setTestMessages] = useState<Record<string, string>>({});
+  const [testResults, setTestResults] = useState<Record<string, { ok: boolean | null; text: string }>>({});
+  const [engineChoice, setEngineChoice] = useState<EngineId[] | null>(null);
   const [progress, setProgress] = useState<{ finished: number; total: number } | null>(null);
 
   const checks = data?.checks ?? [];
@@ -106,8 +109,21 @@ function VisibilityPage({ productId, productName }: { productId: string; product
   const running = checks.find((c) => c.status === "running");
   const questions = data?.questions ?? [];
   const connected = (engineStatus?.engines ?? []).filter((e) => e.connected).map((e) => e.id);
-  const estimate = estimateCheckCost(Math.min(questions.length, 10), runsPerQuestion, connected);
-  const callCount = Math.min(questions.length, 10) * runsPerQuestion * connected.length;
+  const chosenEngines = connected.filter((id) => engineChoice === null || engineChoice.includes(id));
+  const estimate = estimateCheckCost(Math.min(questions.length, 10), runsPerQuestion, chosenEngines);
+  const callCount = Math.min(questions.length, 10) * runsPerQuestion * chosenEngines.length;
+  const lastCheck = checks.find((c) => c.status !== "running");
+  const lastCheckRuns = (data?.runs ?? []).filter((r) => r.check_id === lastCheck?.id);
+
+  useEffect(() => {
+    try { setEngineChoice(readEngineChoice(localStorage.getItem(engineChoiceKey(productId)))); } catch { /* Storage is optional. */ }
+  }, [productId]);
+
+  function toggleEngine(id: EngineId, checked: boolean) {
+    const next = checked ? [...chosenEngines, id] : chosenEngines.filter((engine) => engine !== id);
+    setEngineChoice(next);
+    try { localStorage.setItem(engineChoiceKey(productId), JSON.stringify(next)); } catch { /* Storage is optional. */ }
+  }
 
   // While a check is running, drive it forward: one advance at a time, about
   // every second, until it finishes. Resumes automatically after a reload,
@@ -170,15 +186,19 @@ function VisibilityPage({ productId, productName }: { productId: string; product
   }, [checks, data]);
 
   async function runTest(engine: EngineId) {
-    setTestMessages((m) => ({ ...m, [engine]: "Testing…" }));
-    const result = await testFn({ data: { productId, engine } });
-    setTestMessages((m) => ({ ...m, [engine]: result.ok ? "Connected" : (result.error ?? "Failed") }));
+    setTestResults((m) => ({ ...m, [engine]: { ok: null, text: "Testing…" } }));
+    try {
+      const result = await testFn({ data: { productId, engine } });
+      setTestResults((m) => ({ ...m, [engine]: { ok: result.ok, text: result.ok ? "Test passed just now" : (result.error ?? "The connection test failed. Try again later.") } }));
+    } catch {
+      setTestResults((m) => ({ ...m, [engine]: { ok: false, text: "The connection test failed. Try again later." } }));
+    }
   }
 
   async function runCheck() {
     setBusy(true);
     setMessage(null);
-    const result = await startFn({ data: { productId, runsPerQuestion, engines: connected } });
+    const result = await startFn({ data: { productId, runsPerQuestion, engines: chosenEngines } });
     setBusy(false);
     setConfirming(false);
     if (!result.ok) {
@@ -229,15 +249,15 @@ function VisibilityPage({ productId, productName }: { productId: string; product
 
       <div className="mt-3 flex flex-wrap items-center gap-2">
         {(engineStatus?.engines ?? ENGINES.map((e) => ({ id: e.id, label: e.label, connected: false, testsToday: 0 }))).map((e) => (
-          <span key={e.id} className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs">
+          <span key={e.id} className="inline-flex flex-wrap items-center gap-2 rounded-full border px-3 py-1 text-xs">
             <span className="font-semibold">{e.label}</span>
             <span className={e.connected ? "text-primary" : "text-muted-foreground"}>{e.connected ? "Connected" : "Not connected"}</span>
             {e.connected && (
-              <button className="font-medium text-primary hover:underline" onClick={() => runTest(e.id as EngineId)}>
+              <Button variant="link" size="sm" disabled={testResults[e.id]?.ok === null} onClick={() => runTest(e.id as EngineId)}>
                 Test connection
-              </button>
+              </Button>
             )}
-            {testMessages[e.id] && <span className="text-muted-foreground">{testMessages[e.id]}</span>}
+            {testResults[e.id] && <span className="basis-full text-muted-foreground">{testResults[e.id]?.text}</span>}
           </span>
         ))}
       </div>
@@ -260,6 +280,20 @@ function VisibilityPage({ productId, productName }: { productId: string; product
       {confirming && !running && (
         <div className="mt-4 rounded-xl border bg-card p-5">
           <h2 className="text-lg">Confirm this check</h2>
+          <fieldset className="my-3 space-y-2">
+            <legend className="mb-2 text-sm font-medium">Engines</legend>
+            {(engineStatus?.engines ?? []).filter((e) => e.connected).map((e) => (
+              <label key={e.id} className="flex flex-wrap items-center gap-2 text-sm">
+                <Checkbox checked={chosenEngines.includes(e.id)} onCheckedChange={(checked) => toggleEngine(e.id, checked === true)} />
+                {e.label}
+                {testResults[e.id]?.ok === false ? (
+                  <span className="text-xs text-muted-foreground">Failed its last test</span>
+                ) : engineFailedAllRuns(e.id, lastCheckRuns) ? (
+                  <span className="text-xs text-muted-foreground">Every run failed in the last check</span>
+                ) : null}
+              </label>
+            ))}
+          </fieldset>
           <p className="mt-1 text-sm text-muted-foreground">
             This will make about {callCount} calls, estimated cost about {usd(estimate)}. Costs are estimates from
             published prices, not exact bills.
@@ -280,7 +314,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
             </select>
           </label>
           <div className="mt-4 flex gap-2">
-            <Button onClick={runCheck} disabled={busy}>{busy ? "Starting…" : "Run the check"}</Button>
+            <Button onClick={runCheck} disabled={busy || !chosenEngines.length}>{busy ? "Starting…" : "Run the check"}</Button>
             <Button variant="outline" onClick={() => setConfirming(false)}>Cancel</Button>
           </div>
         </div>

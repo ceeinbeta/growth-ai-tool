@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { estimateCheckCost, engineById, type EngineId } from "./engine-prices";
 import { sovErrorMessage, engineErrorMessage } from "./sov";
+import { validateEngineChoice } from "./sov-engine-choice";
 
 const productInput = (data: unknown) => z.object({ productId: z.string().uuid() }).parse(data);
 
@@ -111,6 +112,9 @@ export const startSovCheck = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await readOwnProduct(context.supabase, data.productId);
+    const { connectedEngines } = await import("./sov-run.server");
+    const choiceError = validateEngineChoice(data.engines, connectedEngines());
+    if (choiceError) return { ok: false, error: choiceError };
     const { data: questionRows, error: qError } = await context.supabase
       .from("sov_questions")
       .select("question")

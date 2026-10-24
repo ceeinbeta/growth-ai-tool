@@ -85,7 +85,15 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('ai search visi
         expect((await sql`select has_function_privilege('anon', ${fn}, 'EXECUTE') as allowed`)[0]?.['allowed']).toBe(false);
         expect((await sql`select has_function_privilege('authenticated', ${fn}, 'EXECUTE') as allowed`)[0]?.['allowed']).toBe(false);
       }
-      expect((await sql`select has_function_privilege('authenticated', 'public.sov_budget_info()', 'EXECUTE') as allowed`)[0]?.['allowed']).toBe(true);
+      expect((await sql`select has_function_privilege('authenticated', 'public.sov_budget_info(uuid)', 'EXECUTE') as allowed`)[0]?.['allowed']).toBe(true);
+      expect((await sql`select has_function_privilege('authenticated', 'public.sov_month_spend(uuid)', 'EXECUTE') as allowed`)[0]?.['allowed']).toBe(false);
+      expect((await sql`select has_function_privilege('anon', 'public.sov_month_spend(uuid)', 'EXECUTE') as allowed`)[0]?.['allowed']).toBe(false);
+      // No client role may hold TRUNCATE, REFERENCES or TRIGGER on any public table.
+      const wide = await sql`
+        select table_name, privilege_type from information_schema.role_table_grants
+        where table_schema = 'public' and grantee in ('anon', 'authenticated')
+        and privilege_type in ('TRUNCATE', 'REFERENCES', 'TRIGGER')`;
+      expect(wide).toHaveLength(0);
     } finally {
       await sql.end();
     }
@@ -204,6 +212,7 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('ai search visi
     expect(summary.error).toBeNull();
     expect(summary.data).toMatchObject({ visibility_monthly_budget_usd: 20 });
     expect(typeof (summary.data as Record<string, unknown>)['visibility_spend_this_month']).toBe('number');
+    expect(typeof (summary.data as Record<string, unknown>)['visibility_reading_calls_24h']).toBe('number');
   });
 
   it('rejects admin_set_setting for non-admins on the new key too', async () => {
@@ -221,5 +230,105 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('ai search visi
       const bad = await a.from('sov_schedule').update({ per_week: 4 }).eq('product_id', productId);
       expect(bad.error).not.toBeNull();
     });
+  });
+
+  it('claims tasks through a unique key so a task cannot run twice', async () => {
+    await withTempUserProduct(async (_client, productId) => {
+      const a = adminClient();
+      const reserved = await a.rpc('reserve_sov_check', { pid: productId, p_runs_per_question: 1, p_engines: ['openai'], p_estimated_cost: 0.01 });
+      expect(reserved.error).toBeNull();
+      const checkId = reserved.data as string;
+      try {
+        const first = await a.from('sov_runs').insert({ check_id: checkId, product_id: productId, engine: 'openai', question: 'q', run_index: 1, status: 'pending' });
+        expect(first.error).toBeNull();
+        const dupe = await a.from('sov_runs').insert({ check_id: checkId, product_id: productId, engine: 'openai', question: 'q', run_index: 1, status: 'pending' });
+        expect(dupe.error).not.toBeNull();
+      } finally {
+        await a.rpc('finish_sov_check', { check_id: checkId, new_status: 'failed', final_cost: null as unknown as number });
+      }
+    });
+  });
+
+  it('scopes budget info: members see only their own product, admins see platform totals', async () => {
+    await withTempUserProduct(async (client, productId) => {
+      const a = adminClient();
+      const reserved = await a.rpc('reserve_sov_check', { pid: productId, p_runs_per_question: 1, p_engines: ['openai'], p_estimated_cost: 0.25 });
+      expect(reserved.error).toBeNull();
+      try {
+        const mine = await client.rpc('sov_budget_info', { p_product_id: productId });
+        expect(mine.error).toBeNull();
+        const scoped = mine.data as Record<string, unknown>;
+        expect(scoped['scope']).toBe('product');
+        expect(scoped['own_spend_usd']).toBe(0.25);
+        expect(scoped['budget_usd']).toBeUndefined();
+        expect(scoped['spent_usd']).toBeUndefined();
+
+        const founder = await founderClient().rpc('sov_budget_info', {});
+        expect(founder.error).toBeNull();
+        const platform = founder.data as Record<string, unknown>;
+        expect(platform['scope']).toBe('platform');
+        expect(typeof platform['budget_usd']).toBe('number');
+        expect(typeof platform['spent_usd']).toBe('number');
+
+        // The mid-run spend figure excludes the check's own reserved estimate.
+        const withAll = await a.rpc('sov_month_spend', {});
+        const without = await a.rpc('sov_month_spend', { p_exclude_check: reserved.data as string });
+        expect(Number((withAll.data as Record<string, unknown>)['spent_usd']) - Number((without.data as Record<string, unknown>)['spent_usd'])).toBeCloseTo(0.25);
+      } finally {
+        await a.rpc('finish_sov_check', { check_id: reserved.data as string, new_status: 'failed', final_cost: null as unknown as number });
+      }
+    });
+  });
+
+  it('finishes an interrupted check: stale claims fail, the sweeper finalizes', { timeout: 30000 }, async () => {
+    await withTempUserProduct(async (_client, productId) => {
+      const a = adminClient();
+      await a.from('sov_questions').insert({ product_id: productId, question: 'sov-test question', active: true });
+
+      // Interrupted check: its only task was claimed but never finished.
+      // (started_at is backdated so the one-check-per-hour limit allows the
+      // later checks in this test)
+      const stalled = await a.rpc('reserve_sov_check', { pid: productId, p_runs_per_question: 1, p_engines: ['openai'], p_estimated_cost: 0.01 });
+      expect(stalled.error).toBeNull();
+      const stalledId = stalled.data as string;
+      await a.from('sov_checks').update({ started_at: new Date(Date.now() - 4 * 3600_000).toISOString() }).eq('id', stalledId);
+      const stale = new Date(Date.now() - 3 * 60_000).toISOString();
+      await a.from('sov_runs').insert({ check_id: stalledId, product_id: productId, engine: 'openai', question: 'sov-test question', run_index: 1, status: 'pending', created_at: stale });
+
+      const { advanceSovCheck, sweepStaleSovChecks } = await import('@/lib/sov-run.server');
+      const progress = await advanceSovCheck(stalledId);
+      // The stale claim was failed and, with every task row present, the check finalized.
+      expect(progress.status).toBe('failed');
+      const stalledCheck = await a.from('sov_checks').select('status').eq('id', stalledId).single();
+      expect(stalledCheck.data?.status).toBe('failed');
+
+      // Sweeper: a running check with an old finished run is 'stopped'…
+      // (started_at is backdated so the one-check-per-hour limit allows it)
+      const withRuns = await a.rpc('reserve_sov_check', { pid: productId, p_runs_per_question: 1, p_engines: ['openai'], p_estimated_cost: 0.01 });
+      expect(withRuns.error).toBeNull();
+      await a.from('sov_checks').update({ started_at: new Date(Date.now() - 2 * 3600_000).toISOString() }).eq('id', withRuns.data as string);
+      const old = new Date(Date.now() - 20 * 60_000).toISOString();
+      await a.from('sov_runs').insert({ check_id: withRuns.data as string, product_id: productId, engine: 'openai', question: 'sov-test question', run_index: 1, status: 'done', created_at: old });
+      const swept = await sweepStaleSovChecks(a);
+      expect(swept).toBeGreaterThanOrEqual(1);
+      const stoppedCheck = await a.from('sov_checks').select('status').eq('id', withRuns.data as string).single();
+      expect(stoppedCheck.data?.status).toBe('stopped');
+
+      // …and one with no runs at all is 'failed'.
+      const empty = await a.rpc('reserve_sov_check', { pid: productId, p_runs_per_question: 1, p_engines: ['openai'], p_estimated_cost: 0.01 });
+      expect(empty.error).toBeNull();
+      await a.from('sov_checks').update({ started_at: new Date(Date.now() - 3 * 3600_000).toISOString() }).eq('id', empty.data as string);
+      await sweepStaleSovChecks(a);
+      const emptyCheck = await a.from('sov_checks').select('status').eq('id', empty.data as string).single();
+      expect(emptyCheck.data?.status).toBe('failed');
+    });
+  });
+
+  it('leaves zero test rows behind', async () => {
+    const a = adminClient();
+    const leftovers = await a.from('allowed_emails').select('email').like('email', 'sov-test-%');
+    expect(leftovers.data ?? []).toHaveLength(0);
+    const products = await a.from('products').select('id').like('url', 'sov-test%');
+    expect(products.data ?? []).toHaveLength(0);
   });
 });

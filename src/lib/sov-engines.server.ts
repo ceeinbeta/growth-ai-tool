@@ -2,7 +2,8 @@ import { engineById, type EngineId } from "./engine-prices";
 
 // Server-only calls to the three AI engines. Keys come from project secrets and
 // never reach the browser. Only the buyer question text is sent — no emails,
-// visitor data, or workspace/user identifiers.
+// visitor data, or workspace/user identifiers. Error details from providers
+// are never stored or shown: only a short code ("HTTP 401", "timeout").
 
 export type EngineAnswer = {
   text: string;
@@ -15,9 +16,9 @@ export type EngineAnswer = {
 export class EngineError extends Error {
   constructor(
     public status: number,
-    message: string,
+    code: string,
   ) {
-    super(message);
+    super(code); // message is only ever a short code, never a response body
   }
 }
 
@@ -50,16 +51,26 @@ async function callOpenAI(key: string, model: string, question: string): Promise
     }),
     signal: AbortSignal.timeout(TIMEOUT_MS),
   });
-  if (!res.ok) throw new EngineError(res.status, await res.text().catch(() => ""));
+  if (!res.ok) throw new EngineError(res.status, `HTTP ${res.status}`);
   const data = (await res.json()) as {
     output_text?: string;
-    output?: { type?: string }[];
+    output?: {
+      type?: string;
+      content?: { type?: string; annotations?: { type?: string; url?: string }[] }[];
+    }[];
     usage?: { input_tokens?: number; output_tokens?: number };
   };
   const searchCalls = (data.output ?? []).filter((i) => i.type === "web_search_call").length;
+  // Cited websites come from url_citation annotations on the message content.
+  const citationUrls = (data.output ?? [])
+    .filter((i) => i.type === "message")
+    .flatMap((i) => i.content ?? [])
+    .flatMap((c) => c.annotations ?? [])
+    .filter((a) => a.type === "url_citation")
+    .map((a) => a.url);
   return {
     text: data.output_text ?? "",
-    citedHosts: [],
+    citedHosts: hostList(citationUrls),
     inputTokens: data.usage?.input_tokens ?? null,
     outputTokens: data.usage?.output_tokens ?? null,
     searchCalls: searchCalls || null,
@@ -79,7 +90,7 @@ async function callPerplexity(key: string, model: string, question: string): Pro
     }),
     signal: AbortSignal.timeout(TIMEOUT_MS),
   });
-  if (!res.ok) throw new EngineError(res.status, await res.text().catch(() => ""));
+  if (!res.ok) throw new EngineError(res.status, `HTTP ${res.status}`);
   const data = (await res.json()) as {
     choices?: { message?: { content?: string } }[];
     citations?: string[];
@@ -111,19 +122,24 @@ async function callClaude(key: string, model: string, question: string): Promise
     }),
     signal: AbortSignal.timeout(TIMEOUT_MS),
   });
-  if (!res.ok) throw new EngineError(res.status, await res.text().catch(() => ""));
+  if (!res.ok) throw new EngineError(res.status, `HTTP ${res.status}`);
   const data = (await res.json()) as {
-    content?: { type?: string; text?: string }[];
+    content?: { type?: string; text?: string; content?: { type?: string; url?: string }[] }[];
     usage?: { input_tokens?: number; output_tokens?: number };
   };
   const blocks = data.content ?? [];
   const searchCalls = blocks.filter((b) => b.type === "server_tool_use").length;
+  // Cited websites come from web_search_tool_result blocks.
+  const resultUrls = blocks
+    .filter((b) => b.type === "web_search_tool_result")
+    .flatMap((b) => (Array.isArray(b.content) ? b.content : []))
+    .map((c) => c.url);
   return {
     text: blocks
       .filter((b) => b.type === "text")
       .map((b) => b.text ?? "")
       .join("\n"),
-    citedHosts: [],
+    citedHosts: hostList(resultUrls),
     inputTokens: data.usage?.input_tokens ?? null,
     outputTokens: data.usage?.output_tokens ?? null,
     searchCalls: searchCalls || null,
@@ -140,19 +156,19 @@ export function engineKeyStatus(): Record<EngineId, boolean> {
 
 async function callEngineOnce(engine: EngineId, question: string): Promise<EngineAnswer> {
   const price = engineById(engine);
-  if (!price) throw new EngineError(400, "unknown engine");
+  if (!price) throw new EngineError(400, "not_connected");
   if (engine === "openai") {
     const key = process.env["OPENAI_API_KEY"];
-    if (!key) throw new EngineError(400, "not connected");
+    if (!key) throw new EngineError(400, "not_connected");
     return callOpenAI(key, price.model, question);
   }
   if (engine === "perplexity") {
     const key = process.env["PERPLEXITY_API_KEY"];
-    if (!key) throw new EngineError(400, "not connected");
+    if (!key) throw new EngineError(400, "not_connected");
     return callPerplexity(key, price.model, question);
   }
   const key = process.env["ANTHROPIC_API_KEY"];
-  if (!key) throw new EngineError(400, "not connected");
+  if (!key) throw new EngineError(400, "not_connected");
   return callClaude(key, price.model, question);
 }
 

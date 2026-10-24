@@ -115,6 +115,7 @@ function AdminContent() {
               <p className="mt-1 text-3xl font-extrabold">${s.visibility_spend_this_month.toFixed(2)} of ${s.visibility_monthly_budget_usd}</p>
               <SettingEditor label="Monthly visibility budget ($)" settingKey="visibility_monthly_budget_usd" value={s.visibility_monthly_budget_usd} onSaved={refresh} onError={setError} />
               <p className="mt-2 text-xs text-muted-foreground">Estimated from published engine prices, not exact bills. Visibility checks stop when this budget is reached.</p>
+              <p className="mt-2 text-xs text-muted-foreground">AI visibility reading calls in the last 24 hours: {s.visibility_reading_calls_24h}</p>
             </div>
           </section>
 

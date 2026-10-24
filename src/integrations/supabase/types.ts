@@ -170,6 +170,32 @@ export type Database = {
           },
         ]
       }
+      install_checks: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "install_checks_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       members: {
         Row: {
           created_at: string
@@ -399,6 +425,7 @@ export type Database = {
         Returns: boolean
       }
       is_workspace_member: { Args: { ws: string }; Returns: boolean }
+      reserve_install_check: { Args: { pid: string }; Returns: undefined }
       reserve_profile_run: { Args: { pid: string }; Returns: string }
       tracking_summary: { Args: { pid: string }; Returns: Json }
     }

@@ -36,6 +36,13 @@
       "when": 1792837985966,
       "tag": "0004_invite_only_signup_and_shared_profile_limit",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792852073132,
+      "tag": "0005_install_checks",
+      "breakpoints": true
     }
   ]
 }

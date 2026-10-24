@@ -9,6 +9,13 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
+## Profile architecture
+- AI profiling uses one authenticated RPC with RLS product reads and privileged usage/reservation writes; keys and providers stay in server-only modules.
+- Database triggers preserve field edit ownership and serialize item caps; atomic profile replacement preserves founder-owned content under concurrent edits.
+- Rolling profile-run reservations are separate from per-call usage so a malformed-output retry counts as one run.
+- Managed auth deletion uses an application lifecycle cleanup trigger for memberships instead of a disallowed direct auth foreign key.
+- Active product storage is initialized only in the client-only authenticated shell to avoid a first-product flash.
+
 
 ## Growloop architecture
 - Signed-in pages live under src/routes/_authenticated (client-only gate, redirects to /auth); / just redirects. Why: session is in localStorage.

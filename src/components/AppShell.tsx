@@ -1,6 +1,6 @@
 import { Link, Outlet, useNavigate, useRouteContext } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { Check, ChevronsUpDown, LayoutGrid, Droplets, Search, Lightbulb, Plug, Plus, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/Logo";
@@ -30,11 +30,10 @@ function Tile({ name }: { name: string }) {
 export function AppShell() {
   const { user } = useRouteContext({ from: "/_authenticated" });
   const { data } = useQuery(workspaceQuery);
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(() => getStoredActive());
   const navigate = useNavigate();
   const qc = useQueryClient();
 
-  useEffect(() => setActiveId(getStoredActive()), []);
   const products = data?.products ?? [];
   const active = products.find((p) => p.id === activeId) ?? products[0] ?? null;
   const setActive = (id: string) => {

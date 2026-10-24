@@ -1,5 +1,7 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { streamText, type ModelMessage } from "ai";
+import { profileShape } from "../profile-schema";
+import { Output } from "ai";
 
 import {
   createLovableAiGatewayRunIdFetch,
@@ -12,13 +14,21 @@ export function createResponsesCall(
   config: { baseURL: string; apiKey: string; model: string },
   messages: ModelMessage[],
   instructions?: string,
+  options?: { output?: ReturnType<typeof Output.object>; initialRunId?: string; onResponseError?: (status: number, message: string) => Promise<void> },
 ) {
-  const runIdFetch = createLovableAiGatewayRunIdFetch(getLovableAiGatewayRunId(request));
+  const runIdFetch = createLovableAiGatewayRunIdFetch(options?.initialRunId ?? getLovableAiGatewayRunId(request));
   const provider = createOpenAI({
     baseURL: `${config.baseURL.replace(/\/+$/, "").replace(/\/v1$/, "")}/v1`,
     apiKey: config.apiKey,
     headers: { "Lovable-API-Key": config.apiKey, "X-Lovable-AIG-SDK": "vercel-ai-sdk" },
-    fetch: runIdFetch.fetch,
+    fetch: async (input, init) => {
+      const response = await runIdFetch.fetch(input, init);
+      if (!response.ok) {
+        const body = await response.clone().json().catch(() => null) as { message?: string; error?: { message?: string } } | null;
+        await options?.onResponseError?.(response.status, body?.message ?? body?.error?.message ?? "The AI connection couldn't complete this request.");
+      }
+      return response;
+    },
   });
   const reasoning = config.model !== "openai/chat-latest";
   const result = streamText({
@@ -26,6 +36,8 @@ export function createResponsesCall(
     // AI SDK 6 lacks `instructions`: rename this key to `system` there.
     ...(instructions ? { instructions } : {}),
     messages,
+    output: Output.object({ schema: profileShape }),
+    maxRetries: 0,
     abortSignal: request.signal,
     providerOptions: {
       openai: {
@@ -33,7 +45,7 @@ export function createResponsesCall(
         ...(reasoning
           ? {
               forceReasoning: true,
-              reasoningEffort: "medium",
+              reasoningEffort: "low",
               reasoningSummary: "auto",
               include: ["reasoning.encrypted_content"],
             }
@@ -43,6 +55,7 @@ export function createResponsesCall(
   });
   return {
     result,
+    gateway: runIdFetch,
     response: () =>
       withLovableAiGatewayRunIdHeader(result.toUIMessageStreamResponse({ sendReasoning: true }), runIdFetch),
   };

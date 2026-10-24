@@ -10,6 +10,7 @@ vi.mock('@tanstack/react-router', () => ({
   useRouteContext: () => ({ user: { email: 'founder@example.com' } }),
 }));
 vi.mock('@tanstack/react-query', () => ({
+  queryOptions: (opts: unknown) => opts,
   useQuery: (opts: { queryKey: string[] }) => ({
     data: opts.queryKey[0] === 'is-app-admin' ? adminFlag : { workspace: null, products: [] },
   }),

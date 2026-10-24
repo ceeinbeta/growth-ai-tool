@@ -286,9 +286,12 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('ai search visi
       await a.from('sov_questions').insert({ product_id: productId, question: 'sov-test question', active: true });
 
       // Interrupted check: its only task was claimed but never finished.
+      // (started_at is backdated so the one-check-per-hour limit allows the
+      // later checks in this test)
       const stalled = await a.rpc('reserve_sov_check', { pid: productId, p_runs_per_question: 1, p_engines: ['openai'], p_estimated_cost: 0.01 });
       expect(stalled.error).toBeNull();
       const stalledId = stalled.data as string;
+      await a.from('sov_checks').update({ started_at: new Date(Date.now() - 4 * 3600_000).toISOString() }).eq('id', stalledId);
       const stale = new Date(Date.now() - 3 * 60_000).toISOString();
       await a.from('sov_runs').insert({ check_id: stalledId, product_id: productId, engine: 'openai', question: 'sov-test question', run_index: 1, status: 'pending', created_at: stale });
 

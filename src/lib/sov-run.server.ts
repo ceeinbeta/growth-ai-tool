@@ -20,9 +20,10 @@ async function adminClient() {
 
 // Extraction and fix generation go through the Lovable AI gateway and count in
 // ai_usage (features 'sov-extract' / 'sov-fixes').
-async function gatewayCall(productId: string, feature: string, schema: "extract" | "fixes", prompt: string) {
+async function gatewayCall(productId: string, feature: string, kind: "extract" | "fixes", prompt: string) {
   const key = process.env["LOVABLE_API_KEY"];
   if (!key) return null;
+  const schema: z.ZodTypeAny = kind === "extract" ? extractionSchema : fixesSchema;
   const provider = createOpenAI({
     baseURL: "https://ai.gateway.lovable.dev/v1",
     apiKey: key,
@@ -84,6 +85,7 @@ export async function runSovCheck(checkId: string, product: ProductInfo, questio
   const worker = async () => {
     while (cursor < tasks.length && !stopped) {
       const task = tasks[cursor++];
+      if (!task) break;
       // Mid-run budget stop: refuse further provider calls once the cap is hit.
       const { budget, spent } = await monthSpend(admin);
       if (spent + runningCost >= budget) {

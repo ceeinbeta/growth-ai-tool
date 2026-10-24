@@ -300,8 +300,10 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('ai search visi
       expect(stalledCheck.data?.status).toBe('failed');
 
       // Sweeper: a running check with an old finished run is 'stopped'…
+      // (started_at is backdated so the one-check-per-hour limit allows it)
       const withRuns = await a.rpc('reserve_sov_check', { pid: productId, p_runs_per_question: 1, p_engines: ['openai'], p_estimated_cost: 0.01 });
       expect(withRuns.error).toBeNull();
+      await a.from('sov_checks').update({ started_at: new Date(Date.now() - 2 * 3600_000).toISOString() }).eq('id', withRuns.data as string);
       const old = new Date(Date.now() - 20 * 60_000).toISOString();
       await a.from('sov_runs').insert({ check_id: withRuns.data as string, product_id: productId, engine: 'openai', question: 'sov-test question', run_index: 1, status: 'done', created_at: old });
       const swept = await sweepStaleSovChecks(a);
@@ -312,6 +314,7 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('ai search visi
       // …and one with no runs at all is 'failed'.
       const empty = await a.rpc('reserve_sov_check', { pid: productId, p_runs_per_question: 1, p_engines: ['openai'], p_estimated_cost: 0.01 });
       expect(empty.error).toBeNull();
+      await a.from('sov_checks').update({ started_at: new Date(Date.now() - 3 * 3600_000).toISOString() }).eq('id', empty.data as string);
       await sweepStaleSovChecks(a);
       const emptyCheck = await a.from('sov_checks').select('status').eq('id', empty.data as string).single();
       expect(emptyCheck.data?.status).toBe('failed');

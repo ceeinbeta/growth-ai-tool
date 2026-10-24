@@ -5,7 +5,7 @@ const state = vi.hoisted(() => ({ component: null as any, test: vi.fn(), start: 
 vi.mock("@tanstack/react-router", () => ({ createFileRoute: () => (config: any) => { state.component = config.component; return config; }, Link: () => null }));
 vi.mock("@tanstack/react-query", () => ({ queryOptions: (o: any) => o, useQueryClient: () => ({ invalidateQueries: vi.fn() }), useQuery: (o: any) => ({ data: o.queryKey[0] === "sov-engine-status"
   ? { engines: [{ id: "openai", label: "OpenAI", connected: true }, { id: "claude", label: "Claude", connected: true }] }
-  : { questions: [{ question: "q" }], checks: state.runs.length ? [{ id: "last", status: "failed" }] : [], runs: state.runs, fixes: [], mentions: [] } }) }));
+  : { questions: [{ question: "q" }], checks: state.runs.length ? [{ id: "last", status: "failed", engines: ["openai", "claude"], started_at: "2026-10-24T20:00:00Z" }] : [], runs: state.runs, fixes: [], mentions: [] } }) }));
 vi.mock("@tanstack/react-start", () => ({ useServerFn: (fn: any) => fn }));
 vi.mock("@/lib/sov.functions", () => ({ getSovEngineStatus: vi.fn(), testEngineConnection: state.test, startSovCheck: state.start, advanceSovCheckFn: vi.fn(), setSovSchedule: vi.fn() }));
 vi.mock("@/components/AppShell", () => ({ useActiveProduct: () => ({ active: { id: "choice-test", name: "Test" } }) }));

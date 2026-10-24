@@ -160,14 +160,14 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('ai search visi
       const third = await a.rpc('reserve_sov_check', { pid: productId, p_runs_per_question: 1, p_engines: ['openai'], p_estimated_cost: 0.01 });
       expect(third.error?.message).toContain('sov_check_hour_limit_reached');
 
-      // Backdate 9 finished checks within the week to hit the weekly cap.
+      // Backdate the first check, then add 9 more backdated finished checks to hit the weekly cap.
+      await a.from('sov_checks').update({ started_at: new Date(Date.now() - 2 * 3600_000).toISOString() }).eq('id', first.data as string);
       for (let i = 0; i < 9; i++) {
         const r = await a.rpc('reserve_sov_check', { pid: productId, p_runs_per_question: 1, p_engines: ['openai'], p_estimated_cost: 0.01 });
-        if (r.error) break;
+        expect(r.error).toBeNull();
         await a.rpc('finish_sov_check', { check_id: r.data as string, new_status: 'done', final_cost: 0.01 });
-        await a.from('sov_checks').update({ started_at: new Date(Date.now() - (i + 2) * 3600_000).toISOString() }).eq('id', r.data as string);
+        await a.from('sov_checks').update({ started_at: new Date(Date.now() - (i + 3) * 3600_000).toISOString() }).eq('id', r.data as string);
       }
-      await a.from('sov_checks').update({ started_at: new Date(Date.now() - 2 * 3600_000).toISOString() }).eq('id', first.data as string);
       const eleventh = await a.rpc('reserve_sov_check', { pid: productId, p_runs_per_question: 1, p_engines: ['openai'], p_estimated_cost: 0.01 });
       expect(eleventh.error?.message).toContain('sov_check_week_limit_reached');
     });

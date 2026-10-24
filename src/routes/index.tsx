@@ -11,6 +11,7 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: "Find the leak. Fix it. Prove it worked." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
     ],
   }),
   beforeLoad: async () => {

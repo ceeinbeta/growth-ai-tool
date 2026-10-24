@@ -13,7 +13,7 @@
 - AI profiling uses one authenticated RPC with RLS product reads and privileged usage/reservation writes; keys and providers stay in server-only modules.
 - Database triggers preserve field edit ownership and serialize item caps; atomic profile replacement preserves founder-owned content under concurrent edits.
 - Rolling profile-run reservations are separate from per-call usage so a malformed-output retry counts as one run.
-- Profile reservations acquire one shared transaction advisory lock before product locks and enforce both rolling limits in the same RPC; concurrent workers cannot bypass the shared cost safeguard.
+- Profile and audit reservations share one transaction advisory lock before product locks, preserving separate per-product caps and one combined rolling cap; retries count as one reservation.
 - Invite-only signup uses a private service-role-only allow-list and an app-owned BEFORE INSERT auth lifecycle trigger; existing sign-in and the AFTER INSERT workspace trigger remain independent.
 - Invitation and shared-limit database tests create auth fixtures through the admin API and explicitly clean temporary users, invitations, workspaces, and reservations in finally blocks; tests must never send real emails or call AI.
 - Managed auth deletion uses an application lifecycle cleanup trigger for memberships instead of a disallowed direct auth foreign key.
@@ -21,6 +21,9 @@
 
 
 ## Growloop architecture
+- Funnel aggregation uses security-invoker ordered first-match chains and computed defaults; step edits use an atomic member-scoped replacement RPC to avoid reorder collisions.
+- Page audits read products and measured funnels as the caller, then reserve and save findings atomically through server-only privileged functions; clients have only column-level leak-status update rights.
+- Every shared-data write test uses temporary rows with finally cleanup or rollback, never the founder's real product rows, to keep dashboards free of test data.
 - Website collection uses one server-only handler at /api/collect and a /api/public/collect alias used by the static snippet because published-site authentication only bypasses the public prefix.
 - Collection checks the Origin header when present and only falls back to the body hostname when absent; this prevents a copied tracking key from bypassing origin checks through a forged body.
 - Authenticated tracking-table access is read-only; collection writes stay privileged so clients cannot forge events through the Data API.

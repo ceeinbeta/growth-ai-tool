@@ -5,6 +5,7 @@ import { WebsiteTracking } from '@/components/WebsiteTracking';
 import { Button } from '@/components/ui/button';
 export const Route = createFileRoute('/_authenticated/integrations')({
   head: () => ({ meta: [
+    { name: 'robots', content: 'noindex' },
     { title: 'Integrations — Growloop' }, { name: 'description', content: 'Install Growloop website tracking and see real visits, sources and signup activity.' },
     { property: 'og:title', content: 'Integrations — Growloop' }, { property: 'og:description', content: 'Connect website tracking for real visits and signup activity.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' },
   ] }), component: Integrations,

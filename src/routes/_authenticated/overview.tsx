@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { stageLabel, useActiveProduct } from "@/components/AppShell";
 import { ProductProfile } from "@/components/ProductProfile";
 import { TrackingOverview } from "@/components/TrackingOverview";
+import { OpenLeaks } from "@/components/OpenLeaks";
 
 export const Route = createFileRoute("/_authenticated/overview")({
   head: () => ({
@@ -13,6 +14,7 @@ export const Route = createFileRoute("/_authenticated/overview")({
       { property: "og:description", content: "Your product at a glance and what Growloop does next." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
     ],
   }),
   component: Overview,
@@ -55,6 +57,7 @@ function Overview() {
       </a>
       <p className="mt-4 whitespace-pre-line text-foreground">{active.description}</p>
 
+      <OpenLeaks productId={active.id} />
       <TrackingOverview key={`tracking-${active.id}`} product={active} />
 
       <ProductProfile key={active.id} product={active} />

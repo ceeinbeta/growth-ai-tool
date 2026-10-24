@@ -20,6 +20,7 @@ export const Route = createFileRoute("/_authenticated/products/new")({
       { property: "og:description", content: "Add a product to Growloop." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
     ],
   }),
   component: NewProduct,

@@ -7,12 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { getPublicOrigin } from '@/lib/public-origin.functions';
 import { publicHead } from '@/lib/public-head';
-import { GROWLOOP_TRACKING_KEY } from '@/lib/public-config';
+import { CONTACT_EMAIL, GROWLOOP_TRACKING_KEY } from '@/lib/public-config';
 import loopImage from '@/assets/growloop-loop.jpg';
 
 export const Route = createFileRoute('/')({
   loader: () => getPublicOrigin(),
-  head: ({ loaderData }) => publicHead(loaderData ?? 'https://growloop-mcads.lovable.app', '/', 'Growloop — Find the leak. Fix it. Prove it worked.', 'A growth app for solo founders. See where visitors drop off, audit your page copy, and measure real visits and signups. Join the free beta waitlist.'),
+  head: ({ loaderData }) => publicHead(loaderData ?? 'https://growloop-mcads.lovable.app', '/', 'Growloop — a growth app for solo founders', 'See where visitors drop off, get help fixing it, and measure what happens next with real visits and signups. Join the free beta waitlist.'),
   component: LandingPage,
 });
 
@@ -48,7 +48,7 @@ export function LandingPage() {
       <div className="mx-auto max-w-6xl px-6 py-16 md:px-10 md:py-24">
         <p className="mb-5 flex items-center gap-2 text-sm font-semibold text-primary"><span className="h-2 w-2 rounded-full bg-signal" />Growloop · For solo founders</p>
         <h1 className="max-w-xl text-4xl font-extrabold leading-tight md:text-6xl">Find the leak.<br />Fix it.<br />Prove it worked.</h1>
-        <p className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground md:text-lg">Growloop is a growth app for solo founders. It shows where visitors drop off, helps you fix it, and tells you what actually worked, so you stop guessing what to work on next.</p>
+        <p className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground md:text-lg">Growloop is a growth app for solo founders. It shows where visitors drop off, helps you fix it, and measures what happens next, so you stop guessing what to work on.</p>
         <Button asChild size="lg" className="mt-8 h-12"><a href="#waitlist">Join the beta waitlist<ArrowRight /></a></Button>
         <p className="mt-3 text-sm text-muted-foreground">Free while we're in beta.</p>
       </div>
@@ -82,6 +82,6 @@ export function LandingPage() {
     ].map(([title, text]) => <div key={title}><Check className="mb-4 h-5 w-5 text-primary" /><h3 className="text-lg">{title}</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">{text}</p></div>)}</div></div></section>
     <section className="mx-auto max-w-6xl px-6 py-14 md:px-10"><div className="flex flex-col justify-between gap-5 md:flex-row md:items-center"><h2 className="max-w-md text-2xl">For live products.<br />And the ones not launched yet.</h2><p className="max-w-md text-base leading-relaxed text-muted-foreground">Collecting a waitlist? Growloop counts joins instead of revenue.</p></div></section>
     <section id="waitlist" className="scroll-mt-6 border-y bg-card"><div className="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:grid-cols-2 md:px-10 md:py-20"><div><p className="mb-3 text-sm font-semibold text-primary">Growloop beta</p><h2 className="max-w-sm text-4xl leading-tight">Join the beta waitlist.</h2><p className="mt-5 max-w-sm leading-relaxed text-muted-foreground">Free while we're in beta. We'll email you when there's a seat.</p></div><WaitlistForm /></div></section>
-    <section className="mx-auto max-w-3xl px-6 py-16 md:py-20"><h2 className="mb-7 text-3xl">A few questions</h2><Accordion type="single" collapsible>{faqs.map(([title, text]) => <AccordionItem key={title} value={title}><AccordionTrigger className="text-base focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring">{title}</AccordionTrigger><AccordionContent className="leading-relaxed text-muted-foreground">{text}</AccordionContent></AccordionItem>)}<AccordionItem value="delete"><AccordionTrigger className="text-base focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring">How do I delete my waitlist entry?</AccordionTrigger><AccordionContent className="leading-relaxed text-muted-foreground">Reply to any email from us and ask for your details to be deleted. Read our <Link to="/privacy" className="text-primary underline">privacy page</Link> for details.</AccordionContent></AccordionItem></Accordion></section>
+    <section className="mx-auto max-w-3xl px-6 py-16 md:py-20"><h2 className="mb-7 text-3xl">A few questions</h2><Accordion type="single" collapsible>{faqs.map(([title, text]) => <AccordionItem key={title} value={title}><AccordionTrigger className="text-base focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring">{title}</AccordionTrigger><AccordionContent className="leading-relaxed text-muted-foreground">{text}</AccordionContent></AccordionItem>)}<AccordionItem value="delete"><AccordionTrigger className="text-base focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring">How do I delete my waitlist entry?</AccordionTrigger><AccordionContent className="leading-relaxed text-muted-foreground">Email <a href={`mailto:${CONTACT_EMAIL}`} className="text-primary underline">{CONTACT_EMAIL}</a> and ask. We'll delete your details. More on the <Link to="/privacy" className="text-primary underline">privacy page</Link>.</AccordionContent></AccordionItem></Accordion></section>
   </main></PublicShell>;
 }

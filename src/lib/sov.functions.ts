@@ -25,8 +25,10 @@ export const getSovEngineStatus = createServerFn({ method: "POST" })
     await readOwnProduct(context.supabase, data.productId);
     const { engineKeyStatus } = await import("./sov-engines.server");
     const keys = engineKeyStatus();
+    // Scoped by the database: admins see platform totals, everyone else sees
+    // only their own product's estimated spend and a plain status.
+    const { data: budget } = await context.supabase.rpc("sov_budget_info", { p_product_id: data.productId });
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
-    const { data: budget } = await admin.rpc("sov_budget_info");
     const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const { data: tests } = await admin
       .from("ai_usage")
@@ -45,10 +47,10 @@ export const getSovEngineStatus = createServerFn({ method: "POST" })
         connected: keys[id],
         testsToday: testCounts[id] ?? 0,
       })),
-      budget: {
-        budget_usd: Number((budget as any)?.budget_usd ?? 20),
-        spent_usd: Number((budget as any)?.spent_usd ?? 0),
-      },
+      budget: budget as
+        | { scope: "platform"; budget_usd: number; spent_usd: number }
+        | { scope: "product"; own_spend_usd: number; status: string }
+        | null,
     };
   });
 
@@ -108,7 +110,7 @@ export const startSovCheck = createServerFn({ method: "POST" })
       .parse(data),
   )
   .handler(async ({ data, context }) => {
-    const product = await readOwnProduct(context.supabase, data.productId);
+    await readOwnProduct(context.supabase, data.productId);
     const { data: questionRows, error: qError } = await context.supabase
       .from("sov_questions")
       .select("question")
@@ -122,7 +124,7 @@ export const startSovCheck = createServerFn({ method: "POST" })
 
     const estimate = estimateCheckCost(questions.length, data.runsPerQuestion, data.engines);
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
-    const { data: budget } = await admin.rpc("sov_budget_info");
+    const { data: budget } = await admin.rpc("sov_month_spend", { p_exclude_check: null });
     const reserved = await admin.rpc("reserve_sov_check", {
       pid: data.productId,
       p_runs_per_question: data.runsPerQuestion,
@@ -132,15 +134,28 @@ export const startSovCheck = createServerFn({ method: "POST" })
     if (reserved.error) {
       return { ok: false, error: sovErrorMessage(reserved.error.message, Number((budget as any)?.budget_usd ?? 20)) };
     }
-    const checkId = reserved.data as string;
-    const { executeSovCheck } = await import("./sov-run.server");
-    // The page polls for status; run the check to completion here.
-    void executeSovCheck(checkId, { id: product.id, name: product.name, url: product.url, aliases: product.aliases ?? [] }, data.runsPerQuestion, data.engines).catch(
-      async () => {
-        await admin.rpc("finish_sov_check", { check_id: checkId, new_status: "failed", final_cost: null as unknown as number });
-      },
-    );
-    return { ok: true, checkId, error: null };
+    // The page drives the check forward with advanceSovCheck calls; nothing
+    // runs fire-and-forget here, so a cut-off response cannot strand it.
+    return { ok: true, checkId: reserved.data as string, error: null };
+  });
+
+// Advance a running check by one small batch. Members of the product's
+// workspace only; the check and product are read with the caller's session
+// first. Idempotent and safe to call twice at once.
+export const advanceSovCheckFn = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ checkId: z.string().uuid() }).parse(data))
+  .handler(async ({ data, context }) => {
+    const { data: check, error } = await context.supabase
+      .from("sov_checks")
+      .select("id, product_id, status")
+      .eq("id", data.checkId)
+      .maybeSingle();
+    if (error) throw error;
+    if (!check) throw new Error("Check not found.");
+    await readOwnProduct(context.supabase, check.product_id);
+    const { advanceSovCheck } = await import("./sov-run.server");
+    return advanceSovCheck(data.checkId);
   });
 
 export const setSovSchedule = createServerFn({ method: "POST" })

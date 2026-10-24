@@ -1,4 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+vi.mock('@/lib/sov-engines.server', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/lib/sov-engines.server')>();
+  return { ...actual, callEngine: vi.fn().mockRejectedValue(new Error('Mock provider: no network access')) };
+});
 import { rollbackSettings, canRollbackSettings } from './rollback-settings';
 import postgres from 'postgres';
 import { randomUUID } from 'node:crypto';
@@ -290,6 +294,8 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('ai search visi
 
       const { advanceSovCheck, sweepStaleSovChecks } = await import('@/lib/sov-run.server');
       const progress = await advanceSovCheck(stalledId);
+      const { callEngine } = await import('@/lib/sov-engines.server');
+      expect(callEngine).not.toHaveBeenCalled();
       // The stale claim was failed and, with every task row present, the check finalized.
       expect(progress.status).toBe('failed');
       const stalledCheck = await a.from('sov_checks').select('status').eq('id', stalledId).single();

@@ -59,6 +59,13 @@ export type SovRunRow = {
 };
 export type SovMentionRow = { run_id: string; name: string; rank: number; kind: MentionKind };
 
+// Legacy empty answers remain untouched in storage, but cannot enter sample math.
+export function usableSovRuns<T extends { status: string; answer_excerpt: string | null }>(runs: T[]): T[] {
+  return runs.map((run) => run.status === "done" && !run.answer_excerpt?.trim()
+    ? { ...run, status: "failed" }
+    : run);
+}
+
 // Share of voice: for each recommended name, the percentage of successful runs
 // that recommended it. Failed runs are excluded from the base.
 export function shareOfVoice(runs: SovRunRow[], mentions: SovMentionRow[], engine?: string) {
@@ -131,7 +138,7 @@ export function sovErrorMessage(message: string, budget?: number): string {
 // Plain engine error copy; never includes the key or any part of it.
 export function engineErrorMessage(status: number, body: string): string {
   const text = body.toLowerCase();
-  if (status === 401 || status === 403) return "The key was rejected. Check it in Project Settings → Secrets.";
+  if (status === 401 || status === 403) return "The key was rejected or the account has no API credit. Check the key in Project Settings → Secrets and your balance with the provider.";
   if (status === 402 || text.includes("insufficient_quota") || text.includes("credit")) return "This provider account is out of credit. Top up with the provider.";
   if (status === 429) return "Rate limited by the provider. Try again in a minute.";
   if (status === 404) return "The model or endpoint was not found. The provider may have renamed it.";

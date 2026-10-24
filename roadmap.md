@@ -1,7 +1,7 @@
 # Slice 7
-- [ ] Fix raw OpenAI text parsing and fail empty answers while preserving spend.
-- [ ] Show usable per-engine counts, calibrate estimates, and untick previously failed engines by default.
-- [ ] Run all tests serialized, verify fixture cleanup, leave existing rows untouched, and do not publish.
+- [x] Fix raw OpenAI text parsing and fail empty answers while preserving spend.
+- [x] Show usable per-engine counts, calibrate estimates, and untick previously failed engines by default.
+- [x] Run tests serialized and verify unchanged public-table/auth-user counts; unsafe legacy/global waitlist tests and unavailable rollback-setting tests skipped; no existing rows touched and no publication.
 - [x] Fix recorded-cost budget stop and add mocked regression coverage.
 - [x] Show session-only test results and remembered per-product engine choices, validated server-side.
 - [x] Rerun all tests serially and do not publish; 176 passed, four shared-settings checks safely skipped because transaction execution permissions are unavailable.

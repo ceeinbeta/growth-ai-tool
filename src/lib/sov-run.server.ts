@@ -92,21 +92,23 @@ const taskKey = (t: Task) => `${t.engine}${t.question}${t.runIndex}`;
 
 async function runTask(checkId: string, product: ProductInfo, competitors: string[], runRowId: string, task: Task) {
   const admin = await adminClient();
-  const price = engineById(task.engine)!;
+  const price = engineById(task.engine);
+  if (!price) return 0;
   try {
     const answer = await callEngine(task.engine, task.question);
     const cost = runCost(price, answer.inputTokens, answer.outputTokens, answer.searchCalls);
+    const usable = answer.text.trim().length > 0;
     await admin
       .from("sov_runs")
       .update({
-        status: "done",
+        status: usable ? "done" : "failed",
         answer_excerpt: answer.text.slice(0, 2000),
         cited_hosts: answer.citedHosts,
         input_tokens: answer.inputTokens,
         output_tokens: answer.outputTokens,
         search_calls: answer.searchCalls,
         cost_usd: cost,
-        error: null,
+        error: usable ? null : "empty answer — The engine returned no answer text.",
       })
       .eq("id", runRowId);
     await admin.from("ai_usage").insert({
@@ -117,9 +119,8 @@ async function runTask(checkId: string, product: ProductInfo, competitors: strin
       output_tokens: answer.outputTokens,
       cost_usd: cost,
     });
-    const extracted = answer.text.trim()
-      ? await gatewayCall(product.id, "sov-extract", "extract", answer.text.slice(0, 8000))
-      : null;
+    if (!usable) return cost;
+    const extracted = await gatewayCall(product.id, "sov-extract", "extract", answer.text.slice(0, 8000));
     const names = (extracted as { names?: string[] } | null)?.names ?? [];
     if (names.length) {
       await admin.from("sov_mentions").insert(

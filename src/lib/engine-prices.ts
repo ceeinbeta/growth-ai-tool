@@ -65,15 +65,20 @@ export const ENGINES: EnginePrice[] = [
 
 export const engineById = (id: string) => ENGINES.find((e) => e.id === id);
 
-// Assumed per-run shape for estimates: one web search per run plus a short answer.
-const EST_INPUT_TOKENS = 2000;
-const EST_OUTPUT_TOKENS = 800;
+// OpenAI and Claude averages measured in the first real check on 2026-10-24.
+// Perplexity remains assumed (not yet measured).
+const EST_RUN_USAGE: Record<EngineId, { input: number; output: number; searches: number }> = {
+  openai: { input: 19542, output: 1189, searches: 1.93 },
+  claude: { input: 11866, output: 1318, searches: 1.5 },
+  perplexity: { input: 2000, output: 800, searches: 1 },
+};
 
 export function estimateRunCost(engine: EnginePrice): number {
+  const usage = EST_RUN_USAGE[engine.id];
   return (
-    (EST_INPUT_TOKENS * engine.inputPerMillion) / 1_000_000 +
-    (EST_OUTPUT_TOKENS * engine.outputPerMillion) / 1_000_000 +
-    engine.searchPerThousand / 1_000
+    (usage.input * engine.inputPerMillion) / 1_000_000 +
+    (usage.output * engine.outputPerMillion) / 1_000_000 +
+    (usage.searches * engine.searchPerThousand) / 1_000
   );
 }
 

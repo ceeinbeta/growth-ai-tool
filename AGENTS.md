@@ -22,6 +22,7 @@
 
 ## Growloop architecture
 - Manual visibility engine choices use a per-product browser preference and server-side connected-engine validation; why: remembered choices must not bypass key availability.
+- Visibility reads classify legacy empty excerpts as unusable without database writes; why: sample math must exclude empty answers while preserving historical rows and spend.
 - Funnel aggregation uses security-invoker ordered first-match chains and computed defaults; step edits use an atomic member-scoped replacement RPC to avoid reorder collisions.
 - Page audits read products and measured funnels as the caller, then reserve and save findings atomically through server-only privileged functions; clients have only column-level leak-status update rights.
 - Every shared-data write test uses temporary rows with finally cleanup or rollback, never the founder's real product rows; test files run serially so shared reservation-cap fixtures cannot interfere.

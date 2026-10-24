@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { rollbackSettings } from './rollback-settings';
+import { rollbackSettings, canRollbackSettings } from './rollback-settings';
 import postgres from 'postgres';
 import { randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
@@ -182,7 +182,7 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('ai search visi
     });
   });
 
-  it('refuses checks that would exceed the monthly budget', async () => {
+  it.skipIf(!canRollbackSettings)('refuses checks that would exceed the monthly budget', async () => {
     await withTempUserProduct(async (_client, productId) => {
       await rollbackSettings(async (sql) => {
         await sql`select public.admin_set_setting('visibility_monthly_budget_usd', 1)`;
@@ -194,7 +194,7 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('ai search visi
     });
   });
 
-  it('accepts the visibility budget setting within 1-500 and rejects outside values', async () => {
+  it.skipIf(!canRollbackSettings)('accepts the visibility budget setting within 1-500 and rejects outside values', async () => {
     await rollbackSettings(async (sql) => {
       await sql`select public.admin_set_setting('visibility_monthly_budget_usd', 50)`;
       for (const val of [0, 501]) {

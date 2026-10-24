@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { rollbackSettings } from './rollback-settings';
+import { rollbackSettings, canRollbackSettings } from './rollback-settings';
 import postgres from 'postgres';
 import { randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
@@ -185,7 +185,7 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('admin invitati
     });
   });
 
-  it('enforces the seat limit excluding admins, and raising it allows invites again', async () => {
+  it.skipIf(!canRollbackSettings)('enforces the seat limit excluding admins, and raising it allows invites again', async () => {
     await rollbackSettings(async (sql) => {
       const first = tempEmail(), second = tempEmail();
       await sql`select public.admin_invite_email(${first}, null)`;
@@ -211,7 +211,7 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('admin invitati
     }
   });
 
-  it('makes the shared AI run cap follow the setting with a 100 fallback', async () => {
+  it.skipIf(!canRollbackSettings)('makes the shared AI run cap follow the setting with a 100 fallback', async () => {
     await withTempProduct(async (productId) => {
       await rollbackSettings(async (sql) => {
         const rows = await sql`select public.admin_summary() as summary`;

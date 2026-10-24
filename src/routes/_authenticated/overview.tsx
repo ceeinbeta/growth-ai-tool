@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { stageLabel, useActiveProduct } from "@/components/AppShell";
+import { ProductProfile } from "@/components/ProductProfile";
 
 export const Route = createFileRoute("/_authenticated/overview")({
   head: () => ({
@@ -58,10 +59,12 @@ function Overview() {
         <p>No numbers show yet because no data is connected to this product.</p>
       </div>
 
+      <ProductProfile key={active.id} product={active} />
+
       <section className="mt-8 rounded-xl border bg-card p-6">
         <h2 className="text-lg">What happens next</h2>
         <ol className="mt-4 space-y-4">
-          {steps.map((s, i) => (
+          {steps.filter((_, i) => i !== 0 || !active.profiled_at).map((s, i) => (
             <li key={s.title} className="flex gap-4">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border font-display text-sm font-bold text-muted-foreground">{i + 1}</span>
               <div>

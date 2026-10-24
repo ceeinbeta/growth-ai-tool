@@ -87,6 +87,71 @@ export type Database = {
           },
         ]
       }
+      events: {
+        Row: {
+          created_at: string
+          first_touch_campaign: string | null
+          first_touch_medium: string | null
+          first_touch_referrer_host: string | null
+          first_touch_source: string | null
+          id: string
+          name: string
+          path: string
+          product_id: string
+          referrer_host: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          visitor_id: string
+        }
+        Insert: {
+          created_at?: string
+          first_touch_campaign?: string | null
+          first_touch_medium?: string | null
+          first_touch_referrer_host?: string | null
+          first_touch_source?: string | null
+          id?: string
+          name: string
+          path: string
+          product_id: string
+          referrer_host?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          visitor_id: string
+        }
+        Update: {
+          created_at?: string
+          first_touch_campaign?: string | null
+          first_touch_medium?: string | null
+          first_touch_referrer_host?: string | null
+          first_touch_source?: string | null
+          id?: string
+          name?: string
+          path?: string
+          product_id?: string
+          referrer_host?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          visitor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       members: {
         Row: {
           created_at: string
@@ -129,6 +194,7 @@ export type Database = {
           profile_source: string | null
           profiled_at: string | null
           stage: string
+          tracking_key: string
           url: string
           workspace_id: string
         }
@@ -144,6 +210,7 @@ export type Database = {
           profile_source?: string | null
           profiled_at?: string | null
           stage: string
+          tracking_key?: string
           url: string
           workspace_id: string
         }
@@ -159,6 +226,7 @@ export type Database = {
           profile_source?: string | null
           profiled_at?: string | null
           stage?: string
+          tracking_key?: string
           url?: string
           workspace_id?: string
         }
@@ -254,6 +322,29 @@ export type Database = {
           },
         ]
       }
+      tracking_event_names: {
+        Row: {
+          name: string
+          product_id: string
+        }
+        Insert: {
+          name: string
+          product_id: string
+        }
+        Update: {
+          name?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tracking_event_names_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workspaces: {
         Row: {
           created_at: string
@@ -285,8 +376,13 @@ export type Database = {
         Returns: undefined
       }
       can_access_product: { Args: { pid: string }; Returns: boolean }
+      collect_tracking_event: {
+        Args: { payload: Json; pid: string }
+        Returns: boolean
+      }
       is_workspace_member: { Args: { ws: string }; Returns: boolean }
       reserve_profile_run: { Args: { pid: string }; Returns: string }
+      tracking_summary: { Args: { pid: string }; Returns: Json }
     }
     Enums: {
       [_ in never]: never

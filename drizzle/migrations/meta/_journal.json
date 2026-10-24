@@ -15,6 +15,13 @@
       "when": 1792835048564,
       "tag": "0001_product_profiles",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792836164300,
+      "tag": "0002_website_tracking",
+      "breakpoints": true
     }
   ]
 }

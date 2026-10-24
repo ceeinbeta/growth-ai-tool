@@ -76,7 +76,7 @@ function AdminContent() {
     }
   }
 
-  const invite = (addr: string, note?: string) => run(() => supabase.rpc('admin_invite_email', { addr, note: note ?? null }).then(r => { if (r.error) throw r.error; }));
+  const invite = (addr: string, note?: string) => run(() => supabase.rpc('admin_invite_email', { addr, note: note ?? undefined }).then(r => { if (r.error) throw r.error; }));
   const uninvite = (addr: string) => run(() => supabase.rpc('admin_uninvite_email', { addr }).then(r => { if (r.error) throw r.error; }));
 
   const s = summary.data;

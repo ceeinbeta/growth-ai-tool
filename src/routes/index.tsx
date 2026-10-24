@@ -26,7 +26,7 @@ const next = [
   { icon: MessageCircle, title: 'Opportunities', text: 'People asking for your kind of product on Reddit, Hacker News and X, with a reply draft you post yourself.' },
   { icon: Target, title: 'Results', text: 'Which actions brought signups.' },
 ];
-const faqs = [
+const faqs: [string, string][] = [
   ['Who is it for?', 'Solo founders building a live product, collecting a waitlist, or working toward their first launch.'],
   ['Does it cost anything?', "Free during the beta. We'll tell you well before anything changes."],
   ['Will it post for me?', 'No. You always post from your own account.'],

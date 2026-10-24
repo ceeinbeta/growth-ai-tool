@@ -9,7 +9,7 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('private waitli
     if (!url) throw new Error('Missing database test configuration');
     const sql = postgres(url, { max: 1 });
     const rollback = new Error('intentional rollback');
-    try { await sql.begin(async tx => { await tx`select pg_advisory_xact_lock(713590241)`; await run(tx); throw rollback; }); }
+    try { await sql.begin(async tx => { await tx`set local role service_role`; await tx`select pg_advisory_xact_lock(713590241)`; await run(tx); throw rollback; }); }
     catch (error) { if (error !== rollback) throw error; }
     finally { await sql.end(); }
   }

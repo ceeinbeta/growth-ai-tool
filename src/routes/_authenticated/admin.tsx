@@ -88,7 +88,7 @@ function AdminContent() {
 
       {!s ? <p className="mt-8 text-sm text-muted-foreground">Loading…</p> : (
         <>
-          <section aria-label="Summary" className="mt-8 grid gap-4 sm:grid-cols-3">
+          <section aria-label="Summary" className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="rounded-lg border bg-card p-5">
               <p className="text-sm text-muted-foreground">On the waitlist</p>
               <p className="mt-1 text-3xl font-extrabold">{s.waitlist_count}</p>
@@ -106,6 +106,15 @@ function AdminContent() {
               <p className="mt-1 text-3xl font-extrabold">{s.ai_runs_last_24h} of {s.platform_ai_runs_per_day}</p>
               <SettingEditor label="Daily AI run cap" settingKey="platform_ai_runs_per_day" value={s.platform_ai_runs_per_day} onSaved={refresh} onError={setError} />
               <p className="mt-2 text-xs text-muted-foreground">Each AI run uses Lovable credits. A higher cap can raise your costs.</p>
+            </div>
+            <div className="rounded-lg border bg-card p-5">
+              <div className="flex items-center gap-2">
+                <p className="text-sm text-muted-foreground">AI search visibility spend this month</p>
+                {s.visibility_spend_this_month >= s.visibility_monthly_budget_usd * 0.8 && <Badge variant="outline">Near the cap</Badge>}
+              </div>
+              <p className="mt-1 text-3xl font-extrabold">${s.visibility_spend_this_month.toFixed(2)} of ${s.visibility_monthly_budget_usd}</p>
+              <SettingEditor label="Monthly visibility budget ($)" settingKey="visibility_monthly_budget_usd" value={s.visibility_monthly_budget_usd} onSaved={refresh} onError={setError} />
+              <p className="mt-2 text-xs text-muted-foreground">Estimated from published engine prices, not exact bills. Visibility checks stop when this budget is reached.</p>
             </div>
           </section>
 

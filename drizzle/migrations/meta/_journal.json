@@ -92,6 +92,13 @@
       "when": 1792865671031,
       "tag": "0012_harden_sov_grants",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1792866960189,
+      "tag": "0013_sov_resumable_and_hardening",
+      "breakpoints": true
     }
   ]
 }

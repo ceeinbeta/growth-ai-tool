@@ -1,0 +1,48 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { fireEvent, render, screen, within, waitFor } from "@testing-library/react";
+
+const state = vi.hoisted(() => ({ component: null as any, test: vi.fn(), start: vi.fn(), runs: [] as any[] }));
+vi.mock("@tanstack/react-router", () => ({ createFileRoute: () => (config: any) => { state.component = config.component; return config; }, Link: () => null }));
+vi.mock("@tanstack/react-query", () => ({ queryOptions: (o: any) => o, useQueryClient: () => ({ invalidateQueries: vi.fn() }), useQuery: (o: any) => ({ data: o.queryKey[0] === "sov-engine-status"
+  ? { engines: [{ id: "openai", label: "OpenAI", connected: true }, { id: "claude", label: "Claude", connected: true }] }
+  : { questions: [{ question: "q" }], checks: state.runs.length ? [{ id: "last", status: "failed" }] : [], runs: state.runs, fixes: [], mentions: [] } }) }));
+vi.mock("@tanstack/react-start", () => ({ useServerFn: (fn: any) => fn }));
+vi.mock("@/lib/sov.functions", () => ({ getSovEngineStatus: vi.fn(), testEngineConnection: state.test, startSovCheck: state.start, advanceSovCheckFn: vi.fn(), setSovSchedule: vi.fn() }));
+vi.mock("@/components/AppShell", () => ({ useActiveProduct: () => ({ active: { id: "choice-test", name: "Test" } }) }));
+vi.mock("@/integrations/supabase/client", () => ({ supabase: {} }));
+import "@/routes/_authenticated/ai-search-visibility";
+
+describe("visibility dialog interactions", () => {
+  beforeEach(() => { localStorage.clear(); state.runs = []; state.test.mockReset(); state.start.mockReset(); });
+  it("shows test results only after a click and keeps failed engines selectable", async () => {
+    state.test.mockResolvedValue({ ok: false, error: "The key was rejected." });
+    render(<state.component />);
+    expect(screen.queryByText("Test passed just now")).toBeNull();
+    fireEvent.click(screen.getAllByRole("button", { name: "Test connection" })[0]);
+    await screen.findByText("The key was rejected.");
+    fireEvent.click(screen.getByRole("button", { name: "Run a check" }));
+    expect(screen.getByText("Failed its last test")).toBeInTheDocument();
+    expect(within(screen.getByRole("group", { name: "Engines" })).getByRole("checkbox", { name: /OpenAI/ })).not.toBeDisabled();
+  });
+  it("updates call estimates, remembers selection and submits only chosen engines", async () => {
+    state.start.mockResolvedValue({ ok: true });
+    const first = render(<state.component />);
+    fireEvent.click(screen.getByRole("button", { name: "Run a check" }));
+    expect(screen.getByText(/This will make about 6 calls/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("checkbox", { name: "OpenAI" }));
+    expect(screen.getByText(/This will make about 3 calls/)).toBeInTheDocument();
+    first.unmount();
+    render(<state.component />);
+    fireEvent.click(screen.getByRole("button", { name: "Run a check" }));
+    expect(screen.getByRole("checkbox", { name: "OpenAI" })).not.toBeChecked();
+    fireEvent.click(screen.getByRole("button", { name: "Run the check" }));
+    await waitFor(() => expect(state.start).toHaveBeenCalledWith({ data: { productId: "choice-test", runsPerQuestion: 3, engines: ["claude"] } }));
+  });
+  it("shows a passed-test line without a second Connected label", async () => {
+    state.test.mockResolvedValue({ ok: true });
+    render(<state.component />);
+    fireEvent.click(screen.getAllByRole("button", { name: "Test connection" })[0]);
+    await screen.findByText("Test passed just now");
+    expect(screen.getAllByText("Connected")).toHaveLength(2);
+  });
+});

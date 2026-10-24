@@ -73,6 +73,39 @@ export type Database = {
         }
         Relationships: []
       }
+      app_admins: {
+        Row: {
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: number
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: number
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: number
+        }
+        Relationships: []
+      }
       audit_runs: {
         Row: {
           created_at: string
@@ -625,6 +658,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_delete_waitlist_entry: {
+        Args: { entry_id: string }
+        Returns: undefined
+      }
+      admin_invite_email: {
+        Args: { addr: string; note?: string }
+        Returns: undefined
+      }
+      admin_list_invites: { Args: never; Returns: Json }
+      admin_list_waitlist: { Args: never; Returns: Json }
+      admin_set_setting: {
+        Args: { setting_key: string; val: number }
+        Returns: undefined
+      }
+      admin_summary: { Args: never; Returns: Json }
+      admin_uninvite_email: { Args: { addr: string }; Returns: undefined }
       apply_product_profile: {
         Args: { pid: string; profile: Json }
         Returns: undefined
@@ -635,6 +684,7 @@ export type Database = {
         Returns: boolean
       }
       funnel_summary: { Args: { days?: number; pid: string }; Returns: Json }
+      is_app_admin: { Args: never; Returns: boolean }
       is_workspace_member: { Args: { ws: string }; Returns: boolean }
       replace_funnel_steps: {
         Args: { pid: string; steps: Json }

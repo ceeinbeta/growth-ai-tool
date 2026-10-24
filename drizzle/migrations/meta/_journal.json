@@ -64,6 +64,13 @@
       "when": 1792861158403,
       "tag": "0008_private_beta_waitlist",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1792863439767,
+      "tag": "0009_admin_invites_and_settings",
+      "breakpoints": true
     }
   ]
 }

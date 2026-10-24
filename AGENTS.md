@@ -30,3 +30,4 @@
 - Product limits are enforced by a DB trigger raising 'product_limit_reached'; the UI maps it to a friendly message. Why: users must not bypass plan limits.
 - Workspace/membership rows are only created by the auth.users trigger; clients get SELECT only. Why: users must not edit plan limits or memberships.
 - Website input normalization lives in src/lib/website.ts with tests. Why: one rule for storage format.
+- Install checks fetch only the saved website host over https with per-hop redirect re-validation (src/lib/install-check.ts) and a server-only reserve_install_check RPC for the hourly cap. Why: prevents the server fetch from reaching internal addresses or being abused.

@@ -11,10 +11,9 @@ vi.mock('@tanstack/react-router', () => ({
 }));
 vi.mock('@tanstack/react-query', () => ({
   queryOptions: (opts: unknown) => opts,
-  useQuery: (opts: { queryKey: string[] }) => {
-    console.log('useQuery called with', opts.queryKey, 'adminFlag=', adminFlag);
-    return { data: opts.queryKey[0] === 'is-app-admin' ? adminFlag : { workspace: null, products: [] } };
-  },
+  useQuery: (opts: { queryKey: string[] }) => ({
+    data: opts.queryKey[0] === 'is-app-admin' ? adminFlag : { workspace: null, products: [] },
+  }),
   useQueryClient: () => ({ cancelQueries: vi.fn(), clear: vi.fn() }),
 }));
 vi.mock('@/integrations/supabase/client', () => ({ supabase: { auth: { signOut: vi.fn() } } }));
@@ -27,13 +26,12 @@ describe('sidebar Admin link', () => {
 
   it('is hidden for non-admins', () => {
     render(<AppShell />);
-    expect(screen.queryByText('Admin')).toBeNull();
+    expect(screen.getByRole('navigation').textContent).not.toContain('Admin');
   });
 
   it('is shown for the founder', () => {
     adminFlag = true;
     render(<AppShell />);
-    console.log('NAV HTML:', document.querySelector('nav')?.innerHTML ?? 'NO NAV');
-    expect(screen.getByText('Admin')).toBeTruthy();
+    expect(screen.getByRole('navigation').textContent).toContain('Admin');
   });
 });

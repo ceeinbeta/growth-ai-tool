@@ -147,7 +147,7 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('ai search visi
     });
   });
 
-  it('enforces one running check, 1 per hour and 10 per week per product', async () => {
+  it('enforces one running check, 1 per hour and 10 per week per product', { timeout: 60000 }, async () => {
     await withTempUserProduct(async (_client, productId) => {
       const a = adminClient();
       const first = await a.rpc('reserve_sov_check', { pid: productId, p_runs_per_question: 1, p_engines: ['openai'], p_estimated_cost: 0.01 });

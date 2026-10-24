@@ -48,14 +48,20 @@ const sovDataQuery = (productId: string) =>
       if (checks.error) throw checks.error;
       if (questions.error) throw questions.error;
       const checkIds = (checks.data ?? []).map((c) => c.id);
-      const [runs, mentions, fixes] = checkIds.length
-        ? await Promise.all([
-            supabase.from("sov_runs").select("id, check_id, engine, question, status").in("check_id", checkIds),
-            supabase.from("sov_mentions").select("run_id, name, rank, kind").in("run_id",
-              (await supabase.from("sov_runs").select("id").in("check_id", checkIds)).data?.map((r) => r.id) ?? []),
-            supabase.from("sov_fixes").select("check_id, text, created_at").in("check_id", checkIds).order("created_at", { ascending: false }),
-          ])
-        : [{ data: [] }, { data: [] }, { data: [] }];
+      if (!checkIds.length) {
+        return { checks: [], questions: questions.data ?? [], schedule: schedule.data ?? null, runs: [], mentions: [], fixes: [] };
+      }
+      const runs = await supabase.from("sov_runs").select("id, check_id, engine, question, status").in("check_id", checkIds);
+      if (runs.error) throw runs.error;
+      const runIds = (runs.data ?? []).map((r) => r.id);
+      const [mentions, fixes] = await Promise.all([
+        runIds.length
+          ? supabase.from("sov_mentions").select("run_id, name, rank, kind").in("run_id", runIds)
+          : Promise.resolve({ data: [], error: null }),
+        supabase.from("sov_fixes").select("check_id, text, created_at").in("check_id", checkIds).order("created_at", { ascending: false }),
+      ]);
+      if (mentions.error) throw mentions.error;
+      if (fixes.error) throw fixes.error;
       return {
         checks: checks.data ?? [],
         questions: questions.data ?? [],

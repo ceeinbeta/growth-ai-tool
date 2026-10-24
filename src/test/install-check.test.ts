@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { allowedFetchUrl, classifyHtml, isPublicHost, unreachableReason, withinCheckLimit } from '../lib/install-check';
+import { allowedFetchUrl, classifyHtml, isAfter, isPublicHost, unreachableReason, withinCheckLimit } from '../lib/install-check';
 
 const key = `gl_${'a'.repeat(30)}`;
 describe('install check host validator', () => {
@@ -29,4 +29,37 @@ describe('install check classification', () => {
 
 describe('install check rate limit', () => {
   it('allows 10 checks per product per hour', () => { expect(withinCheckLimit(9)).toBe(true); expect(withinCheckLimit(10)).toBe(false); });
+});
+
+describe('install check script address', () => {
+  const pkey = 'gl_a4e86b91551424214511b8daca01cad7e9ef';
+  const app = 'growloop-mcads.lovable.app';
+  it('(a) normal script tag on the app host', () => {
+    expect(classifyHtml(`<script async src="https://${app}/t.js" data-key="${pkey}"></script>`, pkey, app)).toEqual({ status: 'found', ownDomain: true });
+  });
+  it('(b) Next.js inline payload with escaped quotes and slashes', () => {
+    const html = `<script>self.__next_f.push([1,"{\\"async\\":true,\\"data-key\\":\\"${pkey}\\",\\"src\\":\\"https:\\/\\/${app}\\/t.js\\"}"])</script>`;
+    expect(classifyHtml(html, pkey, app)).toEqual({ status: 'found', ownDomain: true });
+    const plain = `<script>self.__next_f.push([1,"{\\"data-key\\":\\"${pkey}\\",\\"src\\":\\"https://${app}/t.js\\"}"])</script>`;
+    expect(classifyHtml(plain, pkey, app)).toEqual({ status: 'found', ownDomain: true });
+  });
+  it('(c) key with a script address on a different host still warns', () => {
+    expect(classifyHtml(`<script src="https://other-tracker.com/t.js" data-key="${pkey}"></script>`, pkey, app)).toEqual({ status: 'found', ownDomain: false });
+    expect(classifyHtml(`{"data-key":"${pkey}","src":"https:\\/\\/other-tracker.com\\/t.js"}`, pkey, app)).toEqual({ status: 'found', ownDomain: false });
+  });
+  it('(d) preview host accepted from the published host; other domains warn', () => {
+    const preview = 'id-preview--40278135-0613-44a0-b9e0-00e627dada0d.lovable.app';
+    expect(classifyHtml(`<script src="https://${preview}/t.js" data-key="${pkey}"></script>`, pkey, app).status === 'found' && classifyHtml(`<script src="https://${preview}/t.js" data-key="${pkey}"></script>`, pkey, app)).toEqual({ status: 'found', ownDomain: true });
+    expect(classifyHtml(`<script src="https://lovable.app.evil.com/t.js" data-key="${pkey}"></script>`, pkey, app)).toEqual({ status: 'found', ownDomain: false });
+  });
+});
+
+describe('event time comparison', () => {
+  const click = Date.parse('2026-10-24T14:30:00.123Z');
+  it('compares database and browser formats by time', () => {
+    expect(isAfter('2026-10-24 14:30:00.5+00:00', click)).toBe(true);
+    expect(isAfter('2026-10-24T14:29:59.999999+00:00', click)).toBe(false);
+    expect(isAfter('2026-10-24T14:30:00.124Z', '2026-10-24T14:30:00.123Z')).toBe(true);
+    expect(isAfter(null, click)).toBe(false);
+  });
 });

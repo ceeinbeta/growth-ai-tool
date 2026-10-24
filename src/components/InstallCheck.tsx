@@ -21,7 +21,7 @@ export function InstallCheck({ productId }: { productId: string }) {
   const [error, setError] = useState('');
   const [result, setResult] = useState<Result | null>(null);
   const [listen, setListen] = useState<Listen>('idle');
-  const timer = useRef<ReturnType<typeof setInterval>>();
+  const timer = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   useEffect(() => () => clearInterval(timer.current), []);
 
   async function run() {

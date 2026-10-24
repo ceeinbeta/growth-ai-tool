@@ -17,7 +17,7 @@ export function isPublicHost(host: string): boolean {
 }
 
 /** Host part of a saved website such as "www.example.com/app". */
-export function websiteHost(website: string) { return website.toLowerCase().split(/[/?#]/)[0]; }
+export function websiteHost(website: string) { return website.toLowerCase().split(/[/?#]/)[0] ?? ''; }
 
 export function sameSite(candidate: string, website: string) {
   const base = websiteHost(website).replace(/^www\./, '');

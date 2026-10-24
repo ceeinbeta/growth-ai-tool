@@ -44,7 +44,7 @@ function AuthPage() {
     setBusy(true);
     const { error } = await supabase.auth.signInWithOtp({
       email: parsed.data,
-      options: { emailRedirectTo: window.location.origin },
+      options: { emailRedirectTo: `${window.location.origin}/overview` },
     });
     setBusy(false);
     if (error) return setError(signInLinkErrorMessage(error));

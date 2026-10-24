@@ -10,6 +10,7 @@ import {
   type InviteRow, type WaitlistRow,
 } from '@/lib/admin';
 import { Button } from '@/components/ui/button';
+import { BlockSkeleton } from '@/components/States';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';

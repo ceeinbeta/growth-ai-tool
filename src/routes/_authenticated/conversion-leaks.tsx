@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { Droplets } from 'lucide-react';
+import { BlockSkeleton, EmptyState, ErrorState } from '@/components/States';
 import { useActiveProduct } from '@/components/AppShell';
 import { FunnelCard } from '@/components/FunnelCard';
 import { PageAudit } from '@/components/PageAudit';
@@ -17,6 +19,6 @@ function ConversionLeaks() {
 }
 function ConversionProduct({ product }: { product: Product }) {
   const [days, setDays] = useState<7 | 30 | 90>(30);
-  const { data, error } = useQuery(conversionQuery(product.id, days));
+  const { data, error, refetch } = useQuery(conversionQuery(product.id, days));
   return <><p className="mt-2 text-sm text-muted-foreground">{product.name} · {product.url}</p>{error ? <div className="mt-6"><ErrorState text="We couldn't load the funnel." onRetry={() => void refetch()} /></div> : !data ? <BlockSkeleton rows={5} /> : <><FunnelCard productId={product.id} stage={product.stage} days={days} setDays={setDays} summary={data.summary} saved={data.steps.map(s => ({ label: s.label, kind: s.kind === 'page' ? 'page' : 'event', match: s.match }))} hasEvents={data.hasEvents} /><PageAudit key={product.id} productId={product.id} name={product.name} days={days} audit={data.audit} leaks={data.leaks} /></>}</>;
 }

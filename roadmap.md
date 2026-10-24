@@ -49,3 +49,8 @@
 - [x] Add editable profile and automatic post-create profiling.
 - [x] Fix logo and saved active choice; safe membership cleanup instead of the prohibited direct auth foreign key.
 - [x] Test limits, edit preservation, access, and the signed-in flow.
+# UX part A
+- [x] Overview redesign with next action, setup checklist, numbers, collapsed profile.
+- [x] Shared skeleton, empty and error states; Saved toasts.
+- [x] Product logos (auto fetch, upload, remove) with private storage and hourly limit.
+- [x] Edit and owner-only delete; tests run serially, no rows left; not published.

@@ -38,3 +38,6 @@
 - Install checks fetch only the saved website host over https with per-hop redirect re-validation (src/lib/install-check.ts) and a server-only reserve_install_check RPC for the hourly cap. Why: prevents the server fetch from reaching internal addresses or being abused.
 - Waitlist submissions use a bounded same-origin handler and service-only atomic save/reservation RPC; public roles have no storage access. Why: consent, duplicate privacy and platform limits cannot be bypassed by clients.
 - Public pages derive canonical URLs from the current request origin; contact and optional landing tracking are centralized in public-config. Why: preview and published hosts must self-reference without enabling tracking by default.
+- Product logos live in a private bucket under a product-id folder, readable only by workspace members through signed URLs; site icons are fetched with the install-check URL validator, identified by file bytes, and capped by a member-callable reserve_logo_fetch RPC. Why: no public files, no unsafe fetches, no svg.
+- Product deletion goes through an owner-checked SQL function relying on foreign-key cascades; edits use the shared product-form validator. Why: one validation rule and no orphaned data.
+- Overview setup progress is computed from real rows in src/lib/setup-checklist.ts with tests. Why: completion must never be invented.

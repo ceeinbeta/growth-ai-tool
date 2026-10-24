@@ -146,10 +146,12 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')("atomic shared 
       const a = await createProduct(), b = await createProduct();
       const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
       const baseline = await admin.from("profile_runs").select("id", { count: "exact", head: true }).gt("created_at", since);
+      const audits = await admin.from('audit_runs').select('id', { count: 'exact', head: true }).gt('created_at', since);
       expect(baseline.error).toBeNull();
+      expect(audits.error).toBeNull();
       if (baseline.count === null) throw new Error("Missing reservation count");
       expect(baseline.count).toBeLessThan(100);
-      let remaining = 99 - baseline.count;
+      let remaining = 99 - baseline.count - (audits.count ?? 0);
       while (remaining > 0) {
         const pid = await createProduct(), n = Math.min(5, remaining);
         expect((await admin.from("profile_runs").insert(Array.from({ length: n }, () => ({ product_id: pid })))).error).toBeNull();
@@ -160,7 +162,7 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')("atomic shared 
       const outcomes = await Promise.all([admin.rpc("reserve_profile_run", { pid: a }), admin.rpc("reserve_profile_run", { pid: b })]);
       expect(outcomes.filter(result => !result.error)).toHaveLength(1);
       expect(outcomes.filter(result => result.error?.message === "platform_profile_run_limit_reached")).toHaveLength(1);
-      expect((await admin.from("profile_runs").select("id", { count: "exact", head: true }).gt("created_at", since)).count).toBe(100);
+      expect((await admin.from("profile_runs").select("id", { count: "exact", head: true }).gt("created_at", since)).count).toBe(100 - (audits.count ?? 0));
       expect((await admin.rpc("reserve_profile_run", { pid: b })).error?.message).toBe("platform_profile_run_limit_reached");
     });
   }, 90000);

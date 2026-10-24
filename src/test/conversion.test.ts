@@ -1,0 +1,21 @@
+import { describe, expect, it } from 'vitest';
+import { benchmark, defaultSteps, stepsSchema, worstStep, type FunnelSummary } from '../lib/funnel';
+import { auditSchema, pageCopySchema, auditReservationError, emptyCopy } from '../lib/audit-schema';
+function summary(visitors: number, rate: number, is_default = true): FunnelSummary { return { total_visitors: visitors, is_default, steps: [{ position: 1, label: 'Visits', visitors, rate_from_previous: 1, rate_from_first: 1 }, { position: 2, label: 'Signups', visitors: visitors * rate, rate_from_previous: rate, rate_from_first: rate }] }; }
+describe('funnel rules', () => {
+  it('defaults to stage-specific conversion events', () => { expect(defaultSteps('live')[1]?.match).toBe('signup'); expect(defaultSteps('prelaunch')[1]?.match).toBe('joined_waitlist'); });
+  it('allows at most six custom steps', () => { expect(stepsSchema.safeParse(Array(6).fill(defaultSteps('live')[0])).success).toBe(true); expect(stepsSchema.safeParse(Array(7).fill(defaultSteps('live')[0])).success).toBe(false); });
+  it('validates exact and wildcard paths and event names', () => { for (const match of ['/pricing', '/pricing*', '*']) expect(stepsSchema.safeParse([{ label: 'Page', kind: 'page', match }]).success).toBe(true); for (const match of ['/a*b', '/a?q=1']) expect(stepsSchema.safeParse([{ label: 'Page', kind: 'page', match }]).success).toBe(false); expect(stepsSchema.safeParse([{ label: 'Event', kind: 'event', match: 'Bad Event' }]).success).toBe(false); });
+  it('does not flag below 100 visitors', () => { expect(worstStep(summary(99, 0), 'live')).toBeNull(); expect(worstStep(summary(100, 0), 'live')?.benchmark).toBe(true); });
+  it('uses exact supplied benchmark constants', () => { expect(benchmark('live')).toEqual({ rate: .03, low: .01, high: .05 }); expect(benchmark('prelaunch')).toEqual({ rate: .15, low: .08, high: .25 }); });
+  it('flags only rates below low typical boundary', () => { expect(worstStep(summary(100, .01), 'live')).toBeNull(); expect(worstStep(summary(100, .009), 'live')).not.toBeNull(); expect(worstStep(summary(100, .08), 'prelaunch')).toBeNull(); expect(worstStep(summary(100, .079), 'prelaunch')).not.toBeNull(); });
+  it('custom funnel picks largest loss without a benchmark', () => { const s = summary(100, .5, false); s.steps.push({ position: 3, label: 'Finish', visitors: 10, rate_from_previous: .2, rate_from_first: .1 }); expect(worstStep(s, 'live')).toEqual({ step: s.steps[2], benchmark: false }); });
+});
+const leak = { area: 'Headline', impact: 'high', issue: '“Get started” does not say what the product does.', fix: 'Name the task in the headline.', rewrite: '' };
+describe('audit validation', () => {
+  it('accepts three through five leaks, rejects two and six', () => { for (const n of [3, 4, 5]) expect(auditSchema.safeParse({ leaks: Array(n).fill(leak) }).success).toBe(true); for (const n of [2, 6]) expect(auditSchema.safeParse({ leaks: Array(n).fill(leak) }).success).toBe(false); });
+  it('rejects missing fields and invalid impacts', () => { expect(auditSchema.safeParse({ leaks: Array(3).fill({ ...leak, impact: 'critical' }) }).success).toBe(false); expect(auditSchema.safeParse({ leaks: Array(3).fill({ ...leak, issue: '' }) }).success).toBe(false); });
+  it('enforces a combined 2000 characters across all fields', () => { expect(pageCopySchema.safeParse({ ...emptyCopy, headline: 'x'.repeat(1000), notes: 'x'.repeat(1000) }).success).toBe(true); expect(pageCopySchema.safeParse({ ...emptyCopy, headline: 'x'.repeat(1000), notes: 'x'.repeat(1001) }).success).toBe(false); });
+  it('requires pasted copy and an optional path, not a full URL', () => { expect(pageCopySchema.safeParse(emptyCopy).success).toBe(false); expect(pageCopySchema.safeParse({ ...emptyCopy, headline: 'Hello', path: 'https://example.com' }).success).toBe(false); });
+  it('maps audit and shared reservation limits separately', () => { expect(auditReservationError('audit_run_limit_reached')).toBe("You have used today's 5 audits for this product. Try again tomorrow."); expect(auditReservationError('platform_profile_run_limit_reached')).toBe('AI checks are paused for today. Try again tomorrow.'); });
+});

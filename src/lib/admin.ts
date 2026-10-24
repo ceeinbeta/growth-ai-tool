@@ -21,6 +21,7 @@ export const adminSummarySchema = z.object({
   platform_ai_runs_per_day: z.number(),
   visibility_monthly_budget_usd: z.number(),
   visibility_spend_this_month: z.number(),
+  visibility_reading_calls_24h: z.number(),
 });
 export type AdminSummary = z.infer<typeof adminSummarySchema>;
 

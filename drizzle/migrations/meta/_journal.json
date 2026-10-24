@@ -71,6 +71,13 @@
       "when": 1792863439767,
       "tag": "0009_admin_invites_and_settings",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1792865032876,
+      "tag": "0010_ai_search_visibility",
+      "breakpoints": true
     }
   ]
 }

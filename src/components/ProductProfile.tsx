@@ -72,7 +72,8 @@ export function ProductProfile({ product }: { product: Product }) {
   async function saveSummary(field: SummaryField, value: string) {
     const parsed = summaryValidators[field].safeParse(value);
     if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "Check this value.");
-    await mutate(() => supabase.from("products").update({ [field]: parsed.data }).eq("id", product.id));
+    const patch: Partial<Record<SummaryField, string>> = { [field]: parsed.data };
+    await mutate(() => supabase.from("products").update(patch).eq("id", product.id));
   }
   async function add(kind: "competitor" | "question") {
     const value = (kind === "competitor" ? competitor : question).trim();

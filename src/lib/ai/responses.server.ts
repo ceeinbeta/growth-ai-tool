@@ -14,7 +14,7 @@ export function createResponsesCall(
   config: { baseURL: string; apiKey: string; model: string },
   messages: ModelMessage[],
   instructions?: string,
-  options?: { output?: ReturnType<typeof Output.object>; initialRunId?: string; onResponseError?: (status: number, message: string) => Promise<void> },
+  options?: { initialRunId: string | undefined; onResponseError?: (status: number, message: string) => Promise<void> },
 ) {
   const runIdFetch = createLovableAiGatewayRunIdFetch(options?.initialRunId ?? getLovableAiGatewayRunId(request));
   const provider = createOpenAI({
@@ -34,7 +34,7 @@ export function createResponsesCall(
   const result = streamText({
     model: provider.responses(config.model),
     // AI SDK 6 lacks `instructions`: rename this key to `system` there.
-    ...(instructions ? { instructions } : {}),
+    ...(instructions ? { system: instructions } : {}),
     messages,
     output: Output.object({ schema: profileShape }),
     maxRetries: 0,

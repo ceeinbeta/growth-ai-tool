@@ -38,7 +38,7 @@ describe("engine prices", () => {
     const engine = engineById("openai");
     if (!engine) throw new Error("Missing OpenAI engine");
     expect(estimateRunCost(engine)).toBeCloseTo(19542 * 0.1 / 1_000_000 + 1189 * 0.5 / 1_000_000 + 1.93 * 10 / 1000, 8);
-    expect(estimateRunCost(engine)).toBeCloseTo(0.0219, 4);
+    expect(estimateRunCost(engine)).toBeCloseTo(0.0218487, 8);
   });
 
   it("uses the measured Claude average including 1.5 searches", () => {

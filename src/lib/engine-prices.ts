@@ -27,6 +27,8 @@ export const ENGINES: EnginePrice[] = [
     outputPerMillion: 0.5,
     // Official pricing page: https://developers.openai.com/api/docs/pricing
     // Web search on reasoning models: $10 per 1,000 calls, plus search content tokens.
+    // UNVERIFIED: the $10/1,000 web search figure comes from third-party
+    // sources; it was not confirmed on the official OpenAI pricing page.
     searchPerThousand: 10,
     source: "https://developers.openai.com/api/docs/pricing",
   },
@@ -39,6 +41,8 @@ export const ENGINES: EnginePrice[] = [
     // Official pricing page: https://docs.perplexity.ai/docs/getting-started/pricing
     // Request fee is $5/$8/$12 per 1,000 requests by search context size
     // (low/medium/high). We use the conservative top end until verified.
+    // UNVERIFIED: the exact per-context-size fees were not confirmed on the
+    // official Perplexity pricing page; $12 is the conservative top end.
     searchPerThousand: 12,
     source: "https://docs.perplexity.ai/docs/getting-started/pricing",
   },
@@ -52,6 +56,8 @@ export const ENGINES: EnginePrice[] = [
     inputPerMillion: 0.1,
     outputPerMillion: 0.5,
     // Anthropic docs: web search is $10 per 1,000 searches.
+    // UNVERIFIED: the $10/1,000 search figure comes from Anthropic's own docs
+    // but was not re-confirmed on the official pricing page on the last check.
     searchPerThousand: 10,
     source: "https://platform.claude.com/docs/en/about-claude/pricing",
   },

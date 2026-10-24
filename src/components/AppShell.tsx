@@ -53,7 +53,6 @@ export function AppShell() {
     { label: "Conversion leaks", icon: Droplets },
     { label: "AI search visibility", icon: Search },
     { label: "Opportunities", icon: Lightbulb },
-    { label: "Integrations", icon: Plug },
   ];
 
   return (
@@ -115,6 +114,7 @@ export function AppShell() {
                 <span className="rounded-full bg-sunken px-2 py-0.5 text-[11px] font-semibold">Soon</span>
               </span>
             ))}
+            <Link to="/integrations" className="flex items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium text-foreground hover:bg-sunken" activeProps={{ className: "bg-selected" }}><Plug className="h-4 w-4" /> Integrations</Link>
           </nav>
 
           <div className="mt-auto border-t px-5 py-4">

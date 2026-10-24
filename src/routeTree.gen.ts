@@ -13,7 +13,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedOverviewRouteImport } from './routes/_authenticated/overview'
+import { Route as ApiCollectRouteImport } from './routes/api/collect'
 import { Route as AuthenticatedProductsNewRouteImport } from './routes/_authenticated/products.new'
+import { Route as ApiPublicCollectRouteImport } from './routes/api/public/collect'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,24 +36,38 @@ const AuthenticatedOverviewRoute = AuthenticatedOverviewRouteImport.update({
   path: '/overview',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiCollectRoute = ApiCollectRouteImport.update({
+  id: '/api/collect',
+  path: '/api/collect',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedProductsNewRoute =
   AuthenticatedProductsNewRouteImport.update({
     id: '/products/new',
     path: '/products/new',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicCollectRoute = ApiPublicCollectRouteImport.update({
+  id: '/api/public/collect',
+  path: '/api/public/collect',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/overview': typeof AuthenticatedOverviewRoute
+  '/api/collect': typeof ApiCollectRoute
   '/products/new': typeof AuthenticatedProductsNewRoute
+  '/api/public/collect': typeof ApiPublicCollectRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/overview': typeof AuthenticatedOverviewRoute
+  '/api/collect': typeof ApiCollectRoute
   '/products/new': typeof AuthenticatedProductsNewRoute
+  '/api/public/collect': typeof ApiPublicCollectRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -59,26 +75,44 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/overview': typeof AuthenticatedOverviewRoute
+  '/api/collect': typeof ApiCollectRoute
   '/_authenticated/products/new': typeof AuthenticatedProductsNewRoute
+  '/api/public/collect': typeof ApiPublicCollectRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/overview' | '/products/new'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/overview'
+    | '/api/collect'
+    | '/products/new'
+    | '/api/public/collect'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/overview' | '/products/new'
+  to:
+    | '/'
+    | '/auth'
+    | '/overview'
+    | '/api/collect'
+    | '/products/new'
+    | '/api/public/collect'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/overview'
+    | '/api/collect'
     | '/_authenticated/products/new'
+    | '/api/public/collect'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiCollectRoute: typeof ApiCollectRoute
+  ApiPublicCollectRoute: typeof ApiPublicCollectRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -111,12 +145,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOverviewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/collect': {
+      id: '/api/collect'
+      path: '/api/collect'
+      fullPath: '/api/collect'
+      preLoaderRoute: typeof ApiCollectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/products/new': {
       id: '/_authenticated/products/new'
       path: '/products/new'
       fullPath: '/products/new'
       preLoaderRoute: typeof AuthenticatedProductsNewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/public/collect': {
+      id: '/api/public/collect'
+      path: '/api/public/collect'
+      fullPath: '/api/public/collect'
+      preLoaderRoute: typeof ApiPublicCollectRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -138,6 +186,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiCollectRoute: ApiCollectRoute,
+  ApiPublicCollectRoute: ApiPublicCollectRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

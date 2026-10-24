@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { stageLabel, useActiveProduct } from "@/components/AppShell";
 import { ProductProfile } from "@/components/ProductProfile";
+import { TrackingOverview } from "@/components/TrackingOverview";
 
 export const Route = createFileRoute("/_authenticated/overview")({
   head: () => ({
@@ -54,10 +55,7 @@ function Overview() {
       </a>
       <p className="mt-4 whitespace-pre-line text-foreground">{active.description}</p>
 
-      <div className="mt-6 flex gap-3 rounded-lg border bg-sunken px-4 py-3 text-sm">
-        <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-signal" aria-hidden />
-        <p>No numbers show yet because no data is connected to this product.</p>
-      </div>
+      <TrackingOverview key={`tracking-${active.id}`} product={active} />
 
       <ProductProfile key={active.id} product={active} />
 

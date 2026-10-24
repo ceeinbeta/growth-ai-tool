@@ -15,7 +15,7 @@ async function fixture(run: (a: ReturnType<typeof client>, m: ReturnType<typeof 
   const a = client(true), m = client(false, minted.session.access_token), ws = randomUUID(), outsider = randomUUID();
   const ids: string[] = [];
   try {
-    expect((await a.from('workspaces').insert([{ id: ws, name: 'Temporary conversion verification', max_products: 100 }, { id: outsider, name: 'Temporary isolated verification' }])).error).toBeNull();
+    expect((await a.from('workspaces').insert([{ id: ws, name: 'Temporary conversion verification', max_products: 100 }, { id: outsider, name: 'Temporary isolated verification', max_products: 100 }])).error).toBeNull();
     expect((await a.from('members').insert({ workspace_id: ws, user_id: minted.session.user.id, role: 'member' })).error).toBeNull();
     const create = async (workspace = ws) => { const id = randomUUID(); ids.push(id); expect((await a.from('products').insert({ id, workspace_id: workspace, name: 'Temporary conversion fixture', description: 'Temporary test copy', url: 'example.com', stage: 'live' })).error).toBeNull(); return id; };
     await run(a, m, await create(), await create(outsider), () => create());
@@ -57,7 +57,7 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('conversion dat
     const six = Array.from({ length: 6 }, (_, i) => ({ label: `Step ${i}`, kind: 'page', match: `/${i}` }));
     expect((await m.rpc('replace_funnel_steps', { pid, steps: six })).error).toBeNull();
     expect((await m.from('funnel_steps').insert({ product_id: pid, position: 7, label: 'Seventh', kind: 'page', match: '/7' })).error).not.toBeNull();
-    expect((await m.rpc('replace_funnel_steps', { pid, steps: [...six, six[0]] })).error?.message).toBe('funnel_step_limit_reached');
+    expect((await m.rpc('replace_funnel_steps', { pid, steps: [...six, { label: 'Seventh', kind: 'page', match: '/7' }] })).error?.message).toBe('funnel_step_limit_reached');
     expect((await m.from('funnel_steps').select('id').eq('product_id', pid)).data).toHaveLength(6);
     expect((await m.rpc('replace_funnel_steps', { pid, steps: six.reverse() })).error).toBeNull();
     expect((await m.from('funnel_steps').select('label').eq('product_id', pid).order('position')).data?.[0]?.label).toBe('Step 5');
@@ -72,7 +72,7 @@ describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('conversion dat
     for (const table of ['audits', 'leaks', 'funnel_steps'] as const) expect((await m.from(table).select('*').eq('product_id', other)).data).toEqual([]);
     expect((await m.rpc('replace_funnel_steps', { pid: other, steps })).error).not.toBeNull();
     expect((await m.from('audits').insert({ product_id: pid, page_copy: {}, funnel_context: {}, model: 'test' })).error?.code).toBe('42501');
-    expect((await m.from('leaks').insert({ product_id: pid, audit_id: String(own.data), ...findings[0] })).error?.code).toBe('42501');
+    expect((await m.from('leaks').insert({ product_id: pid, audit_id: String(own.data), area: 'Headline', impact: 'high', issue: 'Unclear headline.', fix: 'Name the task.', rewrite: '' })).error?.code).toBe('42501');
     const leak = (await m.from('leaks').select('*').eq('audit_id', String(own.data))).data?.[0]; if (!leak) throw new Error('Missing test leak');
     expect((await m.from('leaks').update({ status: 'doing' }).eq('id', leak.id)).error).toBeNull();
     expect((await m.from('leaks').select('status').eq('id', leak.id)).data?.[0]?.status).toBe('doing');

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { trackingQuery } from '@/lib/tracking-data';
 import { eventSource } from '@/lib/tracking';
 import type { Product } from '@/lib/workspace';
+import { InstallCheck } from '@/components/InstallCheck';
 
 function relative(date: string, now: number) {
   const minutes = Math.max(0, Math.floor((now - new Date(date).getTime()) / 60000));
@@ -26,12 +27,13 @@ export function WebsiteTracking({ product }: { product: Product }) {
   const last = data?.recent[0];
   const calls = product.stage === 'prelaunch' ? ['joined_waitlist', 'signup'] : ['signup', 'joined_waitlist'];
   return <section aria-label="Website tracking" className="mt-6 rounded-lg border bg-card p-5 sm:p-6">
-    <h2 className="text-lg">Website tracking</h2>
+    <div className="flex flex-wrap items-center gap-2"><h2 className="text-lg">Website tracking</h2>{data && (data.recent.length ? <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-semibold text-primary">Working</span> : <span className="rounded-full bg-sunken px-2 py-0.5 text-xs font-semibold text-muted-foreground">Not verified yet</span>)}</div>
     <p className="mt-3 text-sm text-muted-foreground">Paste this in the &lt;head&gt; of your website. It records visits and where they came from. It stores no personal data and does nothing if a visitor has Do Not Track on.</p>
     <div className="mt-4 flex items-start gap-3 rounded-sm border bg-sunken p-4"><code className="min-w-0 flex-1 break-all text-sm">{origin ? install : 'Loading install code…'}</code><Button variant="ghost" size="icon" disabled={!origin} aria-label={copied ? 'Copied' : 'Copy install snippet'} title={copied ? 'Copied' : 'Copy install snippet'} onClick={copy}>{copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}</Button></div>
     {origin.includes('id-preview--') && <p className="mt-2 text-sm text-muted-foreground">This address is private until you publish Growloop. Your website cannot load the snippet until then.</p>}
     {copyError && <p role="alert" className="mt-2 text-sm text-destructive">{copyError}</p>}
     <p role="status" className="mt-4 flex items-center gap-2 text-sm"><Radio className={`h-4 w-4 ${last ? 'text-primary' : 'text-muted-foreground'}`} />{error ? "Couldn't load tracking activity. Please try again." : !data ? 'Checking for visits…' : last ? `Receiving data. Last event ${relative(last.created_at, now)}.` : 'Waiting for the first visit'}</p>
+    <InstallCheck productId={product.id} />
     <div className="mt-6 space-y-2 text-sm">{calls.map(name => <p key={name}>Call <code className="rounded-sm bg-sunken px-1 py-0.5">growloop.track("{name}")</code> when someone {name === 'signup' ? 'signs up' : 'joins the waitlist'}.</p>)}</div>
     <div className="mt-7 border-t pt-5"><h3 className="font-semibold">Recent activity</h3><p className="mt-1 text-sm text-muted-foreground">Real events from your website</p>
       {data?.recent.length ? <div className="mt-4 overflow-x-auto"><table className="w-full text-left text-sm"><thead><tr className="border-b text-xs text-muted-foreground"><th className="py-2 pr-4 font-medium">Time</th><th className="py-2 pr-4 font-medium">Event</th><th className="py-2 pr-4 font-medium">Page path</th><th className="py-2 font-medium">Source</th></tr></thead><tbody>{data.recent.map(e => <tr key={e.id} className="border-b last:border-0"><td className="whitespace-nowrap py-3 pr-4"><time dateTime={e.created_at} title={new Date(e.created_at).toLocaleString()}>{new Date(e.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</time></td><td className="py-3 pr-4">{e.name}</td><td className="max-w-48 break-all py-3 pr-4">{e.path}</td><td className="max-w-40 break-words py-3">{eventSource(e)}</td></tr>)}</tbody></table></div> : <p className="mt-4 text-sm text-muted-foreground">No events recorded yet.</p>}

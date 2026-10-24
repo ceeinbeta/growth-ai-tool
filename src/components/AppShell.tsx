@@ -52,7 +52,6 @@ export function AppShell() {
   }
 
   const soon = [
-    { label: "AI search visibility", icon: Search },
     { label: "Opportunities", icon: Lightbulb },
   ];
 

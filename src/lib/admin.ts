@@ -19,6 +19,8 @@ export const adminSummarySchema = z.object({
   beta_seat_limit: z.number(),
   ai_runs_last_24h: z.number(),
   platform_ai_runs_per_day: z.number(),
+  visibility_monthly_budget_usd: z.number(),
+  visibility_spend_this_month: z.number(),
 });
 export type AdminSummary = z.infer<typeof adminSummarySchema>;
 

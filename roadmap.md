@@ -1,3 +1,8 @@
+# Slice 3
+- [ ] Add privacy-respecting snippet, public collection, real events and atomic limits.
+- [ ] Add Integrations and measured seven-day Overview totals.
+- [ ] Harden grants and test collection, snippet size, and existing behavior.
+
 # Slice 2
 - [x] Add secure profiling, validated AI output, usage logging, and database limits.
 - [x] Add editable profile and automatic post-create profiling.

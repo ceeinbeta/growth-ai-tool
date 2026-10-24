@@ -24,3 +24,7 @@ export function engineFailedAllRuns(engine: EngineId, runs: { engine: string; st
   const matching = runs.filter((run) => run.engine === engine);
   return matching.length > 0 && matching.every((run) => run.status === "failed");
 }
+
+export function defaultEngineChoice(connected: EngineId[], saved: EngineId[] | null, failed: EngineId[]): EngineId[] {
+  return connected.filter((id) => (saved === null || saved.includes(id)) && !failed.includes(id));
+}

@@ -53,10 +53,9 @@ async function callOpenAI(key: string, model: string, question: string): Promise
   });
   if (!res.ok) throw new EngineError(res.status, `HTTP ${res.status}`);
   const data = (await res.json()) as {
-    output_text?: string;
     output?: {
       type?: string;
-      content?: { type?: string; annotations?: { type?: string; url?: string }[] }[];
+      content?: { type?: string; text?: string; annotations?: { type?: string; url?: string }[] }[];
     }[];
     usage?: { input_tokens?: number; output_tokens?: number };
   };
@@ -69,7 +68,12 @@ async function callOpenAI(key: string, model: string, question: string): Promise
     .filter((a) => a.type === "url_citation")
     .map((a) => a.url);
   return {
-    text: data.output_text ?? "",
+    text: (data.output ?? [])
+      .filter((item) => item.type === "message")
+      .flatMap((item) => item.content ?? [])
+      .filter((part) => part.type === "output_text")
+      .map((part) => part.text ?? "")
+      .join("\n"),
     citedHosts: hostList(citationUrls),
     inputTokens: data.usage?.input_tokens ?? null,
     outputTokens: data.usage?.output_tokens ?? null,

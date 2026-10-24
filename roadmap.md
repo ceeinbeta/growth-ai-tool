@@ -1,3 +1,9 @@
+# Invite-only signup
+- [ ] Restrict new accounts with a private email allow-list; preserve existing sign-in and workspace creation.
+- [ ] Add atomic platform-wide profiling limit and friendly error messages.
+- [ ] Run all tests including database signup, access, and rolling-limit tests; remove temporary data.
+- [ ] Verify signed-in views and explain adding invitations; do not publish.
+
 # Slice 3 tracking fixes
 - [x] Enforce Origin precedence and cover hostname cases with unit tests.
 - [x] Revoke authenticated writes to tracking tables and verify signed-in reads.

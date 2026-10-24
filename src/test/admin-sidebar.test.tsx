@@ -33,6 +33,7 @@ describe('sidebar Admin link', () => {
   it('is shown for the founder', () => {
     adminFlag = true;
     render(<AppShell />);
+    console.log('NAV HTML:', document.querySelector('nav')?.innerHTML ?? 'NO NAV');
     expect(screen.getByText('Admin')).toBeTruthy();
   });
 });

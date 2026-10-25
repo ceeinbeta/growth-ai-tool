@@ -174,7 +174,9 @@
   h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: 0; }
   a:not([class*="bg-"]):not([aria-label]) { text-underline-offset: 4px; }
   main p a, main li p a { text-decoration: underline; }
-  label, legend, thead, dt, time, .public-eyebrow { font-family: var(--font-label); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .12em; }
+  label, legend { font-family: var(--font-sans); font-size: 14px; font-weight: 500; line-height: 1.4; text-transform: none; letter-spacing: 0; color: var(--foreground); }
+  thead, thead th { font-family: var(--font-sans); font-size: 12px; font-weight: 600; text-transform: none; letter-spacing: 0; color: var(--muted-foreground); }
+  dt, time { font: inherit; text-transform: none; letter-spacing: normal; }
 }
 :where(a,button,input,textarea,select,[tabindex],[role="button"],[role="checkbox"],[role="radio"]):focus-visible {
   outline: 2px solid var(--ring) !important;
@@ -230,7 +232,7 @@ label:has(input[type="radio"]:checked), [role="radio"][data-state="checked"] { b
 
 /* Keyboard outlines are Ink with a two-pixel Paper separator. */
 .ink-field :where(a,button,input,textarea,select,[tabindex]):focus-visible { outline-color: var(--ring) !important; }
-[class*="uppercase"][class*="text-xs"], [class*="uppercase"][class*="text-sm"], time, [class*="tabular-nums"][class*="text-xs"] { font-family: var(--font-label); font-weight: 600; }
+[class*="uppercase"][class*="text-xs"], [class*="uppercase"][class*="text-sm"], [class*="tabular-nums"][class*="text-xs"] { font-family: var(--font-label); font-weight: 600; }
 .public-site article:not([class*="rounded"]) { border-radius: 0; }
 
 button[class*="max-sm:"] { min-width: 0; }
@@ -256,7 +258,7 @@ button[class*="max-sm:"] { min-width: 0; }
 /* Shared d15 typography and logo roles; scale and action geometry stay unchanged. */
 .font-bold, .font-extrabold, .font-black { font-weight: 600; }
 .italic { font-style: normal; }
-.brand-label, .public-eyebrow, .nav-group-label { font-family: var(--font-label); font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+.eyebrow, .brand-label, .public-eyebrow, .nav-group-label { font-family: var(--font-label); font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
 .logo { display: inline-flex; align-items: center; gap: .3em; font-family: var(--font-sans); font-weight: 500; line-height: 1.2; color: var(--ink); }
 .logo-wordmark { letter-spacing: -.065em; }
 .logo-mark { width: .82em; height: .82em; flex: none; }

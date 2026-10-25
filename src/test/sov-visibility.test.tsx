@@ -13,6 +13,21 @@ vi.mock("@/integrations/supabase/client", () => ({ supabase: {} }));
 import "@/routes/_authenticated/ai-search-visibility";
 
 describe("visibility dialog interactions", () => {
+  it("lists only usable proper engine names and explains failed engines in their tabs", () => {
+    state.checks = [{ id: 'last', status: 'done', engines: ['openai', 'perplexity', 'claude'], runs_per_question: 1, started_at: '2026-10-24T20:00:00Z' }];
+    state.runs = [
+      { id: 'a', check_id: 'last', engine: 'openai', question: 'q', status: 'failed', error: 'empty answer — The engine returned no answer text.' },
+      { id: 'b', check_id: 'last', engine: 'perplexity', question: 'q', status: 'failed', error: 'HTTP 403 — raw-secret-payload' },
+      { id: 'c', check_id: 'last', engine: 'claude', question: 'q', status: 'done' },
+    ];
+    render(<state.component />);
+    expect(screen.getByText(/from usable answers by asking Claude your buyer questions/)).toBeInTheDocument();
+    expect(screen.getByText('OpenAI: no usable answers')).toBeInTheDocument();
+    expect(screen.getByText('Perplexity: key rejected')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /^Perplexity$/ }));
+    expect(screen.getAllByText('Perplexity: key rejected')).toHaveLength(2);
+    expect(screen.queryByText(/raw-secret-payload/)).toBeNull();
+  });
   beforeEach(() => { localStorage.clear(); state.runs = []; state.checks = null; state.test.mockReset(); state.start.mockReset(); });
   it("shows test results only after a click and keeps failed engines selectable", async () => {
     state.test.mockResolvedValue({ ok: false, error: "The key was rejected." });

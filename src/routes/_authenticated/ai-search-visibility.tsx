@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { engineChoiceKey, readEngineChoice, engineFailedAllRuns, defaultEngineChoice } from "@/lib/sov-engine-choice";
 import { estimateCheckCost, usd, ENGINES, type EngineId } from "@/lib/engine-prices";
-import { shareOfVoice, questionStats, youPercent, usableSovRuns, type SovRunRow, type SovMentionRow } from "@/lib/sov";
+import { shareOfVoice, questionStats, youPercent, usableSovRuns, unusableEngineReason, type SovRunRow, type SovMentionRow } from "@/lib/sov";
 import { getSovEngineStatus, testEngineConnection, startSovCheck, advanceSovCheckFn, setSovSchedule } from "@/lib/sov.functions";
 import { relativeTime } from "@/lib/admin";
 
@@ -53,7 +53,7 @@ const sovDataQuery = (productId: string) =>
       if (!checkIds.length) {
         return { checks: [], questions: questions.data ?? [], schedule: schedule.data ?? null, runs: [], mentions: [], fixes: [] };
       }
-      const runs = await supabase.from("sov_runs").select("id, check_id, engine, question, status, answer_excerpt").in("check_id", checkIds);
+      const runs = await supabase.from("sov_runs").select("id, check_id, engine, question, status, answer_excerpt, error").in("check_id", checkIds);
       if (runs.error) throw runs.error;
       const runIds = (runs.data ?? []).map((r) => r.id);
       const [mentions, fixes] = await Promise.all([
@@ -178,6 +178,8 @@ function VisibilityPage({ productId, productName }: { productId: string; product
   const youShare = share.find((s) => s.kind === "you");
   const others = share.filter((s) => s.kind === "other").slice(0, 5);
   const latestFixes = data?.fixes?.find((f) => f.check_id === latestDone?.id);
+  const usableEngines = ENGINES.filter(e => latestRuns.some(r => r.engine === e.id && r.status === 'done'));
+  const unusableEngines = ENGINES.filter(e => latestDone?.engines.includes(e.id) && !usableEngines.some(usable => usable.id === e.id));
 
   const trend = useMemo(() => {
     const done = checks.filter((c) => c.status === "done" || c.status === "stopped");
@@ -359,15 +361,16 @@ function VisibilityPage({ productId, productName }: { productId: string; product
               </div>
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              <span className="status-chip status-measured">Measured</span> by asking {(latestDone.engines ?? []).join(", ")} your buyer questions {latestDone.runs_per_question} times each on{" "}
-              {new Date(latestDone.started_at).toLocaleDateString()}. AI answers vary, so treat this as a sample, not a
+              <span className="status-chip status-measured">Measured</span> {usableEngines.length ? `from usable answers by asking ${usableEngines.map(e => e.label).join(', ')} your buyer questions ${latestDone.runs_per_question} times each` : 'No engine returned usable answers'} on{" "}
+              {new Date(latestDone.started_at).toLocaleDateString()}. AI answers vary, so treat this as a sample of usable answers, not a
               ranking.
             </p>
+            {unusableEngines.map(engine => <p key={engine.id} className="mt-2 text-sm">{engine.label}: {unusableEngineReason(latestRuns.filter(r => r.engine === engine.id))}</p>)}
             <p className="mt-1 text-xs text-muted-foreground">
               {latestRuns.filter((r) => r.status === "done").length} of {latestRuns.length} runs succeeded.
             </p>
             {engineFilter !== "all" && !latestRuns.some((r) => r.engine === engineFilter && r.status === "done") ? (
-              <p className="mt-4 text-sm">No usable answers in this check</p>
+              <div className="mt-4 text-sm"><p>No usable answers in this check</p><p className="mt-1">{ENGINES.find(e => e.id === engineFilter)?.label}: {unusableEngineReason(latestRuns.filter(r => r.engine === engineFilter))}</p></div>
             ) : latestRuns.some((r) => r.status === "done" && (engineFilter === "all" || r.engine === engineFilter)) && !youShare && (
               <p className="mt-4 text-sm">
                 {productName} was not recommended in these usable answers. That is common for a new product.

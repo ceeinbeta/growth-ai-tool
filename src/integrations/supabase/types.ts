@@ -106,6 +106,32 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_fetches: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_fetches_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_runs: {
         Row: {
           created_at: string
@@ -134,7 +160,9 @@ export type Database = {
       }
       audits: {
         Row: {
+          audited_url: string | null
           created_at: string
+          fetched_at: string | null
           funnel_context: Json
           id: string
           model: string
@@ -142,7 +170,9 @@ export type Database = {
           product_id: string
         }
         Insert: {
+          audited_url?: string | null
           created_at?: string
+          fetched_at?: string | null
           funnel_context: Json
           id?: string
           model: string
@@ -150,7 +180,9 @@ export type Database = {
           product_id: string
         }
         Update: {
+          audited_url?: string | null
           created_at?: string
+          fetched_at?: string | null
           funnel_context?: Json
           id?: string
           model?: string
@@ -961,6 +993,7 @@ export type Database = {
         Args: { feature: string; pid: string }
         Returns: string
       }
+      reserve_audit_fetch: { Args: { pid: string }; Returns: undefined }
       reserve_install_check: { Args: { pid: string }; Returns: undefined }
       reserve_logo_fetch: { Args: { pid: string }; Returns: undefined }
       reserve_profile_run: { Args: { pid: string }; Returns: string }
@@ -969,6 +1002,18 @@ export type Database = {
           p_engines: string[]
           p_estimated_cost: number
           p_runs_per_question: number
+          pid: string
+        }
+        Returns: string
+      }
+      save_fetched_page_audit: {
+        Args: {
+          copy: Json
+          fetch_time: string
+          findings: Json
+          funnel: Json
+          model_name: string
+          page_url: string
           pid: string
         }
         Returns: string

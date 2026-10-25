@@ -29,11 +29,11 @@ const activeClass = "bg-selected text-foreground selected-state";
 
 export function SidebarNav({ isAdmin, onNavigate }: { isAdmin: boolean; onNavigate?: () => void }) {
   return (
-    <nav className="sidebar-nav flex flex-col px-3 py-5" aria-label="Main">
+    <nav className="sidebar-nav flex flex-col px-3 py-4" aria-label="Main">
       {visibleNav(isAdmin).map((group) => (
         <div key={group.label} className="nav-group">
           <p className="nav-group-label">{group.label}</p>
-          <ul className="flex flex-col gap-0.5">
+          <ul className="flex flex-col">
             {group.items.map((item) => (
               <li key={item.label}>
                 {item.soon ? (
@@ -88,7 +88,7 @@ export function AppShell() {
   }
 
   const switcher = (
-    <div className="px-3 pt-5">
+    <div className="px-3 pt-3">
       <DropdownMenu>
         <DropdownMenuTrigger className="product-switcher flex w-full items-center gap-3 rounded-lg border bg-card px-3 text-left hover:bg-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
           {active ? <ProductLogo name={active.name} path={active.logo_path} /> : <span className="flex h-8 w-8 items-center justify-center rounded-sm bg-sunken text-muted-foreground"><Plus className="h-4 w-4" /></span>}
@@ -127,8 +127,8 @@ export function AppShell() {
   );
 
   const account = (
-    <div className="sidebar-account mt-auto border-t px-5 py-3">
-      <p className="sidebar-account truncate text-muted-foreground" title={user.email}>{user.email}</p>
+    <div className="sidebar-account mt-auto flex items-center gap-2 border-t px-5 py-2">
+      <p className="sidebar-account min-w-0 flex-1 truncate text-muted-foreground" title={user.email}>{user.email}</p>
       <Button variant="link" onClick={signOut}>
         <LogOut className="h-4 w-4" /> Sign out
       </Button>
@@ -155,7 +155,7 @@ export function AppShell() {
         </header>
 
         <aside className="hidden shrink-0 flex-col overflow-y-auto border-r bg-sidebar md:sticky md:top-0 md:flex md:h-screen md:w-[var(--sidebar-w)]">
-          <div className="px-5 pt-5">
+          <div className="px-5 pt-4">
             <Link to="/overview" className="sidebar-logo"><Logo /></Link>
           </div>
           {switcher}

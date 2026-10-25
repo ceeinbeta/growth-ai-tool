@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Wrench } from 'lucide-react';
 import { BlockSkeleton, EmptyState, ErrorState } from '@/components/States';
 import { useActiveProduct } from '@/components/AppShell';
+import { PageShell, PageGrid } from '@/components/PageLayout';
 import { PageHeader } from '@/components/PageHeader';
 import { ActionRow } from '@/components/ActionRow';
 import { Button } from '@/components/ui/button';
@@ -41,34 +42,35 @@ function TechnicalAudit() {
 
   const action = active ? <Button disabled={busy} onClick={() => void start(active.id)}>{busy ? 'Running audit...' : 'Run technical audit'}</Button> : undefined;
   return (
-    <div className="mx-auto max-w-3xl">
+    <PageShell>
       <PageHeader title="Technical audit" purpose="Check whether Google and AI assistants can find, read and understand your site. These checks remove common blockers; they do not by themselves improve rankings or recommendations." action={action} />
       {error && <p role="alert" className="mt-4 rounded-sm bg-danger-soft p-3 text-sm text-destructive">{error}</p>}
       {active ? <TechnicalProduct key={active.id} product={active} busy={busy} onRerun={() => void start(active.id)} /> : <div className="mt-6">{data ? <EmptyState icon={Wrench} text="Add a product to check its site." action="Add product" to="/products/new" /> : <BlockSkeleton />}</div>}
-    </div>
+    </PageShell>
   );
 }
 
 function TechnicalProduct({ product, busy, onRerun }: { product: Product; busy: boolean; onRerun: () => void }) {
   const { data, error, refetch } = useQuery(technicalAuditQuery(product.id));
   if (error) return <div className="mt-6"><ErrorState text="We couldn't load the technical audit." onRetry={() => void refetch()} /></div>;
-  if (!data) return <BlockSkeleton rows={5} />;
+  if (!data) return <PageGrid main={<BlockSkeleton rows={5} />} context={<BlockSkeleton rows={3} />} />;
   if (!data.latest) return <div className="mt-6"><EmptyState icon={Wrench} text={`No technical audit yet for ${product.name}. Run one to check ${product.url}.`} action="Run technical audit" onClick={onRerun} /></div>;
 
   const attention = data.findings.filter(f => f.status === 'attention');
   const first = attention[0];
   return (
-    <>
-      <p className="mt-2 break-words text-sm text-muted-foreground">Audited <a href={data.latest.fetched_url} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center text-foreground underline sm:min-h-0">{data.latest.fetched_url}</a> on {new Date(data.latest.fetched_at).toLocaleString()}</p>
-      <section aria-labelledby="tech-summary" className="mt-6 rounded-lg border border-foreground bg-card p-5">
+    <PageGrid main={<>
+      <p className="break-words text-sm text-muted-foreground">Audited <a href={data.latest.fetched_url} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center text-foreground underline sm:min-h-0">{data.latest.fetched_url}</a> on {new Date(data.latest.fetched_at).toLocaleString()}</p>
+      <section aria-labelledby="tech-summary" className="rounded-lg border border-foreground bg-card p-5">
         <h2 id="tech-summary" className="text-lg">Summary</h2>
         <p className="mt-2 text-sm"><SourceChip text="Measured from your site's own pages" />{attention.length === 0 ? 'All checks passed.' : `${attention.length} check${attention.length === 1 ? '' : 's'} need${attention.length === 1 ? 's' : ''} attention.`}{data.latest.unknown_count > 0 ? ` ${data.latest.unknown_count} could not be checked.` : ''}</p>
         {first && <p className="mt-3 text-sm"><strong>Most important fix:</strong> {first.title} — {first.fix}</p>}
       </section>
-      <section aria-label="Checks" className="mt-6 space-y-4">
+      <section aria-label="Checks" className="card-grid">
         {data.findings.map(f => <FindingCard key={f.id} finding={f} />)}
       </section>
-      <section aria-labelledby="tech-history" className="mt-6">
+    </>} context={
+      <section aria-labelledby="tech-history">
         <h2 id="tech-history" className="text-lg">Recent runs</h2>
         <ul className="mt-3 divide-y rounded-lg border bg-card">
           {data.runs.map(r => (
@@ -81,14 +83,14 @@ function TechnicalProduct({ product, busy, onRerun }: { product: Product; busy: 
         </ul>
         <ActionRow className="mt-4"><Button variant="outline" disabled={busy} onClick={onRerun}>{busy ? 'Running audit...' : 'Re-run after your fixes'}</Button></ActionRow>
       </section>
-    </>
+    } />
   );
 }
 
 function FindingCard({ finding: f }: { finding: Tables<'technical_audit_findings'> }) {
   const status = f.status as TechnicalStatus;
   return (
-    <article className="rounded-lg border bg-card p-5">
+    <article className="rounded-lg border bg-card p-4">
       <div className="flex flex-wrap items-center gap-3">
         <span className={chipClass[status] ?? chipClass.unknown}>{statusLabel[status] ?? statusLabel.unknown}</span>
         <h3 className="min-w-0 flex-1 text-base">{f.title}</h3>

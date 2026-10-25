@@ -166,7 +166,7 @@ export function AppShell() {
           {account}
         </aside>
 
-        <main className="min-w-0 flex-1 px-5 py-8 md:px-10 md:py-10">
+        <main className="min-w-0 flex-1 px-4 py-4 md:px-6 md:py-6">
           <Outlet />
         </main>
       </div>

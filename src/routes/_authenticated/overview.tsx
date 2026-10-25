@@ -1,4 +1,5 @@
 import { ActionRow } from '@/components/ActionRow';
+import { PageShell } from '@/components/PageLayout';
 import { createFileRoute, Link, useLocation } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -44,7 +45,7 @@ function Overview() {
   const used = data.products.length;
   if (!active) {
     return (
-      <div className="mx-auto max-w-lg">
+      <div className="mx-auto w-full max-w-lg">
         <h1 className="sr-only">Overview</h1>
         <EmptyState icon={Package} text="Add your first product. Growloop will show its setup steps and numbers here." action="Add product" to="/products/new" />
         <p className="mt-6 text-center text-xs text-muted-foreground">{used} of {max} products used on the Standard plan</p>
@@ -86,7 +87,7 @@ function ProductOverview({ product, footer, onDeleted }: { product: Product; foo
   const setupComplete = !!setupDone && setupDone.done === setupDone.total;
 
   return (
-    <div className="mx-auto flex max-w-[1200px] flex-col gap-4">
+    <PageShell>
       <section data-overview-section aria-label="Product and next step" className="flex flex-col gap-3">
         <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-w-0 items-center gap-3">
@@ -134,7 +135,7 @@ function ProductOverview({ product, footer, onDeleted }: { product: Product; foo
           ? <div data-profile-expanded className="flex flex-col gap-2"><ProductProfile product={product} /><ActionRow><Button variant="link" onClick={() => setProfileOpen(false)} aria-expanded="true" aria-controls="profile">Collapse profile</Button></ActionRow></div>
           : <ProfileSummary product={product} onEdit={() => setProfileOpen(true)} />}
       </section>
-    </div>
+    </PageShell>
   );
 }
 

@@ -44,7 +44,7 @@ export function SidebarNav({ isAdmin, onNavigate }: { isAdmin: boolean; onNaviga
                 ) : (
                   <Link
                     to={item.to}
-                    hash={item.hash}
+                    {...(item.hash ? { hash: item.hash } : {})}
                     onClick={onNavigate}
                     className={itemClass}
                     activeOptions={item.hash ? { includeHash: true } : { exact: true, includeHash: false }}

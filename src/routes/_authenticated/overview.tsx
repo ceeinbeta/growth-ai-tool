@@ -121,7 +121,7 @@ function NextStepCard({ facts, onProfile }: { facts: NextStepFacts; onProfile: (
   const loop = loopSteps(facts);
   const button = next.key === "profile"
     ? <Button onClick={() => { onProfile(); requestAnimationFrame(() => document.getElementById("profile")?.scrollIntoView({ behavior: "smooth" })); }}>{next.action}<ArrowRight /></Button>
-    : <Button asChild><Link to={next.to.split("#")[0]!} hash={next.to.split("#")[1]}>{next.action}<ArrowRight /></Link></Button>;
+    : <Button asChild><Link to={next.to.split("#")[0]!} {...(next.to.includes("#") ? { hash: next.to.split("#")[1]! } : {})}>{next.action}<ArrowRight /></Link></Button>;
   return (
     <section aria-labelledby="next-step-heading" className="mt-8 rounded-lg border border-foreground bg-card p-6">
       <p className="nav-group-label text-foreground">Next best step</p>

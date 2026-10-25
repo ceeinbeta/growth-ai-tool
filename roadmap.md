@@ -1,3 +1,8 @@
+# Public redesign B2
+- [ ] Rebuild home, add Features, update shared public navigation/footer.
+- [ ] Add public sitemap and preserve robots exclusions.
+- [ ] Run mocked serialized tests and verify desktop/mobile without database writes; do not publish.
+
 # Slice 7
 - [x] Fix raw OpenAI text parsing and fail empty answers while preserving spend.
 - [x] Show usable per-engine counts, calibrate estimates, and untick previously failed engines by default.

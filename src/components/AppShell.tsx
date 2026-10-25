@@ -138,14 +138,14 @@ export function AppShell() {
     <Ctx.Provider value={{ data, active, setActive }}>
       <div className="flex min-h-screen w-full flex-col md:flex-row">
         <header className="sticky top-0 z-30 flex items-center justify-between border-b bg-sidebar px-4 py-3 md:hidden">
-          <Link to="/overview" className="flex min-h-11 items-center"><Logo /></Link>
+          <Link to="/overview" aria-label="Growloop overview" className="flex min-h-11 items-center"><Logo variant="mark-only" /></Link>
           <Sheet open={drawer} onOpenChange={setDrawer}>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" aria-label="Open menu"><Menu /></Button>
             </SheetTrigger>
             <SheetContent side="left" className="flex w-72 flex-col overflow-y-auto bg-sidebar p-0">
               <SheetTitle className="sr-only">Menu</SheetTitle>
-              <div className="px-5 pt-5"><Logo /></div>
+              <div className="px-5 pt-5"><Logo variant="mark-only" /></div>
               {switcher}
               <SidebarNav isAdmin={!!isAdmin} onNavigate={() => setDrawer(false)} />
               {account}

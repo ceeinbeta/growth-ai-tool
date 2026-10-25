@@ -2,7 +2,7 @@ import { ArrowDownRight, ArrowUpRight, Droplets, Search } from 'lucide-react';
 
 export function PublicProductIllustration() {
   return <figure aria-label="Sample Growloop funnel and AI search visibility" className="w-full max-w-lg lg:ml-auto">
-    <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+    <div className="brand-hero-card overflow-hidden rounded-lg border bg-card">
       <div className="flex items-center justify-between border-b px-5 py-4"><span className="font-display text-sm font-bold">Your product / Overview</span><span className="status-chip status-sample">Sample data</span></div>
       <div className="p-5 sm:p-6">
         <div className="mb-5 flex items-center gap-2 text-sm font-semibold"><Droplets className="size-4 text-foreground" />Conversion funnel<span className="ml-auto text-xs font-normal text-muted-foreground">30 days · Sample</span></div>

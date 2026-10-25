@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 describe.skipIf(process.env['PROFILE_INTEGRATION_TEST'] !== '1')('public pages without a session', () => {
-  for (const [path, title] of [['/', 'Find the leak.'], ['/privacy', 'Privacy']]) {
+  for (const [path, title] of [['/', 'Find the leak.'], ['/features', 'Conversion leak finder'], ['/privacy', 'Privacy']]) {
     it(`renders ${path} without redirecting to sign-in`, async () => {
       const response = await fetch(`http://localhost:8080${path}`, { redirect: 'manual' });
       expect(response.status).toBe(200);

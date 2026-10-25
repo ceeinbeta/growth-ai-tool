@@ -66,9 +66,17 @@ export function LandingPage() {
     return () => script.remove();
   }, []);
   return <PublicShell><main id="main-content">
-    <section className="border-b bg-background"><div className="public-container grid items-center gap-12 py-12 md:py-16 lg:grid-cols-2 lg:gap-16">
-      <div><p className="public-eyebrow">Growth for solo founders</p><p className="public-lede mt-5 text-muted-foreground">Growloop is a growth app for solo founders that finds why your product isn't growing, helps you fix it, and measures what happens next.</p><h1 className="public-h1 mt-4">Find the leak.<br />Fix it.<br />Prove it worked.</h1><ActionRow layout="section" className="mt-8"><Button asChild size="lg"><a href="#waitlist">Join the beta waitlist<ArrowRight /></a></Button><Button asChild size="lg" variant="link"><Link to="/features">See what's included</Link></Button></ActionRow><p className="mt-4 text-sm text-muted-foreground">Free while we're in beta. Invite-only. No automatic posting.</p></div>
-      <PublicProductIllustration />
+    <section className="hero-backdrop relative overflow-hidden border-b bg-background"><div className="public-container relative flex flex-col items-center pb-14 pt-10 text-center md:pt-12">
+      <a href="#features-today" className="announce-pill inline-flex max-w-full items-center gap-2 border bg-card py-1 pl-1 pr-3 text-sm text-foreground no-underline hover:bg-sunken"><span className="rounded-full bg-selected px-2 py-0.5 text-xs font-semibold">Beta</span><span className="min-w-0 truncate">Free while we're in invite-only beta</span><ChevronRight className="size-4 shrink-0" aria-hidden /></a>
+      <h1 className="public-h1 hero-h1 mt-6">Find the leak. Fix it.<br /><span className="hero-highlight">Prove it worked.</span></h1>
+      <p className="public-lede mt-5 max-w-[60ch] text-muted-foreground">Growloop is a growth app for solo founders that finds why your product isn't growing, helps you fix it, and measures what happens next.</p>
+      <div className="mt-7 w-full"><WaitlistForm variant="hero" idPrefix="hero-waitlist" /></div>
+      <p className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground"><ShieldCheck className="size-4 shrink-0 text-foreground" aria-hidden />Free while we're in beta. No card needed. You always post from your own account.</p>
+      <ul aria-label="How Growloop keeps things honest" className="mt-5 flex flex-wrap justify-center gap-2">
+        {([[Tag, 'Numbers labeled measured, estimated or sample'], [CookieIcon, 'No tracking cookies'], [Rocket, 'Works before you launch']] as const).map(([I, t]) => <li key={t} className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1.5 text-sm"><I className="size-4 shrink-0 text-brand-deep" aria-hidden />{t}</li>)}
+      </ul>
+      <p className="mt-8 text-sm text-muted-foreground">Checks how ChatGPT, Perplexity and Claude recommend you</p>
+      <div className="mt-6 flex w-full justify-center"><PublicProductIllustration /></div>
     </div></section>
     <section className="public-section bg-card border-b"><div className="public-container"><p className="public-eyebrow">The problem</p><h2 className="public-heading"><em className="human-phrase">Shipping was the easy part.</em></h2><div className="mt-10 grid gap-5 md:grid-cols-3">{[
       [Droplets, 'Traffic is not the leak', 'More visitors do not fix a signup step that loses people. First find where they drop off.'],

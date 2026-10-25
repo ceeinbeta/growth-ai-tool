@@ -118,12 +118,12 @@ export function EditProductDialog({ product, onDeleted }: { product: Product; on
 
           <section className="border-t pt-4" aria-label="Logo">
             <h3 className="text-sm font-semibold">Logo</h3>
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <ProductLogo name={product.name} path={product.logo_path} size={56} />
+            <div className="mt-3"><ProductLogo name={product.name} path={product.logo_path} size={56} /></div>
+            <ActionRow className="mt-3">
               <Button variant="outline" size="sm" disabled={busy} onClick={() => logoAction(() => fetchLogo({ data: { productId: product.id } }), "Logo refreshed")}>Refresh logo</Button>
-              <Button variant="outline" size="sm" disabled={busy} asChild><label className="cursor-pointer">Change logo<input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={onFile} /></label></Button>
-              {product.logo_path && <Button variant="ghost" size="sm" disabled={busy} onClick={() => logoAction(() => clearLogo({ data: { productId: product.id } }), "Logo removed")}>Remove logo</Button>}
-            </div>
+              <Button variant="outline" size="sm" disabled={busy} asChild><label className="cursor-pointer font-sans normal-case tracking-normal">Change logo<input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={onFile} /></label></Button>
+              {product.logo_path && <Button variant="link" size="sm" disabled={busy} onClick={() => logoAction(() => clearLogo({ data: { productId: product.id } }), "Logo removed")}>Remove logo</Button>}
+            </ActionRow>
             <p className="mt-2 text-xs text-muted-foreground">PNG, JPEG or WebP, up to 300 KB.</p>
             {logoMsg && <p role="status" className="mt-2 text-sm text-muted-foreground">{logoMsg}</p>}
           </section>

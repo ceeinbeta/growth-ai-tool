@@ -44,5 +44,5 @@
 - Overview setup progress is computed from real rows in src/lib/setup-checklist.ts with tests. Why: completion must never be invented.
 
 - Public feature facts are shared by home and Features; public navigation uses router links with home hashes for section jumps. Why: one honest feature inventory and consistent navigation.
-- Public discovery stays static: `src/lib/public-discovery.ts` owns the origin and public/private paths; run `bun run refresh:discovery` after changing them to refresh robots and the three-page sitemap without lastmod. Why: one domain setting, no private URLs or server sitemap, and current-host canonical metadata stays independent.
-- Server-only libraries (linkedom, ai SDKs) are excluded from browser dependency pre-bundling in vite.config.ts; why: linkedom fails to bundle for the browser and silently blanks every client-only page in dev.
+- Public discovery stays static: `src/lib/public-discovery.ts` owns the origin and public/private paths; run `bun run refresh:discovery` after changing them to refresh robots and the three-page sitemap without lastmod. Why: one domain setting, no private URLs.
+- Server-only libraries stay excluded from browser dep pre-bundling; why: linkedom breaks it and blanks client pages in dev.

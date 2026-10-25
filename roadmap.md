@@ -9,6 +9,8 @@
 - [x] 180 mocked tests passed serially; 50 integration tests skipped; public/signed-in read-only desktop and mobile navigation checks passed with no runtime errors, data writes or publishing.
 
 # Founder d7 re-theme
+- [ ] Finish d7 token audit and add shared action alignment across public and app screens.
+- [ ] Run mocked serial no-write tests, measure contrast and capture six requested screens on desktop/mobile.
 - [x] Replace global tokens, typography, controls and logo/favicon; audit all visual usages without behavior changes.
 - [x] Apply labeled source chips, chart colors and AI teaching treatments.
 - [x] Run mocked serial tests and browser/contrast/focus checks without writes; document contrast exceptions; do not publish.

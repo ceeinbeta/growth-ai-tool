@@ -1,0 +1,28 @@
+# Growloop
+
+> Growloop is a growth app for solo founders that finds why your product isn't growing, helps you fix it, and measures what happens next.
+
+Growloop is in invite-only beta and is free while in beta. It never posts, sends or publishes anything for you — you always approve and post yourself. Numbers on screen are labeled measured, estimated, benchmark or sample, and AI-written content is labeled.
+
+## Live today
+
+- Conversion leak finder: measured funnels that show where visitors drop off.
+- Page audit by address: AI-written findings and rewrites for a page on your own site.
+- Technical audit: eight rule-based checks that Google and AI assistants can find, read and understand your site.
+- AI search visibility: how often ChatGPT, Perplexity and Claude recommend your product, from repeated sample runs.
+- Website tracking: one script line for real visits, signups and waitlist joins; no cookies or personal data.
+- Product profile: an editable audience, competitor and buyer-question profile.
+
+## Coming next
+
+- Google search growth, listing optimization, finding conversations, results attribution, competitor gaps and experiments are not available yet.
+
+## Pages
+
+- [Home](/): What Growloop is and how it works.
+- [Features](/features): What is live today and what is coming next.
+- [Privacy](/privacy): What data is collected and how to ask for deletion.
+
+## Contact
+
+- Email: hello@mcads.co

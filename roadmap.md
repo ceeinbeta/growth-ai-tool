@@ -1,7 +1,7 @@
 # Page fetching and visibility copy
-- [ ] Add bounded same-site page extraction, fetch reservations, provenance and paste fallback.
-- [ ] Explain usable-only visibility engines and individual failures.
-- [ ] Run mocked serialized tests and preview checks; do not publish or touch real data.
+- [x] Add bounded same-site page extraction, ten hourly fetch reservations, provenance and paste fallback.
+- [x] Explain usable-only visibility engines and individual failures.
+- [x] 202 mocked tests passed serially; 50 integration tests skipped. Signed-in desktop/mobile preview checked without submitting audits; schema/grants verified and fetch rows remain zero. No publication or real-data changes.
 
 # Review fixes
 - [x] Repair robots and add regression checks; discovery origin is centralized with a static refresh command.

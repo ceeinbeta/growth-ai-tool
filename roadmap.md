@@ -82,3 +82,4 @@
 - [x] Edit and owner-only delete; tests run serially, no rows left; not published.
 
 - [x] Type scale + landing rewrite (d9): shared --text-* scale in styles.css, landing reordered for SEO/GEO with JSON-LD + llms.txt, 243 tests pass, preview-only.
+- [x] Overview polish + Integrations as a feature: KPI row with 7/30/90 periods, funnel + recent activity, collapsible checklist, Coming-next integration list with mailto requests. 255 tests pass, preview-only.

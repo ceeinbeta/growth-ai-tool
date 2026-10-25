@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { upcomingFeatures, liveFeatures } from '@/lib/public-features';
 import { publicHead } from '@/lib/public-head';
-import { discoveryRobots, discoverySitemap } from '@/lib/public-discovery';
+import { DISCOVERY_ORIGIN, DISCOVERY_LAST_UPDATED, PUBLIC_DISCOVERY_PATHS, discoveryRobots, discoverySitemap, discoveryLlms } from '@/lib/public-discovery';
 
 describe('public discovery and feature availability', () => {
   it('keeps six unbuilt capabilities out of the live feature inventory', () => {
@@ -36,6 +36,20 @@ describe('public discovery and feature availability', () => {
   it('keeps both static discovery files synchronized with one origin setting', () => {
     expect(readFileSync('public/robots.txt', 'utf8')).toBe(discoveryRobots());
     expect(readFileSync('public/sitemap.xml', 'utf8')).toBe(discoverySitemap());
+    expect(readFileSync('public/llms.txt', 'utf8')).toBe(discoveryLlms());
+  });
+  it('lists exactly the live and coming feature inventories in llms.txt', () => {
+    const llms = readFileSync('public/llms.txt', 'utf8');
+    const names = (section: string) => [...section.matchAll(/^- \[([^\]]+)\]/gm)].map(m => m[1]);
+    expect(names(llms.split('## Live today\n')[1]?.split('## Coming next')[0] ?? '')).toEqual(liveFeatures.map(f => f.name));
+    expect(names(llms.split('## Coming next\n')[1]?.split('## Pages')[0] ?? '')).toEqual(upcomingFeatures.map(f => f.name));
+  });
+  it('uses the discovery origin for only public llms page links and includes its update date', () => {
+    const llms = readFileSync('public/llms.txt', 'utf8');
+    const pages = llms.split('## Pages\n')[1]?.split('## Contact')[0] ?? '';
+    expect([...pages.matchAll(/\]\(([^)]+)\)/g)].map(m => m[1])).toEqual(PUBLIC_DISCOVERY_PATHS.map(path => `${DISCOVERY_ORIGIN}${path}`));
+    expect(llms).toContain(`Last updated: ${DISCOVERY_LAST_UPDATED}`);
+    expect(DISCOVERY_LAST_UPDATED).toBe('2026-10-25');
   });
   it('self-references Features with its own title and description', () => {
     const head = publicHead('https://growloop-mcads.lovable.app', '/features', 'Features — Growloop', 'Live Growloop features');

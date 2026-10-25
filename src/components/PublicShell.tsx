@@ -28,7 +28,7 @@ export function WaitlistLink({ children = 'Join the beta waitlist', onClick }: {
 export function PublicShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   return <div className="public-site">
-    <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:z-[60] focus:bg-card focus:p-4 focus:text-primary">Skip to content</a>
+    <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:z-[60] focus:bg-card focus:p-4 focus:text-foreground">Skip to content</a>
     <header className="sticky top-0 z-40 border-b bg-card">
       <nav aria-label="Public" className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 py-3 sm:px-8 lg:px-12">
         <Link to="/" aria-label="Growloop home"><Logo /></Link>

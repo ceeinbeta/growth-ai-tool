@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function EmptyState({ icon: Icon, text, action, to, onClick }: { icon: LucideIcon; text: string; action: string; to?: string; onClick?: () => void }) {
   return (
     <div className="rounded-lg border bg-card p-8 text-center">
-      <Icon className="mx-auto h-8 w-8 text-primary" aria-hidden />
+      <Icon className="mx-auto h-8 w-8 text-foreground" aria-hidden />
       <p className="mx-auto mt-3 max-w-sm text-sm text-muted-foreground">{text}</p>
       {to ? <Button asChild className="mt-5"><Link to={to}>{action}</Link></Button> : <Button className="mt-5" onClick={onClick}>{action}</Button>}
     </div>

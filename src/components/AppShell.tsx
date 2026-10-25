@@ -71,21 +71,21 @@ export function AppShell() {
                   <DropdownMenuItem
                     key={p.id}
                     onSelect={() => setActive(p.id)}
-                    className={`gap-3 ${p.id === active?.id ? "bg-selected" : ""}`}
+                    className={`gap-3 ${p.id === active?.id ? "bg-selected selected-state" : ""}`}
                   >
                     <ProductLogo name={p.name} path={p.logo_path} />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-medium">{p.name}</span>
                       <span className="block text-xs text-muted-foreground">{stageLabel(p.stage)}</span>
                     </span>
-                    {p.id === active?.id && <Check className="h-4 w-4 text-primary" />}
+                    {p.id === active?.id && <Check className="h-4 w-4 text-foreground" />}
                   </DropdownMenuItem>
                 ))}
                 {products.length > 0 && <DropdownMenuSeparator />}
                 {products.length >= max ? (
                   <div className="px-2 py-2 text-xs text-muted-foreground">Standard includes {max} products.</div>
                 ) : (
-                  <DropdownMenuItem onSelect={() => navigate({ to: "/products/new" })} className="gap-3 text-primary">
+                  <DropdownMenuItem onSelect={() => navigate({ to: "/products/new" })} className="gap-3 text-foreground">
                     <Plus className="h-4 w-4" /> Add product
                   </DropdownMenuItem>
                 )}
@@ -97,27 +97,27 @@ export function AppShell() {
             <Link
               to="/overview"
               className="flex items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium text-foreground hover:bg-sunken"
-              activeProps={{ className: "bg-selected" }}
+              activeProps={{ className: "bg-selected text-foreground selected-state" }}
             >
               <LayoutGrid className="h-4 w-4" /> Overview
             </Link>
-            <Link to="/conversion-leaks" className="flex items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium text-foreground hover:bg-sunken" activeProps={{ className: "bg-selected" }}><Droplets className="h-4 w-4" /> Conversion leaks</Link>
-            <Link to="/ai-search-visibility" className="flex items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium text-foreground hover:bg-sunken" activeProps={{ className: "bg-selected" }}><Search className="h-4 w-4" /> AI search visibility</Link>
+            <Link to="/conversion-leaks" className="flex items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium text-foreground hover:bg-sunken" activeProps={{ className: "bg-selected text-foreground selected-state" }}><Droplets className="h-4 w-4" /> Conversion leaks</Link>
+            <Link to="/ai-search-visibility" className="flex items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium text-foreground hover:bg-sunken" activeProps={{ className: "bg-selected text-foreground selected-state" }}><Search className="h-4 w-4" /> AI search visibility</Link>
             {soon.map(({ label, icon: Icon }) => (
               <span key={label} aria-disabled="true" className="flex cursor-default items-center gap-3 px-3 py-2 text-sm text-muted-foreground">
                 <Icon className="h-4 w-4" /> <span className="flex-1">{label}</span>
-                <span className="rounded-full bg-sunken px-2 py-0.5 text-[11px] font-semibold">Soon</span>
+                <span className="status-chip status-coming">Soon</span>
               </span>
             ))}
-            <Link to="/integrations" className="flex items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium text-foreground hover:bg-sunken" activeProps={{ className: "bg-selected" }}><Plug className="h-4 w-4" /> Integrations</Link>
+            <Link to="/integrations" className="flex items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium text-foreground hover:bg-sunken" activeProps={{ className: "bg-selected text-foreground selected-state" }}><Plug className="h-4 w-4" /> Integrations</Link>
             {isAdmin && (
-              <Link to="/admin" className="flex items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium text-foreground hover:bg-sunken" activeProps={{ className: "bg-selected" }}><ShieldCheck className="h-4 w-4" /> Admin</Link>
+              <Link to="/admin" className="flex items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium text-foreground hover:bg-sunken" activeProps={{ className: "bg-selected text-foreground selected-state" }}><ShieldCheck className="h-4 w-4" /> Admin</Link>
             )}
           </nav>
 
           <div className="mt-auto border-t px-5 py-4">
             <p className="truncate text-sm text-muted-foreground" title={user.email}>{user.email}</p>
-            <button onClick={signOut} className="mt-2 inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline">
+            <button onClick={signOut} className="mt-2 inline-flex items-center gap-2 text-sm font-medium text-foreground hover:underline">
               <LogOut className="h-4 w-4" /> Sign out
             </button>
           </div>

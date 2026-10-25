@@ -257,7 +257,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
         {(engineStatus?.engines ?? ENGINES.map((e) => ({ id: e.id, label: e.label, connected: false, testsToday: 0 }))).map((e) => (
           <span key={e.id} className="inline-flex flex-wrap items-center gap-2 rounded-full border px-3 py-1 text-xs">
             <span className="font-semibold">{e.label}</span>
-            <span className={e.connected ? "text-primary" : "text-muted-foreground"}>{e.connected ? "Connected" : "Not connected"}</span>
+            <span className={e.connected ? "text-foreground" : "text-muted-foreground"}>{e.connected ? "Connected" : "Not connected"}</span>
             {e.connected && (
               <Button variant="link" size="sm" disabled={testResults[e.id]?.ok === null} onClick={() => runTest(e.id as EngineId)}>
                 Test connection
@@ -271,7 +271,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
         <p className="mt-2 text-sm text-muted-foreground">
           Spent this month {usd(budget.spent_usd)} of ${budget.budget_usd} (estimated)
           {budget.spent_usd >= budget.budget_usd * 0.8 && (
-            <span className="ml-2 font-medium text-amber-600">Near the monthly budget.</span>
+            <span className="ml-2 font-medium text-warning">Near the monthly budget.</span>
           )}
         </p>
       )}
@@ -327,7 +327,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
       {!questions.length && (
         <p className="mt-6 rounded-xl border bg-card p-5 text-sm">
           Add the questions buyers ask on your product profile first.{" "}
-          <Link to="/overview" className="font-medium text-primary hover:underline">Open your product profile</Link>
+          <Link to="/overview" className="font-medium text-foreground hover:underline">Open your product profile</Link>
         </p>
       )}
       {engineStatus && !connected.length && (
@@ -351,7 +351,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
                   <button
                     key={f}
                     onClick={() => setEngineFilter(f)}
-                    className={`rounded-full px-3 py-1 text-xs font-medium ${engineFilter === f ? "bg-selected text-primary" : "text-muted-foreground hover:bg-sunken"}`}
+                    className={`rounded-full px-3 py-1 text-xs font-medium ${engineFilter === f ? "bg-selected text-foreground selected-state" : "text-muted-foreground hover:bg-sunken"}`}
                   >
                     {f === "all" ? "All engines" : f === "openai" ? "OpenAI" : f === "perplexity" ? "Perplexity" : "Claude"}
                   </button>
@@ -385,7 +385,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
                   </div>
                   <div className="mt-1 h-2 rounded-full bg-sunken">
                     <div
-                      className={`h-2 rounded-full ${s.kind === "you" ? "bg-primary" : "bg-muted-foreground/40"}`}
+                      className={`h-2 rounded-full ${s.kind === "you" ? "bg-primary" : "bg-chart-other"}`}
                       style={{ width: `${s.pct}%` }}
                     />
                   </div>
@@ -435,7 +435,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
                 {trend.map((t) => (
                   <div key={t.date} className="flex flex-col items-center gap-1">
                     <span className="text-xs font-medium">{t.pct}%</span>
-                    <div className="w-8 rounded-sm bg-primary" style={{ height: `${Math.max(4, t.pct)}px` }} />
+                    <div className="w-8 rounded-sm border border-foreground bg-primary" style={{ height: `${Math.max(4, t.pct)}px` }} />
                     <span className="text-[10px] text-muted-foreground">
                       {new Date(t.date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
                     </span>
@@ -462,9 +462,9 @@ function VisibilityPage({ productId, productName }: { productId: string; product
           )}
 
           {latestFixes && (
-            <section className="mt-6 rounded-xl border bg-card p-6">
+            <section className="mt-6 rounded-xl border bg-card p-6 learning-block">
               <h2 className="text-lg">How to get cited</h2>
-              <p className="mt-1 text-xs text-muted-foreground">AI-written from your results. Check it before you use it.</p>
+              <p className="mt-1 text-xs text-muted-foreground"><span className="status-chip status-ai">AI-written</span> from your results. Check it before you use it.</p>
               <ul className="mt-3 list-disc space-y-2 pl-5 text-sm">
                 {((latestFixes.text as { suggestions?: string[] })?.suggestions ?? []).map((s, i) => (
                   <li key={i}>{s}</li>

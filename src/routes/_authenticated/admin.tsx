@@ -228,7 +228,7 @@ function AdminContent() {
 }
 
 function StatusPill({ row }: { row: WaitlistRow }) {
-  if (row.has_account) return <Badge className="bg-selected text-primary">Has account</Badge>;
+  if (row.has_account) return <Badge className="bg-selected text-foreground selected-state">Has account</Badge>;
   if (row.on_allow_list || row.invited_at) return <Badge variant="outline">Invited</Badge>;
   return <Badge variant="secondary">Not invited</Badge>;
 }

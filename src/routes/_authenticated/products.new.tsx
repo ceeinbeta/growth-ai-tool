@@ -111,8 +111,8 @@ function NewProduct() {
                 { v: "live", l: "Live product" },
                 { v: "prelaunch", l: "Pre-launch, collecting a waitlist" },
               ].map((o) => (
-                <label key={o.v} className={`flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2.5 text-sm ${form.stage === o.v ? "border-primary bg-selected" : ""}`}>
-                  <input type="radio" name="stage" value={o.v} checked={form.stage === o.v} onChange={() => setForm((f) => ({ ...f, stage: o.v }))} className="accent-primary" />
+                <label key={o.v} className={`flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2.5 text-sm ${form.stage === o.v ? "border-foreground bg-selected" : ""}`}>
+                  <input type="radio" name="stage" value={o.v} checked={form.stage === o.v} onChange={() => setForm((f) => ({ ...f, stage: o.v }))} className="accent-foreground" />
                   {o.l}
                 </label>
               ))}

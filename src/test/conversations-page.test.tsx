@@ -21,6 +21,7 @@ describe('mocked founder flow with no requests or rows',()=>{
   const copy=vi.fn(async()=>{});Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:copy}});
   const Component=Route.component as ()=>any;const client=new QueryClient({defaultOptions:{queries:{retry:false}}});render(<QueryClientProvider client={client}><Component/></QueryClientProvider>);
   await screen.findByRole('button',{name:'Scan Hacker News'});
+  await waitFor(()=>expect(screen.getByLabelText('One term per line · up to 10')).toHaveValue('team docs'));
   fireEvent.change(screen.getByLabelText('One term per line · up to 10'),{target:{value:'team documentation'}});
   fireEvent.click(screen.getByRole('button',{name:'Scan Hacker News'}));
   await screen.findByRole('heading',{name:item.title});expect(mocks.scan).toHaveBeenCalledWith({data:{productId:item.product_id,terms:['team documentation']}});

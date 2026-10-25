@@ -28,6 +28,7 @@ export const Route = createFileRoute('/')({
 });
 
 const todayFeatures = [
+  { icon: MessageCircle, id: 'conversations', name: 'Finding conversations', text: 'Find public Hacker News posts with rule-based scores and AI-written reply drafts. You post replies yourself. Reddit and X are Soon.' },
   { icon: Droplets, id: 'conversion', name: 'Conversion leak finder', text: 'Follow your funnel step by step and see exactly where visitors leave, measured from real visits.' },
   { icon: ScanText, id: 'audit', name: 'Page audit by address', text: 'Point at a page on your site; Growloop reads the real copy and gives you an AI-written list of fixes and rewrites.' },
   { icon: Wrench, id: 'technical', name: 'Technical audit', text: 'Eight rule-based checks that Google and AI assistants can find, read and understand your site, with plain how-to-fix notes.' },
@@ -93,7 +94,7 @@ export function LandingPage() {
       [Search, 'AI search visibility', 'See how often ChatGPT, Perplexity and Claude recommend you, and get suggestions for how to get cited; engines are connected one by one during the beta.', false],
       [ChartNoAxesColumn, 'Google search growth', 'Understand organic searches and improve the pages that could bring visitors.', true],
       [ListChecks, 'Listing optimization', 'Improve how your product appears in directories and listings.', true],
-      [MessageCircle, 'Finding conversations', 'Find buyers asking on Reddit, Hacker News and X. You post the replies yourself.', true],
+      [MessageCircle, 'Finding conversations', 'Find public Hacker News posts with transparent scores and reply drafts you post yourself. Reddit and X are Soon, not available yet.', false],
     ].map(([Icon, title, text, upcoming]) => { const I = Icon as typeof Search; return <article key={String(title)} className="rounded-md border p-6"><div className="flex items-center justify-between gap-3"><I className="size-6 text-foreground" /><PublicStatus upcoming={Boolean(upcoming)} /></div><h3 className="mt-6 text-xl">{String(title)}</h3><p className="mt-3 text-md text-muted-foreground">{String(text)}</p></article>; })}</div><p className="mt-8 text-sm text-muted-foreground">Integrations with Google Search Console, Google Analytics, PostHog, Stripe, Bing Webmaster Tools, Slack and Notion/CSV export are <span className="status-chip status-coming ml-1">Soon</span> — they are not connected today.</p></div></section>
     <section className="public-container flex flex-col justify-between gap-5 py-14 md:flex-row md:items-center"><h2 className="text-2xl">For live products.<br />And the ones not launched yet.</h2><p className="public-lede max-w-md text-muted-foreground">Collecting a waitlist? Growloop counts joins instead of signups, and every audit works the same way.</p></section>
     <section id="faq" className="public-section border-y bg-card"><div className="mx-auto max-w-3xl px-5 sm:px-8"><p className="public-eyebrow">Before you join</p><h2 className="public-heading mb-8">Questions, answered.</h2><Accordion type="single" collapsible>{FAQS.map(({ q, a }) => <AccordionItem key={q} value={q}><AccordionTrigger className="text-base">{q}</AccordionTrigger><AccordionContent className="text-md text-muted-foreground"><FaqAnswer q={q} a={a} /></AccordionContent></AccordionItem>)}</Accordion></div></section>

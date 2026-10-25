@@ -10,6 +10,7 @@ AI search visibility is built to check ChatGPT, Perplexity and Claude; engines a
 
 ## Live today
 
+- [Finding conversations](https://growloop-mcads.lovable.app/features#conversations): Find public Hacker News posts with transparent rule-based scores and reply drafts you post yourself.
 - [Conversion leak finder](https://growloop-mcads.lovable.app/features#conversion): See where visitors leave your funnel before you spend on more traffic.
 - [Page audit by address](https://growloop-mcads.lovable.app/features#audit): Get an AI-written second look at the copy behind a conversion leak.
 - [Technical audit](https://growloop-mcads.lovable.app/features#technical): Check whether Google and AI assistants can find, read and understand your site.
@@ -22,7 +23,6 @@ AI search visibility is built to check ChatGPT, Perplexity and Claude; engines a
 
 - [Google search growth](https://growloop-mcads.lovable.app/features#coming-next): Soon, not available yet. See which pages and searches bring organic visitors, and what to improve.
 - [Listing optimization](https://growloop-mcads.lovable.app/features#coming-next): Soon, not available yet. Improve how your product appears in directories and listings.
-- [Finding conversations](https://growloop-mcads.lovable.app/features#coming-next): Soon, not available yet. Find buyers asking on Reddit, Hacker News and X, with reply drafts you post yourself.
 - [Results](https://growloop-mcads.lovable.app/features#coming-next): Soon, not available yet. See which actions brought signups.
 - [Competitor gaps](https://growloop-mcads.lovable.app/features#coming-next): Soon, not available yet. Find opportunities your competitors are missing.
 - [Experiments](https://growloop-mcads.lovable.app/features#coming-next): Soon, not available yet. Compare changes and learn which one helps your product grow.

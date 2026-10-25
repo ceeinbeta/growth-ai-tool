@@ -90,7 +90,7 @@ function ProductOverview({ product, footer, onDeleted }: { product: Product; foo
       <section data-overview-section aria-label="Product and next step" className="flex flex-col gap-3">
         <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-w-0 items-center gap-3">
-            <ProductLogo name={product.name} path={product.logo_path} size={40} />
+            <ProductLogo name={product.name} path={product.logo_path} size={32} />
             <div className="min-w-0">
               <div className="flex min-w-0 flex-wrap items-center gap-2">
                 <h1 className="min-w-0 truncate text-2xl">{product.name}</h1>

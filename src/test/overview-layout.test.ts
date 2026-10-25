@@ -5,7 +5,7 @@ const page = readFileSync('src/routes/_authenticated/overview.tsx', 'utf8');
 
 describe('overview layout', () => {
   it('has no more than 4 top-level sections on desktop', () => {
-    const count = page.match(/data-overview-section/g)?.length ?? 0;
+    const count = page.match(/<section data-overview-section/g)?.length ?? 0;
     expect(count).toBeGreaterThan(0);
     expect(count).toBeLessThanOrEqual(4);
   });

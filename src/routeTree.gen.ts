@@ -16,6 +16,7 @@ import { Route as FeaturesRouteImport } from './routes/features'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAiSearchVisibilityRouteImport } from './routes/_authenticated/ai-search-visibility'
+import { Route as AuthenticatedConversationsRouteImport } from './routes/_authenticated/conversations'
 import { Route as AuthenticatedConversionLeaksRouteImport } from './routes/_authenticated/conversion-leaks'
 import { Route as AuthenticatedIntegrationsRouteImport } from './routes/_authenticated/integrations'
 import { Route as AuthenticatedOverviewRouteImport } from './routes/_authenticated/overview'
@@ -59,6 +60,12 @@ const AuthenticatedAiSearchVisibilityRoute =
   AuthenticatedAiSearchVisibilityRouteImport.update({
     id: '/ai-search-visibility',
     path: '/ai-search-visibility',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedConversationsRoute =
+  AuthenticatedConversationsRouteImport.update({
+    id: '/conversations',
+    path: '/conversations',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedConversionLeaksRoute =
@@ -119,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/ai-search-visibility': typeof AuthenticatedAiSearchVisibilityRoute
+  '/conversations': typeof AuthenticatedConversationsRoute
   '/conversion-leaks': typeof AuthenticatedConversionLeaksRoute
   '/integrations': typeof AuthenticatedIntegrationsRoute
   '/overview': typeof AuthenticatedOverviewRoute
@@ -136,6 +144,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/ai-search-visibility': typeof AuthenticatedAiSearchVisibilityRoute
+  '/conversations': typeof AuthenticatedConversationsRoute
   '/conversion-leaks': typeof AuthenticatedConversionLeaksRoute
   '/integrations': typeof AuthenticatedIntegrationsRoute
   '/overview': typeof AuthenticatedOverviewRoute
@@ -155,6 +164,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/ai-search-visibility': typeof AuthenticatedAiSearchVisibilityRoute
+  '/_authenticated/conversations': typeof AuthenticatedConversationsRoute
   '/_authenticated/conversion-leaks': typeof AuthenticatedConversionLeaksRoute
   '/_authenticated/integrations': typeof AuthenticatedIntegrationsRoute
   '/_authenticated/overview': typeof AuthenticatedOverviewRoute
@@ -174,6 +184,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/admin'
     | '/ai-search-visibility'
+    | '/conversations'
     | '/conversion-leaks'
     | '/integrations'
     | '/overview'
@@ -191,6 +202,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/admin'
     | '/ai-search-visibility'
+    | '/conversations'
     | '/conversion-leaks'
     | '/integrations'
     | '/overview'
@@ -209,6 +221,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/_authenticated/admin'
     | '/_authenticated/ai-search-visibility'
+    | '/_authenticated/conversations'
     | '/_authenticated/conversion-leaks'
     | '/_authenticated/integrations'
     | '/_authenticated/overview'
@@ -283,6 +296,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAiSearchVisibilityRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/conversations': {
+      id: '/_authenticated/conversations'
+      path: '/conversations'
+      fullPath: '/conversations'
+      preLoaderRoute: typeof AuthenticatedConversationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/conversion-leaks': {
       id: '/_authenticated/conversion-leaks'
       path: '/conversion-leaks'
@@ -352,6 +372,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedAiSearchVisibilityRoute: typeof AuthenticatedAiSearchVisibilityRoute
+  AuthenticatedConversationsRoute: typeof AuthenticatedConversationsRoute
   AuthenticatedConversionLeaksRoute: typeof AuthenticatedConversionLeaksRoute
   AuthenticatedIntegrationsRoute: typeof AuthenticatedIntegrationsRoute
   AuthenticatedOverviewRoute: typeof AuthenticatedOverviewRoute
@@ -362,6 +383,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedAiSearchVisibilityRoute: AuthenticatedAiSearchVisibilityRoute,
+  AuthenticatedConversationsRoute: AuthenticatedConversationsRoute,
   AuthenticatedConversionLeaksRoute: AuthenticatedConversionLeaksRoute,
   AuthenticatedIntegrationsRoute: AuthenticatedIntegrationsRoute,
   AuthenticatedOverviewRoute: AuthenticatedOverviewRoute,

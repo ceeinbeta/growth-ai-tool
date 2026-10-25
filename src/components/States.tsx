@@ -3,13 +3,14 @@ import { AlertCircle } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ActionRow } from '@/components/ActionRow';
 
 export function EmptyState({ icon: Icon, text, action, to, onClick }: { icon: LucideIcon; text: string; action: string; to?: string; onClick?: () => void }) {
   return (
     <div className="rounded-lg border bg-card p-8 text-center">
       <Icon className="mx-auto h-8 w-8 text-foreground" aria-hidden />
       <p className="mx-auto mt-3 max-w-sm text-sm text-muted-foreground">{text}</p>
-      {to ? <Button asChild className="mt-5"><Link to={to}>{action}</Link></Button> : <Button className="mt-5" onClick={onClick}>{action}</Button>}
+      <ActionRow className="mt-5">{to ? <Button asChild><Link to={to}>{action}</Link></Button> : <Button onClick={onClick}>{action}</Button>}</ActionRow>
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signInLinkErrorMessage } from "@/lib/auth-errors";
+import { ActionRow } from '@/components/ActionRow';
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -63,9 +64,9 @@ function AuthPage() {
               <p className="mt-2 text-sm text-muted-foreground">
                 We sent a sign-in link to <span className="font-medium text-foreground">{email.trim()}</span>. Open it on this device to sign in.
               </p>
-              <button className="mt-4 text-sm font-medium text-foreground hover:underline" onClick={() => setSent(false)}>
+              <ActionRow className="mt-4"><Button variant="link" onClick={() => setSent(false)}>
                 Use a different email
-              </button>
+              </Button></ActionRow>
             </div>
           ) : (
             <form onSubmit={submit} noValidate>
@@ -81,9 +82,9 @@ function AuthPage() {
                 aria-invalid={!!error}
               />
               {error && <p className="mt-2 rounded-sm bg-danger-soft px-3 py-2 text-sm text-destructive">{error}</p>}
-              <Button type="submit" className="mt-4 h-11 w-full" disabled={busy}>
+              <ActionRow className="mt-4"><Button type="submit" disabled={busy}>
                 {busy ? "Sending…" : "Email me a sign-in link"}
-              </Button>
+              </Button></ActionRow>
               <p className="mt-3 text-xs text-muted-foreground">No password. We'll email you a one-time link.</p>
             </form>
           )}

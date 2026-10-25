@@ -1,3 +1,4 @@
+import { ActionRow, ActionHeader } from '@/components/ActionRow';
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -120,10 +121,10 @@ function NewProduct() {
             {err("stage")}
           </fieldset>
           {errors.form && <div className="rounded-sm bg-danger-soft px-3 py-2 text-sm text-destructive">{errors.form}</div>}
-          <div className="flex gap-3">
+          <ActionRow>
             <Button type="submit" disabled={busy}>{busy ? "Saving…" : "Add product"}</Button>
-            <Button asChild variant="ghost"><Link to="/overview">Cancel</Link></Button>
-          </div>
+            <Button asChild variant="outline"><Link to="/overview">Cancel</Link></Button>
+          </ActionRow>
         </form>
       )}
     </div>

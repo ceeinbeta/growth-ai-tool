@@ -17,13 +17,13 @@ function PublicAccountLink() {
     window.addEventListener('growloop:auth-changed', update);
     return () => { mounted = false; window.removeEventListener('focus', update); window.removeEventListener('growloop:auth-changed', update); };
   }, []);
-  return <Button asChild variant="link" className="min-h-11 px-0 text-foreground"><Link to={signedIn ? '/overview' : '/auth'}>{signedIn ? 'Open Growloop' : 'Sign in'}</Link></Button>;
+  return <Button asChild variant="link" size="lg"><Link to={signedIn ? '/overview' : '/auth'}>{signedIn ? 'Open Growloop' : 'Sign in'}</Link></Button>;
 }
 function PublicLinks({ close }: { close?: () => void }) {
   return <><Link to="/features" onClick={close} className="public-nav-link">Features</Link><Link to="/" hash="how-it-works" onClick={close} className="public-nav-link">How it works</Link><Link to="/" hash="faq" onClick={close} className="public-nav-link">FAQ</Link><Link to="/privacy" onClick={close} className="public-nav-link">Privacy</Link></>;
 }
 export function WaitlistLink({ children = 'Join the beta waitlist', onClick, variant = 'default' }: { children?: ReactNode; onClick?: () => void; variant?: 'default' | 'outline' }) {
-  return <Button asChild variant={variant} size="lg" className="min-h-12 px-5"><Link to="/" hash="waitlist" onClick={onClick}>{children}<ArrowRight /></Link></Button>;
+  return <Button asChild variant={variant} size="lg" ><Link to="/" hash="waitlist" onClick={onClick}>{children}<ArrowRight /></Link></Button>;
 }
 export function PublicShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -34,7 +34,7 @@ export function PublicShell({ children }: { children: ReactNode }) {
         <Link to="/" aria-label="Growloop home"><Logo /></Link>
         <div className="hidden items-center gap-6 lg:flex"><PublicLinks /></div>
         <div className="hidden items-center gap-6 lg:flex"><PublicAccountLink /><WaitlistLink variant="outline">Join the waitlist</WaitlistLink></div>
-        <Sheet open={open} onOpenChange={setOpen}><SheetTrigger asChild><Button variant="ghost" size="icon" aria-label="Open navigation menu" className="min-h-11 min-w-11 lg:hidden"><Menu /></Button></SheetTrigger>
+        <Sheet open={open} onOpenChange={setOpen}><SheetTrigger asChild><Button variant="ghost" size="icon" aria-label="Open navigation menu" className="lg:hidden"><Menu /></Button></SheetTrigger>
           <SheetContent className="public-site w-[min(90vw,360px)] motion-reduce:animate-none motion-reduce:transition-none"><SheetTitle className="text-left"><Logo /></SheetTitle><SheetDescription className="sr-only">Public navigation</SheetDescription><nav aria-label="Mobile public" className="mt-10 flex flex-col items-start gap-4"><PublicLinks close={() => setOpen(false)} /><PublicAccountLink /><WaitlistLink onClick={() => setOpen(false)}>Join the waitlist</WaitlistLink></nav></SheetContent>
         </Sheet>
       </nav>

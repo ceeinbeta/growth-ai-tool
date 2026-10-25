@@ -1,3 +1,4 @@
+import { ActionRow, ActionHeader } from '@/components/ActionRow';
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -237,36 +238,25 @@ function VisibilityPage({ productId, productName }: { productId: string; product
 
   return (
     <div className="mx-auto max-w-3xl">
-      <div className="flex flex-wrap items-center gap-3">
+      <ActionHeader action={running ? <Button disabled>{progress ? `${progress.finished} of ${progress.total} runs finished` : "Check running…"}</Button> : <Button variant={confirming ? "outline" : "default"} onClick={openConfirmation} disabled={!connected.length || !questions.length}>Run a check</Button>}>
         <h1 className="text-3xl font-extrabold">AI search visibility</h1>
         {latestDone && (
           <span className="text-sm text-muted-foreground">Last checked {relativeTime(latestDone.started_at)}</span>
         )}
-        <div className="ml-auto">
-          {running ? (
-            <Button disabled>
-              {progress ? `${progress.finished} of ${progress.total} runs finished` : "Check running…"}
-            </Button>
-          ) : (
-            <Button variant={confirming ? "outline" : "default"} onClick={openConfirmation} disabled={!connected.length || !questions.length}>
-              Run a check
-            </Button>
-          )}
-        </div>
-      </div>
+      </ActionHeader>
 
-      <div className="mt-3 flex flex-wrap items-center gap-2">
+      <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
         {(engineStatus?.engines ?? ENGINES.map((e) => ({ id: e.id, label: e.label, connected: false, testsToday: 0 }))).map((e) => (
-          <span key={e.id} className="inline-flex flex-wrap items-center gap-2 rounded-full border px-3 py-1 text-xs">
+          <div key={e.id} className="grid min-w-0 grid-rows-[auto_auto_1fr_auto] gap-2 rounded-lg border bg-card p-4 text-xs">
             <span className="font-semibold">{e.label}</span>
             <span className={e.connected ? "text-foreground" : "text-muted-foreground"}>{e.connected ? "Connected" : "Not connected"}</span>
+            <div className="min-h-5">{testResults[e.id] && <span className="break-words text-muted-foreground">{testResults[e.id]?.text}</span>}</div>
             {e.connected && (
-              <Button variant="link" size="sm" disabled={testResults[e.id]?.ok === null} onClick={() => runTest(e.id as EngineId)}>
+              <Button variant="link" className="justify-self-start" size="sm" disabled={testResults[e.id]?.ok === null} onClick={() => runTest(e.id as EngineId)}>
                 Test connection
               </Button>
             )}
-            {testResults[e.id] && <span className="basis-full text-muted-foreground">{testResults[e.id]?.text}</span>}
-          </span>
+          </div>
         ))}
       </div>
       {budget?.scope === "platform" && (
@@ -319,10 +309,10 @@ function VisibilityPage({ productId, productName }: { productId: string; product
               ))}
             </select>
           </label>
-          <div className="mt-4 flex gap-2">
+          <ActionRow className="mt-4">
             <Button onClick={runCheck} disabled={busy || !chosenEngines.length}>{busy ? "Starting…" : "Run the check"}</Button>
             <Button variant="outline" onClick={() => setConfirming(false)}>Cancel</Button>
-          </div>
+          </ActionRow>
         </div>
       )}
 
@@ -388,7 +378,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
                   </div>
                   <div className="mt-1 h-2 rounded-full bg-sunken">
                     <div
-                      className={`h-2 rounded-full ${s.kind === "you" ? "bg-primary" : "bg-chart-other"}`}
+                      className={`h-2 rounded-full ${s.kind === "you" ? "border border-foreground bg-primary" : "bg-chart-other"}`}
                       style={{ width: `${s.pct}%` }}
                     />
                   </div>

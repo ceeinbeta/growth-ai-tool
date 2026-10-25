@@ -7,10 +7,10 @@ import { ActionRow } from '@/components/ActionRow';
 
 export function EmptyState({ icon: Icon, text, action, to, onClick }: { icon: LucideIcon; text: string; action: string; to?: string; onClick?: () => void }) {
   return (
-    <div className="rounded-lg border bg-card p-8 text-center">
-      <Icon className="mx-auto h-8 w-8 text-foreground" aria-hidden />
-      <p className="mx-auto mt-3 max-w-sm text-sm text-muted-foreground">{text}</p>
-      <ActionRow className="mt-5">{to ? <Button asChild><Link to={to}>{action}</Link></Button> : <Button onClick={onClick}>{action}</Button>}</ActionRow>
+    <div className="empty-row flex flex-wrap items-center gap-3 rounded-lg border bg-card px-4 py-3">
+      <Icon className="size-4 shrink-0 text-foreground" aria-hidden />
+      <p className="min-w-0 flex-1 text-sm text-muted-foreground">{text}</p>
+      {to ? <Button asChild size="sm"><Link to={to}>{action}</Link></Button> : <Button size="sm" onClick={onClick}>{action}</Button>}
     </div>
   );
 }

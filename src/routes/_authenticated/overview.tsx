@@ -119,7 +119,9 @@ function ProductOverview({ product, footer, onDeleted }: { product: Product; foo
           : <KpiRow product={product} days={days} totals={tracking.data.totals} summary={funnel.data.summary} hasEvents={overview.data ? overview.data.eventCount > 0 : tracking.data.recent.length > 0} />}
       </section>
 
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-12">
+      {overview.data && funnel.data && missingSteps(overview.data, funnel.data.summary.total_visitors).length >= 2
+        ? <SetupCard steps={missingSteps(overview.data, funnel.data.summary.total_visitors)} />
+        : <div className="mt-4 grid items-start gap-4 lg:grid-cols-12">
         <div className="lg:col-span-7">
           {funnel.error ? <ErrorState text="We couldn't load your funnel." onRetry={() => void funnel.refetch()} />
             : !funnel.data ? <Skeleton className="h-56 w-full" />
@@ -128,7 +130,7 @@ function ProductOverview({ product, footer, onDeleted }: { product: Product; foo
         <div className="lg:col-span-5">
           {!overview.data ? <Skeleton className="h-56 w-full" /> : <RecentActivity data={overview.data} />}
         </div>
-      </div>
+      </div>}
 
       <div className="mt-4 grid items-start gap-4 lg:grid-cols-12">
         <div className="lg:col-span-7">
@@ -203,13 +205,10 @@ function FunnelCard({ product, summary, days }: { product: Product; summary: Fun
     <section aria-labelledby="funnel-heading" className="rounded-lg border bg-card p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 id="funnel-heading" className="text-xl">Funnel · {days} days</h2>
-        <SourceChip text={MEASURED} />
+        <span className="ml-auto shrink-0"><SourceChip text={MEASURED} inline /></span>
       </div>
       {summary.total_visitors === 0 ? (
-        <div className="mt-4">
-          <p className="text-sm text-muted-foreground">No visitors recorded in this period yet.</p>
-          <ActionRow className="mt-4"><Button asChild variant="outline"><Link to="/integrations" hash="tracking">Install tracking</Link></Button></ActionRow>
-        </div>
+        <EmptyRow icon={Users} text="No visitors recorded in this period yet." action="Install tracking" to="/integrations" hash="tracking" />
       ) : (
         <ol className="mt-4 divide-y">
           {summary.steps.map(s => (
@@ -225,6 +224,37 @@ function FunnelCard({ product, summary, days }: { product: Product; summary: Fun
       )}
       {summary.total_visitors > 0 && summary.total_visitors < 100 && <p className="mt-3 text-xs text-muted-foreground">Not enough data yet to flag a worst step — that needs 100 visitors at the first step.</p>}
       <ActionRow className="mt-4"><Button asChild variant="outline"><Link to="/conversion-leaks">Open conversion leaks</Link></Button></ActionRow>
+    </section>
+  );
+}
+
+type Missing = { key: string; icon: typeof Users; text: string; action: string; to: string; hash?: string };
+function missingSteps(data: { audit: unknown; technicalAudit: unknown; lastCheck: unknown }, visitors: number): Missing[] {
+  const out: Missing[] = [];
+  if (visitors === 0) out.push({ key: "visits", icon: Users, text: "No visits recorded in this period.", action: "Install tracking", to: "/integrations", hash: "tracking" });
+  if (!data.audit) out.push({ key: "audit", icon: FileSearch, text: "No page audit yet.", action: "Run a page audit", to: "/conversion-leaks" });
+  if (!data.technicalAudit) out.push({ key: "tech", icon: Wrench, text: "No technical audit yet.", action: "Run a technical audit", to: "/technical-audit" });
+  if (!data.lastCheck) out.push({ key: "ai", icon: Search, text: "No AI visibility check yet.", action: "Run a check", to: "/ai-search-visibility" });
+  return out;
+}
+
+function EmptyRow({ icon: Icon, text, action, to, hash }: Omit<Missing, "key">) {
+  return (
+    <div className="mt-3 flex min-w-0 flex-wrap items-center gap-3 py-1">
+      <Icon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+      <p className="min-w-0 flex-1 text-sm text-muted-foreground">{text}</p>
+      <Link to={to} {...(hash ? { hash } : {})} className="shrink-0 text-sm font-medium text-foreground underline">{action}</Link>
+    </div>
+  );
+}
+
+function SetupCard({ steps }: { steps: Missing[] }) {
+  return (
+    <section aria-labelledby="setup-missing-heading" className="mt-4 rounded-lg border bg-card p-5">
+      <h2 id="setup-missing-heading" className="text-xl">Set up</h2>
+      <ul className="mt-1 divide-y">
+        {steps.map(({ key, ...s }) => <li key={key}><EmptyRow {...s} /></li>)}
+      </ul>
     </section>
   );
 }

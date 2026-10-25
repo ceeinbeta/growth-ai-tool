@@ -67,4 +67,10 @@ describe('shared type scale', () => {
     expect(css).toContain('max-width: 1120px');
     expect(css).toContain('max-width: 68ch');
   });
+  it('keeps all font roles in DM Sans without reviving the superseded fonts', () => {
+    const css = readFileSync('src/styles.css', 'utf8');
+    for (const role of ['label', 'sans', 'display', 'mono']) expect(css).toMatch(new RegExp(`--font-${role}: "DM Sans"`));
+    const sourcesText = [css, ...sources('src/components').concat(sources('src/routes')).map(path => readFileSync(path, 'utf8'))].join('\n');
+    expect(sourcesText).not.toMatch(/Manrope|DM Mono|Georgia|font-family:\s*monospace/);
+  });
 });

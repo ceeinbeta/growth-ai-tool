@@ -87,6 +87,6 @@
 - [x] Landing review: corrected shared FAQ claims and beta engine availability; generated dated absolute llms links and feature inventory through discovery refresh. 29 tests passed, 3 skipped; all 10 visible FAQ answers match JSON-LD in preview. No data writes or publishing.
 
 # Brand identity 01 — d15
-- [ ] Replace shared visual theme, font families, radii and labels while preserving layout, type scale and actions.
-- [ ] Replace shared logo and browser/social assets; update leaf metadata and Organization.logo.
-- [ ] Update theme/type safeguards and design rules; verify contrasts and requested desktop/mobile screens with mocked serial tests, no data writes or publishing.
+- [x] Replace shared visual theme, font families, radii and labels while preserving layout, type scale and actions.
+- [x] Replace shared logo and browser/social assets; update leaf metadata and Organization.logo.
+- [x] Update theme/type safeguards and design rules; 267 mocked tests passed serially, 53 database tests skipped for no-write safety. Preview build OK; requested eight screens captured at 1280px and 390px, no overflow/page errors. Contrast, keyboard focus and reduced motion checked; existing 40px/44px button sizing retained. No data writes, AI calls or publishing.

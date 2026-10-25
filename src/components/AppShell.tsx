@@ -1,7 +1,7 @@
 import { Link, Outlet, useNavigate, useRouteContext } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createContext, useContext, useState } from "react";
-import { Check, ChevronsUpDown, Plus, LogOut, Menu } from "lucide-react";
+import { Check, ChevronsUpDown, Plus, LogOut, Menu, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/Logo";
 import { ProductLogo } from "@/components/ProductLogo";
@@ -24,22 +24,23 @@ export const useActiveProduct = () => useContext(Ctx);
 
 export const stageLabel = (s: Product["stage"]) => (s === "live" ? "Live" : "Pre-launch");
 
-const itemClass = "flex items-center gap-3 rounded-sm px-3 py-2 text-nav font-medium text-foreground hover:bg-sunken";
+const itemClass = "nav-item";
 const activeClass = "bg-selected text-foreground selected-state";
 
 export function SidebarNav({ isAdmin, onNavigate }: { isAdmin: boolean; onNavigate?: () => void }) {
   return (
-    <nav className="flex flex-col gap-4 px-3 py-5" aria-label="Main">
+    <nav className="sidebar-nav flex flex-col px-3 py-5" aria-label="Main">
       {visibleNav(isAdmin).map((group) => (
-        <div key={group.label}>
-          <p className="nav-group-label px-3 pb-1">{group.label}</p>
+        <div key={group.label} className="nav-group">
+          <p className="nav-group-label">{group.label}</p>
           <ul className="flex flex-col gap-0.5">
             {group.items.map((item) => (
               <li key={item.label}>
                 {item.soon ? (
-                  <span aria-disabled="true" className="flex cursor-default items-center gap-3 px-3 py-2 text-nav text-muted-foreground">
-                    <span className="flex-1">{item.label}</span>
-                    <span className="status-chip status-coming">Coming next</span>
+                  <span aria-disabled="true" title={`${item.label} (Coming next)`} className="nav-item nav-item-soon">
+                    <span className="nav-item-label">{item.label}</span>
+                    <span className="nav-soon-pill">Coming next</span>
+                    <Clock className="nav-soon-icon" aria-label="Coming next" />
                   </span>
                 ) : (
                   <Link
@@ -50,7 +51,7 @@ export function SidebarNav({ isAdmin, onNavigate }: { isAdmin: boolean; onNaviga
                     activeOptions={item.hash ? { includeHash: true } : { exact: true, includeHash: false }}
                     activeProps={{ className: activeClass }}
                   >
-                    {item.label}
+                    <span className="nav-item-label">{item.label}</span>
                   </Link>
                 )}
               </li>
@@ -89,11 +90,11 @@ export function AppShell() {
   const switcher = (
     <div className="px-3 pt-5">
       <DropdownMenu>
-        <DropdownMenuTrigger className="flex w-full items-center gap-3 rounded-lg border bg-card px-3 py-2 text-left hover:bg-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+        <DropdownMenuTrigger className="product-switcher flex w-full items-center gap-3 rounded-lg border bg-card px-3 text-left hover:bg-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
           {active ? <ProductLogo name={active.name} path={active.logo_path} /> : <span className="flex h-8 w-8 items-center justify-center rounded-sm bg-sunken text-muted-foreground"><Plus className="h-4 w-4" /></span>}
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-sm font-semibold">{active?.name ?? "No product yet"}</span>
-            <span className="block text-xs text-muted-foreground">{active ? stageLabel(active.stage) : "Add one to start"}</span>
+            <span className="product-switcher-name block truncate">{active?.name ?? "No product yet"}</span>
+            <span className="product-switcher-stage block truncate">{active ? stageLabel(active.stage) : "Add one to start"}</span>
           </span>
           <ChevronsUpDown className="h-4 w-4 text-muted-foreground" />
         </DropdownMenuTrigger>
@@ -126,8 +127,8 @@ export function AppShell() {
   );
 
   const account = (
-    <div className="mt-auto border-t px-5 py-4">
-      <p className="truncate text-sm text-muted-foreground" title={user.email}>{user.email}</p>
+    <div className="sidebar-account mt-auto border-t px-5 py-3">
+      <p className="sidebar-account truncate text-muted-foreground" title={user.email}>{user.email}</p>
       <Button variant="link" onClick={signOut}>
         <LogOut className="h-4 w-4" /> Sign out
       </Button>
@@ -143,7 +144,7 @@ export function AppShell() {
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" aria-label="Open menu"><Menu /></Button>
             </SheetTrigger>
-            <SheetContent side="left" className="flex w-72 flex-col overflow-y-auto bg-sidebar p-0">
+            <SheetContent side="left" className="sidebar-panel flex flex-col overflow-y-auto bg-sidebar p-0">
               <SheetTitle className="sr-only">Menu</SheetTitle>
               <div className="px-5 pt-5"><Logo variant="mark-only" /></div>
               {switcher}
@@ -153,9 +154,9 @@ export function AppShell() {
           </Sheet>
         </header>
 
-        <aside className="hidden shrink-0 flex-col overflow-y-auto border-r bg-sidebar md:sticky md:top-0 md:flex md:h-screen md:w-64">
+        <aside className="hidden shrink-0 flex-col overflow-y-auto border-r bg-sidebar md:sticky md:top-0 md:flex md:h-screen md:w-[var(--sidebar-w)]">
           <div className="px-5 pt-5">
-            <Link to="/overview"><Logo /></Link>
+            <Link to="/overview" className="sidebar-logo"><Logo /></Link>
           </div>
           {switcher}
           <SidebarNav isAdmin={!!isAdmin} />

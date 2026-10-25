@@ -15,7 +15,7 @@ describe('sidebar navigation', () => {
   it('lists groups in the agreed order', () => {
     expect(NAV_GROUPS.map(g => g.label.toUpperCase())).toEqual(['HOME', 'GROWTH AUDIT', 'DISTRIBUTION', 'ANALYTICS', 'FOUNDATION']);
   });
-  it('renders Coming next items as disabled text, not links', () => {
+  it('renders Soon items as disabled text, not links', () => {
     render(<SidebarNav isAdmin={false} />);
     for (const label of ['Google search growth', 'Listing optimization', 'Finding conversations', 'Results', 'Competitor gaps', 'Experiments']) {
       const el = screen.getByText(label).closest('[aria-disabled="true"]');
@@ -32,7 +32,7 @@ describe('sidebar navigation', () => {
     expect(screen.getByRole('link', { name: 'Product profile' }).getAttribute('href')).toBe('/overview#profile');
     expect(screen.getByRole('link', { name: 'Website tracking' }).getAttribute('href')).toBe('/integrations#tracking');
   });
-  it('uses shared single-line sidebar roles with the exact Coming next pill', () => {
+  it('uses shared single-line sidebar roles with the exact Soon pill', () => {
     const { container } = render(<SidebarNav isAdmin />);
     const rows = container.querySelectorAll('.nav-item');
     expect(rows.length).toBeGreaterThan(10);
@@ -42,7 +42,7 @@ describe('sidebar navigation', () => {
     });
     const pills = container.querySelectorAll('.nav-soon-pill');
     expect(pills.length).toBe(6);
-    pills.forEach((p) => expect(p.textContent).toBe('Coming next'));
+    pills.forEach((p) => expect(p.textContent).toBe('Soon'));
   });
   it('defines sidebar sizes on the shared scale', async () => {
     const css = (await import('node:fs')).readFileSync('src/styles.css', 'utf8');
@@ -60,7 +60,7 @@ describe('sidebar navigation', () => {
     render(<SidebarNav isAdmin />);
     expect(screen.getByRole('link', { name: 'Admin' }).getAttribute('href')).toBe('/admin');
   });
-  it('lists the Coming next integrations in the promised order', () => {
+  it('lists the Soon integrations in the promised order', () => {
     expect(COMING_INTEGRATIONS.map(i => i.name)).toEqual([
       'Google Search Console', 'Google Analytics', 'PostHog', 'Stripe',
       'Bing Webmaster Tools', 'Slack', 'Notion / CSV export',

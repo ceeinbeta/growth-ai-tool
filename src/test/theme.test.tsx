@@ -22,7 +22,7 @@ describe('Brand identity 01 d15 safeguards', () => {
       render(<StatusChip type={type} />);
       const chip = screen.getByText(sourceLabels[type]);
       expect(chip.className).toContain(`status-${type}`);
-      expect(chip.textContent).toBe({ live: 'LIVE', coming: 'COMING NEXT', sample: 'SAMPLE DATA', measured: 'MEASURED', estimated: 'ESTIMATED', benchmark: 'BENCHMARK', ai: 'AI-written' }[type]);
+      expect(chip.textContent).toBe({ live: 'LIVE', coming: 'SOON', sample: 'SAMPLE DATA', measured: 'MEASURED', estimated: 'ESTIMATED', benchmark: 'BENCHMARK', ai: 'AI-written' }[type]);
     });
   }
 });

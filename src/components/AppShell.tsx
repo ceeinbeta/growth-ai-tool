@@ -38,10 +38,10 @@ export function SidebarNav({ isAdmin, onNavigate }: { isAdmin: boolean; onNaviga
             {group.items.map((item) => (
               <li key={item.label}>
                 {item.soon ? (
-                  <span aria-disabled="true" title={`${item.label} (Coming next)`} className="nav-item nav-item-soon">
+                  <span aria-disabled="true" title={`${item.label} (Soon)`} className="nav-item nav-item-soon">
                     <span className="nav-item-label">{item.label}</span>
-                    <span className="nav-soon-pill">Coming next</span>
-                    <Clock className="nav-soon-icon" aria-label="Coming next" />
+                    <span className="nav-soon-pill">Soon</span>
+                    <Clock className="nav-soon-icon" aria-label="Soon" />
                   </span>
                 ) : (
                   <Link

@@ -41,8 +41,8 @@ describe('public discovery and feature availability', () => {
   it('lists exactly the live and coming feature inventories in llms.txt', () => {
     const llms = readFileSync('public/llms.txt', 'utf8');
     const names = (section: string) => [...section.matchAll(/^- \[([^\]]+)\]/gm)].map(m => m[1]);
-    expect(names(llms.split('## Live today\n')[1]?.split('## Coming next')[0] ?? '')).toEqual(liveFeatures.map(f => f.name));
-    expect(names(llms.split('## Coming next\n')[1]?.split('## Pages')[0] ?? '')).toEqual(upcomingFeatures.map(f => f.name));
+    expect(names(llms.split('## Live today\n')[1]?.split('## Soon')[0] ?? '')).toEqual(liveFeatures.map(f => f.name));
+    expect(names(llms.split('## Soon\n')[1]?.split('## Pages')[0] ?? '')).toEqual(upcomingFeatures.map(f => f.name));
   });
   it('uses the discovery origin for only public llms page links and includes its update date', () => {
     const llms = readFileSync('public/llms.txt', 'utf8');

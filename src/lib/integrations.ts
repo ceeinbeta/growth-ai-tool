@@ -1,4 +1,4 @@
-// Integrations that are not built yet; shown as Coming next, never as links.
+// Integrations that are not built yet; shown as Soon, never as links.
 // Order is part of the product page and covered by tests.
 export const COMING_INTEGRATIONS = [
   { name: 'Google Search Console', gives: 'See which Google searches bring visitors to your site.' },

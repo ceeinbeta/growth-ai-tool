@@ -47,4 +47,4 @@ export function loopSteps(f: NextStepFacts): LoopStep[] {
   ];
 }
 
-export const loopStatusText: Record<LoopStatus, string> = { done: "Done", current: "Current", "not-started": "Not started", "coming-next": "Coming next" };
+export const loopStatusText: Record<LoopStatus, string> = { done: "Done", current: "Current", "not-started": "Not started", "coming-next": "Soon" };

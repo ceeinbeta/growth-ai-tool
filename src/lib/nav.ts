@@ -1,5 +1,5 @@
 // Single source for the signed-in sidebar and mobile drawer.
-// Items with `soon` are visible "Coming next" labels, never links.
+// Items with `soon` are visible "Soon" labels, never links.
 export type NavItem =
   | { label: string; to: "/overview" | "/conversion-leaks" | "/technical-audit" | "/ai-search-visibility" | "/integrations" | "/admin"; hash?: string; soon?: false; adminOnly?: boolean }
   | { label: string; soon: true };

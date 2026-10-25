@@ -134,6 +134,13 @@
       "when": 1792943228502,
       "tag": "0018_tracking_summary_period",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1792954870559,
+      "tag": "0019_hn_conversations",
+      "breakpoints": true
     }
   ]
 }

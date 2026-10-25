@@ -172,7 +172,7 @@
   h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: 0; }
   a:not([class*="bg-"]):not([aria-label]) { text-underline-offset: 4px; }
   main p a, main li p a { text-decoration: underline; }
-  label, legend, thead, dt, time, .public-eyebrow { font-family: var(--font-label); font-weight: 600; text-transform: uppercase; letter-spacing: .12em; }
+  label, legend, thead, dt, time, .public-eyebrow { font-family: var(--font-label); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .12em; }
 }
 :where(a,button,input,textarea,select,[tabindex],[role="button"],[role="checkbox"],[role="radio"]):focus-visible {
   outline: 2px solid var(--ring) !important;

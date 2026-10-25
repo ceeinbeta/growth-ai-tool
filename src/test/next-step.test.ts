@@ -1,14 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { loopSteps, pickNextStep, type NextStepFacts } from '@/lib/next-step';
 
-const all: NextStepFacts = { profiled: true, profileReviewed: true, eventCount: 5, funnelSteps: 2, hasAudit: true, usableVisibilityRuns: 3, leaksInProgressOrDone: 0 };
+const all: NextStepFacts = { profiled: true, profileReviewed: true, eventCount: 5, funnelSteps: 2, hasAudit: true, hasTechnicalAudit: true, usableVisibilityRuns: 3, leaksInProgressOrDone: 0 };
 
 describe('next best step order', () => {
   it('asks for the profile first', () => expect(pickNextStep({ ...all, profiled: false, eventCount: 0 }).key).toBe('profile'));
   it('asks for an unreviewed AI profile to be checked', () => expect(pickNextStep({ ...all, profileReviewed: false }).key).toBe('profile'));
   it('then tracking', () => expect(pickNextStep({ ...all, eventCount: 0, funnelSteps: 0 }).key).toBe('tracking'));
   it('then funnel steps', () => expect(pickNextStep({ ...all, funnelSteps: 0, hasAudit: false }).key).toBe('funnel'));
-  it('then a page audit', () => expect(pickNextStep({ ...all, hasAudit: false, usableVisibilityRuns: 0 }).key).toBe('audit'));
+  it('then a page audit', () => expect(pickNextStep({ ...all, hasAudit: false, hasTechnicalAudit: false, usableVisibilityRuns: 0 }).key).toBe('audit'));
+  it('then a technical audit', () => expect(pickNextStep({ ...all, hasTechnicalAudit: false, usableVisibilityRuns: 0 }).key).toBe('technical'));
   it('then an AI visibility check', () => expect(pickNextStep({ ...all, usableVisibilityRuns: 0 }).key).toBe('visibility'));
   it('otherwise review the biggest leak', () => expect(pickNextStep(all).key).toBe('leak'));
 });

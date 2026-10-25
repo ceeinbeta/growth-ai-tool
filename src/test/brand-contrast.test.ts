@@ -19,11 +19,11 @@ describe('d15 contrast and centralized palette', () => {
     }
   });
   it('rejects normal-text use of green and confirms the lightest muted family step', () => {
-    expect(contrast(palette['brand-green'] ?? '', palette.paper ?? '')).toBeLessThan(4.5);
-    expect(contrast(palette.white ?? '', palette['brand-green'] ?? '')).toBeLessThan(4.5);
-    expect(contrast(palette.ink ?? '', palette['brand-green'] ?? '')).toBeLessThan(4.5);
+    expect(contrast(palette['brand-green'] ?? '', palette['paper'] ?? '')).toBeLessThan(4.5);
+    expect(contrast(palette['white'] ?? '', palette['brand-green'] ?? '')).toBeLessThan(4.5);
+    expect(contrast(palette['ink'] ?? '', palette['brand-green'] ?? '')).toBeLessThan(4.5);
     const brighter = (palette['muted-text'] ?? '').replace(/[\da-f]{2}/gi, channel => (Number.parseInt(channel, 16) + 1).toString(16).padStart(2, '0'));
-    expect(contrast(brighter, palette.canvas ?? '')).toBeLessThan(4.5);
+    expect(contrast(brighter, palette['canvas'] ?? '')).toBeLessThan(4.5);
   });
   it('forbids authored hardcoded hex outside the shared theme', () => {
     expect([...files('src'), ...files('scripts')].filter(path => path !== 'src/styles.css' && !path.includes('/test/') && hex.test(readFileSync(path, 'utf8')))).toEqual([]);

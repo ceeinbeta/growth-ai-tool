@@ -1,3 +1,4 @@
+import { ActionRow, ActionHeader } from '@/components/ActionRow';
 import { createFileRoute, Link, useLocation } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -69,7 +70,7 @@ function ProductOverview({ product, footer, onDeleted }: { product: Product; foo
 
   return (
     <div className="mx-auto max-w-3xl">
-      <header className="grid grid-cols-[56px_minmax(0,1fr)] items-start gap-4 sm:flex sm:flex-wrap max-sm:[&>button]:col-span-2 max-sm:[&>button]:justify-self-end">
+      <ActionHeader action={<EditProductDialog product={product} onDeleted={onDeleted} />}><div className="flex min-w-0 items-start gap-4">
         <ProductLogo name={product.name} path={product.logo_path} size={56} />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-3">
@@ -78,10 +79,10 @@ function ProductOverview({ product, footer, onDeleted }: { product: Product; foo
           </div>
           <a href={`https://${product.url}`} target="_blank" rel="noopener noreferrer" className="mt-1 inline-block break-all text-sm font-medium text-foreground hover:underline">{product.url}</a>
         </div>
-        <EditProductDialog product={product} onDeleted={onDeleted} />
-      </header>
+        </div>
+      </ActionHeader>
       <p className={`mt-4 whitespace-pre-line text-foreground ${more ? "" : "line-clamp-2"}`}>{product.description}</p>
-      {product.description.length > 140 && <button className="mt-1 text-sm font-medium text-foreground hover:underline" onClick={() => setMore(m => !m)} aria-expanded={more}>{more ? "Show less" : "Show more"}</button>}
+      {product.description.length > 140 && <Button variant="link" onClick={() => setMore(m => !m)} aria-expanded={more}>{more ? "Show less" : "Show more"}</Button>}
 
       {overview.error ? <div className="mt-8"><ErrorState text="We couldn't load your setup progress." onRetry={() => void overview.refetch()} /></div>
         : !items ? <div className="mt-8 space-y-4"><Skeleton className="h-28 w-full" /><Skeleton className="h-64 w-full" /></div>
@@ -116,7 +117,7 @@ function NextAction({ items, onProfile }: { items: ChecklistItem[]; onProfile: (
       {next ? <>
         <h2 className="mt-1 text-xl">{next.title}</h2>
         {next.result && <p className="mt-1 text-sm text-muted-foreground">{next.result}</p>}
-        <Button asChild className="mt-4"><ItemLink item={next} onProfile={onProfile}>{next.action}<ArrowRight className="ml-2 h-4 w-4" /></ItemLink></Button>
+        <ActionRow className="mt-4"><Button asChild><ItemLink item={next} onProfile={onProfile}>{next.action}<ArrowRight /></ItemLink></Button></ActionRow>
       </> : <p className="mt-1 text-base">You're set up. Next: run an AI visibility check weekly. <Link to="/ai-search-visibility" className="font-medium text-foreground underline">Open AI search visibility</Link></p>}
     </section>
   );
@@ -185,7 +186,7 @@ function ProfileSummary({ product, onEdit }: { product: Product; onEdit: () => v
         <div><dt className="text-muted-foreground">Competitors</dt><dd className="mt-0.5">{data ? data.competitors.length : "…"}</dd></div>
         <div><dt className="text-muted-foreground">Buyer questions</dt><dd className="mt-0.5">{data ? data.questions.length : "…"}</dd></div>
       </dl> : <p className="mt-3 text-sm text-muted-foreground">Not profiled yet. Growloop reads what you told us and writes a short profile you can check.</p>}
-      <Button variant="outline" className="mt-4" onClick={onEdit}>{product.profiled_at ? "Edit profile" : "Open profile"}</Button>
+      <ActionRow className="mt-4"><Button variant="outline" onClick={onEdit}>{product.profiled_at ? "Edit profile" : "Open profile"}</Button></ActionRow>
     </section>
   );
 }

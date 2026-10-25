@@ -1,3 +1,4 @@
+import { ActionRow, ActionHeader } from '@/components/ActionRow';
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { ArrowRight, Check } from 'lucide-react';
@@ -38,7 +39,7 @@ export function WaitlistForm() {
     <div aria-hidden="true" className="hidden"><label htmlFor="waitlist-company">Company</label><input id="waitlist-company" type="text" tabIndex={-1} autoComplete="off" value={company} onChange={e => setCompany(e.target.value)} /></div>
     <div className="flex items-start gap-3"><Checkbox id="waitlist-consent" checked={consent} onCheckedChange={value => setConsent(value === true)} aria-required="true" className="mt-1" /><Label htmlFor="waitlist-consent" className="text-sm leading-relaxed">{WAITLIST_CONSENT}</Label></div>
     {error && <p id="waitlist-error" role="alert" className="rounded-sm bg-danger-soft p-3 text-sm text-destructive">{error}</p>}
-    <Button type="submit" disabled={busy} className="h-12 w-full sm:w-auto" size="lg">{busy ? 'Joining…' : 'Join the beta waitlist'}<ArrowRight /></Button>
+    <ActionRow><Button type="submit" disabled={busy} size="lg">{busy ? 'Joining…' : 'Join the beta waitlist'}<ArrowRight /></Button></ActionRow>
     <p className="text-xs text-muted-foreground">Free during the beta. <Link to="/privacy" className="text-foreground underline underline-offset-4">How we use your details</Link></p>
   </form>;
 }

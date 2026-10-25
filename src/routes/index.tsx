@@ -1,3 +1,4 @@
+import { ActionRow, ActionHeader } from '@/components/ActionRow';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { ArrowRight, ChartNoAxesColumn, Droplets, ScanText, Search, MessageCircle, Target, Check } from 'lucide-react';
@@ -54,7 +55,7 @@ export function LandingPage() {
   }, []);
   return <PublicShell><main id="main-content">
     <section className="border-b bg-background"><div className="public-container grid items-center gap-12 py-12 md:py-16 lg:grid-cols-2 lg:gap-16">
-      <div><p className="public-eyebrow">Growth for solo founders</p><h1 className="mt-5 text-4xl font-extrabold leading-tight sm:text-5xl lg:text-6xl">Find the leak.<br />Fix it.<br />Prove it worked.</h1><p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">Growloop is a growth app for solo founders. It shows where visitors drop off, helps you fix it, and measures what happens next, so you stop guessing what to work on.</p><div className="mt-8 flex flex-wrap gap-3"><Button asChild size="lg" className="min-h-12 px-5"><a href="#waitlist">Join the beta waitlist<ArrowRight /></a></Button><Button asChild size="lg" variant="outline" className="min-h-12 px-5"><Link to="/features">Explore features</Link></Button></div><p className="mt-4 text-sm text-muted-foreground">Free during beta. Invite-only. No automatic posting.</p></div><PublicProductIllustration />
+      <div><p className="public-eyebrow">Growth for solo founders</p><h1 className="mt-5 text-4xl font-extrabold leading-tight sm:text-5xl lg:text-6xl">Find the leak.<br />Fix it.<br />Prove it worked.</h1><p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">Growloop is a growth app for solo founders. It shows where visitors drop off, helps you fix it, and measures what happens next, so you stop guessing what to work on.</p><ActionRow layout="section" className="mt-8"><Button asChild size="lg"><a href="#waitlist">Join the beta waitlist<ArrowRight /></a></Button><Button asChild size="lg" variant="outline"><Link to="/features">Explore features</Link></Button></ActionRow><p className="mt-4 text-sm text-muted-foreground">Free during beta. Invite-only. No automatic posting.</p></div><PublicProductIllustration />
     </div></section>
     <section className="public-section bg-card"><div className="public-container"><p className="public-eyebrow">The hard part comes next</p><h2 className="public-heading"><em className="human-phrase">Shipping was the easy part.</em></h2><div className="mt-10 grid gap-5 md:grid-cols-3">{[
       [Droplets, 'Visitors arrive. Then leave.', 'More traffic does not fix a signup step that loses people. First, find where they drop off.'],
@@ -76,7 +77,7 @@ export function LandingPage() {
       ['Add your product', 'Review your AI-written audience, competitors and buyer questions.'],
       ['Connect your website', 'Install the snippet, check it, and start collecting real visits and signups.'],
       ['Find your next fix', 'Review your funnel, audit your copy, and check your AI search visibility.'],
-    ].map(([title, text], i) => <li key={title}><span className="font-display text-3xl font-bold text-foreground">0{i + 1}</span><h3 className="mt-4 text-xl">{title}</h3><p className="mt-3 leading-relaxed text-muted-foreground">{text}</p></li>)}</ol><Button asChild variant="outline" size="lg" className="mt-10 min-h-12"><Link to="/features">How it works in detail<ArrowRight /></Link></Button></div></section>
+    ].map(([title, text], i) => <li key={title}><span className="font-display text-3xl font-bold text-foreground">0{i + 1}</span><h3 className="mt-4 text-xl">{title}</h3><p className="mt-3 leading-relaxed text-muted-foreground">{text}</p></li>)}</ol><ActionRow layout="section" className="mt-10"><Button asChild variant="outline" size="lg"><Link to="/features">How it works in detail<ArrowRight /></Link></Button></ActionRow></div></section>
     <section className="public-section border-y bg-background"><div className="public-container"><h2 className="public-heading">Our rules.</h2><div className="mt-10 grid gap-8 md:grid-cols-3">{[
       ['You approve everything.', 'Growloop drafts, you post. Nothing is sent or published without your yes.'],
       ['Every number has a source.', 'Numbers are labeled measured, estimated, benchmark or sample. AI-written content is labeled too.'],

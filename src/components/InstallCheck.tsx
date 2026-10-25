@@ -1,3 +1,4 @@
+import { ActionRow, ActionHeader } from '@/components/ActionRow';
 import { useEffect, useRef, useState } from 'react';
 import { useServerFn } from '@tanstack/react-start';
 import { supabase } from '@/integrations/supabase/client';
@@ -46,7 +47,7 @@ export function InstallCheck({ productId }: { productId: string }) {
   }
 
   return <div className="mt-5">
-    <Button variant="outline" onClick={run} disabled={busy}>{busy ? 'Checking…' : result ? 'Check again' : 'Check installation'}</Button>
+    <ActionRow><Button variant="outline" onClick={run} disabled={busy}>{busy ? 'Checking…' : result ? 'Check again' : 'Check installation'}</Button></ActionRow>
     {error && <p role="alert" className="mt-3 text-sm text-destructive">{error}</p>}
     {result && <ol className="mt-4 space-y-3 text-sm" aria-live="polite">
       <li><span className="font-semibold">Snippet on your website.</span> {result.snippet.message}</li>

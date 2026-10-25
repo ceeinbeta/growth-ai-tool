@@ -1,3 +1,4 @@
+import { ActionRow, ActionHeader } from '@/components/ActionRow';
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -93,7 +94,7 @@ export function EditProductDialog({ product, onDeleted }: { product: Product; on
 
   return (
     <Dialog open={open} onOpenChange={reset}>
-      <DialogTrigger asChild><Button variant="outline" size="sm"><Pencil className="mr-2 h-4 w-4" />Edit product</Button></DialogTrigger>
+      <DialogTrigger asChild><Button variant="outline" size="sm"><Pencil />Edit product</Button></DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader><DialogTitle>Edit product</DialogTitle><DialogDescription>The tracking key stays the same, so your installed snippet keeps working.</DialogDescription></DialogHeader>
         {savedUrlChange ? (
@@ -133,7 +134,7 @@ export function EditProductDialog({ product, onDeleted }: { product: Product; on
             <Label htmlFor="delete-confirm" className="mt-3 block">Type <span className="font-semibold">{product.name}</span> to confirm</Label>
             <Input id="delete-confirm" className="mt-2" value={typed} onChange={e => { setTyped(e.target.value); setDeleteError(""); }} aria-describedby="delete-error" />
             {deleteError && <p id="delete-error" role="alert" className="mt-1.5 text-sm text-destructive">{deleteError}</p>}
-            <Button variant="destructive" className="mt-3" disabled={busy || !deleteConfirmed(typed, product.name)} onClick={remove}>Delete product</Button>
+            <ActionRow className="mt-3"><Button variant="destructive" disabled={busy || !deleteConfirmed(typed, product.name)} onClick={remove}>Delete product</Button></ActionRow>
           </section>
         </>)}
       </DialogContent>

@@ -1,3 +1,4 @@
+import { ActionRow, ActionHeader } from '@/components/ActionRow';
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -143,13 +144,13 @@ function AdminContent() {
                         <TableCell>{relativeTime(row.created_at)}</TableCell>
                         <TableCell><StatusPill row={row} /></TableCell>
                         <TableCell>
-                          <div className="flex justify-end gap-2">
+                          <ActionRow>
                             {!row.on_allow_list && !row.has_account && (
                               <Button size="sm" variant="outline" onClick={() => invite(row.email)}><UserPlus className="h-4 w-4" /> Invite</Button>
                             )}
                             <Button size="sm" variant="outline" onClick={() => setInviteFor(row.email)}><Copy className="h-4 w-4" /> Copy invite message</Button>
                             <Button size="sm" variant="outline" onClick={() => setDeleteRow(row)}><Trash2 className="h-4 w-4" /> Delete entry</Button>
-                          </div>
+                          </ActionRow>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -176,7 +177,7 @@ function AdminContent() {
                         <TableCell>{row.note ?? '—'}</TableCell>
                         <TableCell>{row.has_account ? `Signed in ${row.last_sign_in_at ? new Date(row.last_sign_in_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'recently'}` : 'Invited, not signed in yet'}</TableCell>
                         <TableCell>
-                          <div className="flex justify-end gap-2">
+                          <ActionRow>
                             <Button size="sm" variant="outline" onClick={() => setInviteFor(row.email)}><Copy className="h-4 w-4" /> Copy invite message</Button>
                             {row.has_account ? (
                               <TooltipProvider>
@@ -190,7 +191,7 @@ function AdminContent() {
                             ) : (
                               <Button size="sm" variant="outline" onClick={() => uninvite(row.email)}><UserMinus className="h-4 w-4" /> Remove</Button>
                             )}
-                          </div>
+                          </ActionRow>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -257,7 +258,7 @@ function SettingEditor({ label, settingKey, value, onSaved, onError }: {
   return (
     <div className="mt-3 flex items-center gap-2">
       <Label htmlFor={`setting-${settingKey}`} className="sr-only">{label}</Label>
-      <Input id={`setting-${settingKey}`} type="number" value={draft} onChange={e => setDraft(e.target.value)} className="h-8 w-24" />
+      <Input id={`setting-${settingKey}`} type="number" value={draft} onChange={e => setDraft(e.target.value)} className="w-24" />
       <Button size="sm" variant="outline" disabled={busy || draft === String(value)} onClick={save}>Save</Button>
     </div>
   );
@@ -282,7 +283,7 @@ function DirectInvite({ invites, onInvite }: { invites: InviteRow[]; onInvite: (
   return (
     <section aria-label="Invite someone who is not on the waitlist" className="mt-10 rounded-lg border bg-card p-5">
       <h2 className="text-xl font-bold">Invite someone who is not on the waitlist</h2>
-      <form onSubmit={submit} className="mt-4 flex flex-wrap items-end gap-3">
+      <form onSubmit={submit} className="mt-4 grid gap-3 sm:grid-cols-2">
         <div className="min-w-56 flex-1">
           <Label htmlFor="direct-invite-email">Email</Label>
           <Input id="direct-invite-email" type="email" required value={email} onChange={e => setEmail(e.target.value)} className="mt-1" placeholder="founder@theirapp.com" />
@@ -291,7 +292,7 @@ function DirectInvite({ invites, onInvite }: { invites: InviteRow[]; onInvite: (
           <Label htmlFor="direct-invite-note">Note <span className="text-muted-foreground">(optional, only you see this)</span></Label>
           <Input id="direct-invite-note" value={note} onChange={e => setNote(e.target.value)} className="mt-1" placeholder="Met at…" />
         </div>
-        <Button type="submit" disabled={busy}><UserPlus className="h-4 w-4" /> Invite</Button>
+        <ActionRow className="sm:col-span-2"><Button type="submit" disabled={busy}><UserPlus className="h-4 w-4" /> Invite</Button></ActionRow>
       </form>
       {error && <p role="alert" className="mt-3 text-sm text-destructive">{error}</p>}
     </section>
@@ -325,14 +326,14 @@ function InviteDialog({ email, onClose }: { email: string | null; onClose: () =>
           </div>
           <div>
             <Label htmlFor="invite-body">Message</Label>
-            <Textarea id="invite-body" value={body} onChange={e => setBody(e.target.value)} rows={14} className="mt-1 font-mono text-sm" />
+            <Textarea id="invite-body" value={body} onChange={e => setBody(e.target.value)} rows={14} className="mt-1 text-sm" />
           </div>
-          <Button onClick={() => {
+          <ActionRow><Button onClick={() => {
             void navigator.clipboard.writeText(`Subject: ${subject}\n\n${body}`).then(() => {
               setCopied(true);
               setTimeout(() => setCopied(false), 2000);
             });
-          }}><Copy className="h-4 w-4" /> {copied ? 'Copied' : 'Copy to clipboard'}</Button>
+          }}><Copy className="h-4 w-4" /> {copied ? 'Copied' : 'Copy to clipboard'}</Button></ActionRow>
         </div>
       </DialogContent>
     </Dialog>

@@ -4,12 +4,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Founder d7: exact playbook colors with documented derived neutrals below. */
+/* Brand identity 01 — decision d15 supersedes d7. Exact palette plus AA-safe derivatives. */
 
 @theme inline {
-  --font-label: "DM Mono", ui-monospace, monospace;
+  --font-label: "DM Sans", ui-sans-serif, system-ui, sans-serif;
   /* One shared type scale: every screen uses these sizes, no per-page overrides.
-     xs 12 DM Mono labels · sm 13 secondary/meta · base 15 app body · md/lg 16-17 public body
+     xs 12 DM Sans labels · sm 13 secondary/meta · base 15 app body · md/lg 16-17 public body
      · xl 20 card/section titles & public h3 · 2xl 22 · 3xl 27 app page titles · nav 14 sidebar. */
   --text-xs: 12px; --text-xs--line-height: 1.5;
   --text-sm: 13px; --text-sm--line-height: 1.5;
@@ -20,19 +20,25 @@
   --text-2xl: 22px; --text-2xl--line-height: 1.3;
   --text-3xl: 27px; --text-3xl--line-height: 1.2;
   --text-nav: 14px; --text-nav--line-height: 1.5;
-  --color-learning: var(--learning);
-  --color-learning-foreground: var(--learning-foreground);
+  --font-mono: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --color-brand-green: var(--brand-green);
+  --color-brand-bright: var(--brand-bright);
+  --color-brand-deep: var(--brand-deep);
+  --color-primary-hover: var(--primary-hover);
+  --radius-control: 12px;
+  --radius-public: 2rem;
+  --radius-app: 1.25rem;
   --color-warning: var(--warning);
   --color-warning-soft: var(--warning-soft);
   --color-chart-other: var(--chart-other);
   --color-overlay: var(--overlay);
-  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Manrope", ui-sans-serif, sans-serif;
-  --radius-sm: 4px;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "DM Sans", ui-sans-serif, sans-serif;
+  --radius-sm: 12px;
   --radius-md: 12px;
-  --radius-lg: 12px;
-  --radius-xl: 12px;
-  --radius-2xl: 12px;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 2rem;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -69,48 +75,54 @@
 }
 
 :root {
-  --ink: #17211D;
-  --lime: #BDFF38;
-  --paper: #F6F8F3;
+  --canvas: #F3F5EE;
+  --paper: #FBFCF8;
   --white: #FFFFFF;
-  --radius: 12px;
-  --background: var(--paper);
+  --ink: #17352C;
+  --palette-muted: #687A72;
+  --muted-text: #62746E;
+  --brand-green: #39A875;
+  --brand-bright: #A8E063;
+  --brand-deep: #237A55;
+  --line: #DCE4DA;
+  --primary-hover: #9CD454;
+  --radius: 1.25rem;
+  --background: var(--canvas);
   --foreground: var(--ink);
-  --card: var(--white);
+  --card: var(--paper);
   --card-foreground: var(--ink);
-  --popover: var(--white);
+  --popover: var(--paper);
   --popover-foreground: var(--ink);
-  --primary: var(--lime);
+  --primary: var(--brand-bright);
   --primary-foreground: var(--ink);
-  --secondary: color-mix(in srgb, var(--ink) 7%, var(--paper));
+  --secondary: var(--paper);
   --secondary-foreground: var(--ink);
-  --muted: var(--secondary);
-  --muted-foreground: rgba(23,33,29,0.68);
-  --accent: color-mix(in srgb, var(--lime) 22%, var(--paper));
+  --muted: var(--paper);
+  --muted-foreground: var(--muted-text);
+  --accent: color-mix(in srgb, var(--brand-bright) 22%, var(--canvas));
   --accent-foreground: var(--ink);
   --selected: var(--accent);
-  --sunken: var(--secondary);
-  --signal: var(--lime);
-  --info: var(--ink);
-  --learning: #6C4EF6;
-  --learning-foreground: var(--white);
+  --sunken: var(--paper);
+  --signal: var(--brand-bright);
+  --info: var(--brand-deep);
   --destructive: #C23B30;
-  --destructive-foreground: var(--white);
+  --destructive-foreground: var(--ink);
   --danger-soft: #FBE0DD;
   --warning: #B86E00;
   --warning-soft: #FDEFD2;
-  --border: rgba(23,33,29,0.14);
-  --input: var(--ink);
+  --border: var(--line);
+  --input: var(--line);
   --ring: var(--ink);
-  --chart-other: rgba(23,33,29,0.70);
+  --chart-other: var(--ink);
   --overlay: color-mix(in srgb, var(--ink) 80%, transparent);
-  --sidebar: var(--paper);
+  --hero-shadow: 0 1.5rem 4rem rgba(23,53,44,0.09);
+  --sidebar: var(--canvas);
   --sidebar-foreground: var(--ink);
-  --sidebar-primary: var(--lime);
+  --sidebar-primary: var(--brand-bright);
   --sidebar-primary-foreground: var(--ink);
   --sidebar-accent: var(--accent);
   --sidebar-accent-foreground: var(--ink);
-  --sidebar-border: var(--border);
+  --sidebar-border: var(--line);
   --sidebar-ring: var(--ink);
 }
 
@@ -128,7 +140,7 @@
   }
   h1, h2, h3, h4 {
     font-family: var(--font-display);
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: 0;
   }
 }
@@ -140,11 +152,11 @@
 .public-container { width: 100%; max-width: 1120px; margin-inline: auto; padding-inline: 20px; }
 .public-section { padding-block: 48px; }
 /* Public scale: h1 clamp(34,5vw,52), h2 clamp(26,3.4vw,36), h3 20, body 16-17, reading text max 68ch. */
-.public-h1 { font-size: clamp(34px, 5vw, 52px); line-height: 1.08; font-weight: 800; letter-spacing: -0.01em; }
-.public-heading { margin-top: 16px; font-size: clamp(26px, 3.4vw, 36px); line-height: 1.15; font-weight: 700; }
+.public-h1 { font-size: clamp(34px, 5vw, 52px); line-height: 1.08; font-weight: 600; letter-spacing: -0.05em; }
+.public-heading { margin-top: 16px; font-size: clamp(26px, 3.4vw, 36px); line-height: 1.15; font-weight: 600; letter-spacing: -0.04em; }
 .public-lede { font-size: 17px; line-height: 1.6; max-width: 68ch; }
 .public-measure { max-width: 68ch; }
-.public-eyebrow { color: var(--foreground); font-size: 12px; font-weight: 600; }
+.public-eyebrow { color: var(--brand-deep); font-size: 12px; font-weight: 600; }
 .public-nav-link { font-size: 14px; color: var(--foreground); line-height: 1.5; }
 .public-nav-link:hover { color: var(--foreground); text-decoration: underline; text-underline-offset: 4px; }
 @media (min-width: 640px) { .public-container { padding-inline: 32px; } }
@@ -155,15 +167,12 @@
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 }
 
-/* Derived neutrals: white cards, Ink 14% dividers, Ink 68% muted copy,
-   Ink 7% over Paper secondary fields, lime 22% over Paper selected fields.
-   The required danger/warning colors are outlines only on their tints:
-   text stays Ink because the exact colored text pairs fail WCAG AA. */
+/* AA-safe text roles; status colors are decoration with labeled Ink copy. */
 @layer base {
   h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: 0; }
   a:not([class*="bg-"]):not([aria-label]) { text-underline-offset: 4px; }
   main p a, main li p a { text-decoration: underline; }
-  label, legend, thead, dt, time, .public-eyebrow { font-family: var(--font-label); font-weight: 500; text-transform: uppercase; letter-spacing: .06em; }
+  label, legend, thead, dt, time, .public-eyebrow { font-family: var(--font-label); font-weight: 600; text-transform: uppercase; letter-spacing: .12em; }
 }
 :where(a,button,input,textarea,select,[tabindex],[role="button"],[role="checkbox"],[role="radio"]):focus-visible {
   outline: 2px solid var(--ring) !important;
@@ -177,21 +186,21 @@
 }
 .status-chip {
   display: inline-flex; align-items: center; width: fit-content; vertical-align: middle;
-  padding: 4px 7px; border: 1px solid var(--foreground); border-radius: 4px;
-  font-family: var(--font-label); font-size: 10px; font-weight: 500;
-  line-height: 1.4; letter-spacing: .06em; text-transform: uppercase; color: var(--foreground);
+  padding: 4px 7px; border: 1px solid var(--foreground); border-radius: 12px;
+  font-family: var(--font-label); font-size: 12px; font-weight: 600;
+  line-height: 1.4; letter-spacing: .12em; text-transform: uppercase; color: var(--foreground);
 }
-.status-live { background: var(--primary); }
+.status-live { background: var(--selected); }
 .status-coming, .status-estimated { background: transparent; }
 .status-attention { border-color: var(--warning); background: var(--warning-soft); color: var(--foreground); }
 .status-sample { border-style: dashed; background: transparent; }
 .status-measured { background: var(--foreground); color: var(--background); }
 .status-benchmark { border-style: dotted; background: transparent; }
-.status-ai { border-color: var(--learning); background: var(--learning); color: var(--learning-foreground); }
-.learning-block { border-left: 3px solid var(--learning); }
-.human-phrase { font-family: Georgia, serif; font-weight: 400; font-style: italic; }
+.status-ai { border-color: var(--line); background: var(--selected); color: var(--ink); text-transform: none; letter-spacing: 0; }
+.learning-block { border-left: 3px solid var(--brand-bright); }
+.human-phrase { font-family: var(--font-sans); font-weight: 500; font-style: normal; }
 .public-site article { box-shadow: none; }
-.public-site .public-eyebrow { font-size: 11px; }
+.public-site .public-eyebrow { font-size: 12px; }
 [class*="bg-danger-soft"] { color: var(--foreground); }
 [class*="bg-danger-soft"] [class*="text-destructive"] { color: var(--foreground); }
 [class*="text-warning"] { color: var(--foreground); background: var(--warning-soft); border: 1px solid var(--warning); padding: 2px 6px; }
@@ -200,23 +209,26 @@
 }
 
 .ink-field {
-  --foreground: var(--paper); --card-foreground: var(--paper);
-  --muted-foreground: var(--paper); --border: rgba(246,248,243,.3);
+  --foreground: var(--white); --card-foreground: var(--white);
+  --muted-foreground: var(--white); --brand-deep: var(--white); --border: color-mix(in srgb, var(--white) 30%, transparent);
   --primary-foreground: var(--ink);
-  background: var(--ink); color: var(--paper);
+  background: var(--ink); color: var(--white);
 }
 .ink-field a { color: var(--foreground); }
 .ink-field .logo-mark { color: var(--foreground); }
 .ink-field .public-nav-link { color: var(--foreground); }
 .ink-field [class*="bg-secondary"] { background: transparent; border: 1px solid var(--foreground); }
-:where([class*="bg-card"][class*="rounded"], [role="dialog"]) { border-radius: 12px; box-shadow: none; }
+:where([class*="bg-card"][class*="rounded"], [role="dialog"]) { border-radius: var(--radius-app); box-shadow: none; }
+.public-site :is(article[class*="rounded"], [class*="bg-card"][class*="rounded"]) { border-radius: var(--radius-public); }
+.public-site .brand-hero-card { border-radius: var(--radius-public); box-shadow: var(--hero-shadow); }
+:where(input,textarea,select,[data-slot="button"],[role="combobox"]) { border-radius: var(--radius-control); }
 label:has(input[type="radio"]:checked), [role="radio"][data-state="checked"] { box-shadow: inset 0 -2px var(--foreground); }
 [class*="text-destructive"]:not([class*="bg-danger-soft"]) { text-decoration-color: var(--destructive); }
 .public-site .public-heading { max-width: 68ch; }
 
 /* Keyboard outlines are Ink with a two-pixel Paper separator. */
 .ink-field :where(a,button,input,textarea,select,[tabindex]):focus-visible { outline-color: var(--ring) !important; }
-[class*="uppercase"][class*="text-xs"], [class*="uppercase"][class*="text-sm"], time, [class*="tabular-nums"][class*="text-xs"] { font-family: var(--font-label); font-weight: 500; }
+[class*="uppercase"][class*="text-xs"], [class*="uppercase"][class*="text-sm"], time, [class*="tabular-nums"][class*="text-xs"] { font-family: var(--font-label); font-weight: 600; }
 .public-site article:not([class*="rounded"]) { border-radius: 0; }
 
 button[class*="max-sm:"] { min-width: 0; }
@@ -237,4 +249,23 @@ button[class*="max-sm:"] { min-width: 0; }
   .action-row[data-layout="section"] > [data-variant="link"] { margin-inline-end: 0; }
   .action-header { grid-template-columns: minmax(0,1fr) auto; align-items: baseline; }
 }
-.nav-group-label { font-family: var(--font-label); font-weight: 500; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted-foreground); }
+.nav-group-label { font-family: var(--font-label); font-weight: 600; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted-foreground); }
+
+/* Shared d15 typography and logo roles; scale and action geometry stay unchanged. */
+.font-bold, .font-extrabold, .font-black { font-weight: 600; }
+.italic { font-style: normal; }
+.brand-label, .public-eyebrow, .nav-group-label { font-family: var(--font-label); font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+.logo { display: inline-flex; align-items: center; gap: .3em; font-family: var(--font-sans); font-weight: 500; line-height: 1.2; color: var(--ink); }
+.logo-wordmark { letter-spacing: -.065em; }
+.logo-mark { width: .82em; height: .82em; flex: none; }
+.logo-mark-only .logo-mark { width: 1em; height: 1em; }
+.logo-stroke { stroke: var(--brand-green); }
+.logo-dot { fill: var(--brand-bright); }
+.logo-inverse { color: var(--white); }
+.logo-inverse .logo-stroke { stroke: var(--white); }
+.logo-ink .logo-stroke { stroke: var(--ink); }
+.logo-sm { font-size: 17px; } .logo-md { font-size: 20px; } .logo-lg { font-size: 27px; }
+.logo-mark-only.logo-md { font-size: 32px; }
+.bg-primary .text-muted-foreground, .bg-selected .text-muted-foreground, .bg-accent .text-muted-foreground { color: var(--ink); }
+[class*="text-destructive"] { color: var(--ink); }
+.brand-social-image { display: block; width: 100%; height: auto; }

@@ -1,7 +1,7 @@
 import { allowedFetchUrl, FETCH_TIMEOUT_MS, MAX_HTML_BYTES, MAX_REDIRECTS, websiteHost } from './install-check';
 import { iconCandidates, MAX_LOGO_BYTES, sniffImage, type LogoType } from './logo';
 
-async function readCapped(res: Response, cap: number): Promise<Uint8Array | null> {
+export async function readCapped(res: Response, cap: number): Promise<Uint8Array | null> {
   const reader = res.body?.getReader();
   if (!reader) return new Uint8Array();
   const chunks: Uint8Array[] = []; let length = 0;
@@ -17,7 +17,7 @@ async function readCapped(res: Response, cap: number): Promise<Uint8Array | null
 }
 
 /** Same rules as the install check: https, public host, same site, every redirect re-validated, no cookies. */
-async function safeGet(start: string, website: string, signal: AbortSignal, accept: string): Promise<{ res: Response; url: URL } | null> {
+export async function safeGet(start: string, website: string, signal: AbortSignal, accept: string): Promise<{ res: Response; url: URL } | null> {
   let url = allowedFetchUrl(start, website);
   if (!url) return null;
   for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {

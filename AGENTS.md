@@ -42,6 +42,7 @@
 - Product logos live in a private bucket under a product-id folder, readable only by workspace members through signed URLs; site icons are fetched with the install-check URL validator, identified by file bytes, and capped by a member-callable reserve_logo_fetch RPC. Why: no public files, no unsafe fetches, no svg.
 - Product deletion goes through an owner-checked SQL function relying on foreign-key cascades; edits use the shared product-form validator. Why: one validation rule and no orphaned data.
 - Overview setup progress is computed from real rows in src/lib/setup-checklist.ts with tests. Why: completion must never be invented.
+- Technical audits are rule-based only (no AI calls): same-site bounded fetches, service-only hourly reservation and atomic save RPCs, hand-written fix copy in src/lib/technical-audit.ts. Why: free per run and no fabricated markup or claims.
 
 - Public feature facts are shared by home and Features; public navigation uses router links with home hashes for section jumps. Why: one honest feature inventory and consistent navigation.
 - Public discovery stays static: `src/lib/public-discovery.ts` owns the origin and public/private paths; run `bun run refresh:discovery` after changing them to refresh robots and the three-page sitemap without lastmod. Why: one domain setting, no private URLs.

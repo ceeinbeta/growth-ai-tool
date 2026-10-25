@@ -1,3 +1,7 @@
+# Technical audit slice
+- [x] Add rule-based technical audit page, tables, reservation/save functions, sidebar link and next-step entry.
+- [x] Mocked serial tests passed; real-site run not exercised (would write rows to the founder's product); not published.
+
 # Page fetching and visibility copy
 - [x] Add bounded same-site page extraction, ten hourly fetch reservations, provenance and paste fallback.
 - [x] Explain usable-only visibility engines and individual failures.

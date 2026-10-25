@@ -12,7 +12,7 @@ export async function generatePageAudit(product: { id: string; name: string; one
   if (!key) return { ok: false, error: "AI audits aren't connected yet. Please try again later." };
   const state = await admin.from('profile_ai_state').select('blocked,message').eq('model', AUDIT_MODEL).maybeSingle();
   if (state.error) return { ok: false, error: "We couldn't check the AI connection. Please try again." };
-  if (state.data?.blocked) return { ok: false, error: state.data.message ?? 'AI checks are paused until access is restored.' };
+  if (state.data?.blocked) return { ok: false, error: 'AI checks are paused until access is restored.' };
   const reservation = await admin.rpc('reserve_ai_run', { pid: product.id, feature: 'audit-page' });
   if (reservation.error) return { ok: false, error: auditReservationError(reservation.error.message) };
   let runId: string | undefined;

@@ -27,6 +27,6 @@ export const overviewQuery = (productId: string) => queryOptions({
       if (mentions.error) throw mentions.error;
       lastCheck = { date: check.data.started_at, usableRuns: usable.length, pct: usable.length ? youPercent(usable as SovRunRow[], (mentions.data ?? []) as SovMentionRow[]) : 0 };
     }
-    return { eventCount: events.count ?? 0, lastEventAt: latest.data?.created_at ?? null, visitors30d: Number(visitors.data ?? 0), audit: audit.data, lastCheck, funnelSteps: steps.count ?? 0, leaksWorked: worked.count ?? 0 };
+    return { eventCount: events.count ?? 0, lastEventAt: latest.data?.created_at ?? null, visitors30d: Number(visitors.data ?? 0), audit: audit.data, lastCheck, funnelSteps: steps.count ?? 0, leaksWorked: worked.count ?? 0, technicalAudit: technical.data };
   },
 });

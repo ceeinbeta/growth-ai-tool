@@ -165,6 +165,7 @@
 }
 .status-live { background: var(--primary); }
 .status-coming, .status-estimated { background: transparent; }
+.status-attention { border-color: var(--warning); background: var(--warning-soft); color: var(--foreground); }
 .status-sample { border-style: dashed; background: transparent; }
 .status-measured { background: var(--foreground); color: var(--background); }
 .status-benchmark { border-style: dotted; background: transparent; }

@@ -2,7 +2,7 @@
 // Page canonical metadata continues to use the current request origin.
 export const DISCOVERY_ORIGIN = 'https://growloop-mcads.lovable.app';
 export const PUBLIC_DISCOVERY_PATHS = ['/', '/features', '/privacy'];
-export const PRIVATE_CRAWLER_PATHS = ['/admin', '/ai-search-visibility', '/overview', '/settings', '/integrations', '/conversion-leaks', '/products', '/auth', '/api/'];
+export const PRIVATE_CRAWLER_PATHS = ['/admin', '/ai-search-visibility', '/overview', '/settings', '/integrations', '/conversion-leaks', '/technical-audit', '/products', '/auth', '/api/'];
 
 export function discoveryRobots() {
   return ['User-agent: *', 'Allow: /', ...PRIVATE_CRAWLER_PATHS.map(path => `Disallow: ${path}`), `Sitemap: ${DISCOVERY_ORIGIN}/sitemap.xml`, ''].join('\n');

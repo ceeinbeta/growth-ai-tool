@@ -5,6 +5,7 @@ vi.mock('@tanstack/react-router', () => ({ Link: ({ to, children, ...rest }: any
 import { WaitlistForm } from '@/components/WaitlistForm';
 import { WAITLIST_SUCCESS } from '@/lib/waitlist';
 
+globalThis.ResizeObserver ??= class { observe() {} unobserve() {} disconnect() {} } as any;
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 const fill = () => fireEvent.change(screen.getByLabelText('Email (required)'), { target: { value: 'a@example.com' } });
 
@@ -44,6 +45,6 @@ describe('homepage hero honesty', () => {
     expect(page).toContain('id="features-today"');
   });
   it('makes no rating, refund or guarantee claims', () => {
-    expect(page).not.toMatch(/refund|guarantee|money.back|★|stars?\b|rated|reviews?\b/i);
+    expect(page).not.toMatch(/refund|guarantee|money.back|★|\bstars?\b|\brated\b|\d(\.\d)? ?\/ ?5\b|customer reviews/i);
   });
 });

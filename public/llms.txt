@@ -1,28 +1,38 @@
 # Growloop
 
-> Growloop is a growth app for solo founders that finds why your product isn't growing, helps you fix it, and measures what happens next.
+> Growloop is a growth app for solo founders that finds why your product is not growing, helps you fix it, and measures what happens next.
 
-Growloop is in invite-only beta and is free while in beta. It never posts, sends or publishes anything for you — you always approve and post yourself. Numbers on screen are labeled measured, estimated, benchmark or sample, and AI-written content is labeled.
+Growloop is in invite-only beta and is free while in beta. It never posts, sends or publishes anything for you. Numbers are labeled measured, estimated, benchmark or sample, and AI-written content is labeled.
+
+Last updated: 2026-10-25
+
+AI search visibility is built to check ChatGPT, Perplexity and Claude; engines are connected one by one during the beta, so some may show as not connected.
 
 ## Live today
 
-- Conversion leak finder: measured funnels that show where visitors drop off.
-- Page audit by address: AI-written findings and rewrites for a page on your own site.
-- Technical audit: eight rule-based checks that Google and AI assistants can find, read and understand your site.
-- AI search visibility: how often ChatGPT, Perplexity and Claude recommend your product, from repeated sample runs.
-- Website tracking: one script line for real visits, signups and waitlist joins; no cookies or personal data.
-- Product profile: an editable audience, competitor and buyer-question profile.
+- [Conversion leak finder](https://growloop-mcads.lovable.app/features#conversion): See where visitors leave your funnel before you spend on more traffic.
+- [Page audit by address](https://growloop-mcads.lovable.app/features#audit): Get an AI-written second look at the copy behind a conversion leak.
+- [Technical audit](https://growloop-mcads.lovable.app/features#technical): Check whether Google and AI assistants can find, read and understand your site.
+- [Website tracking](https://growloop-mcads.lovable.app/features#tracking): Measure real visits and signups with one script line.
+- [AI search visibility](https://growloop-mcads.lovable.app/features#visibility): See how often connected AI assistants recommend you beside your competitors; engines are connected one by one during the beta.
+- [Product profile](https://growloop-mcads.lovable.app/features#profile): Put your product, audience and buyer questions in one editable place.
+- [Multi-product workspace](https://growloop-mcads.lovable.app/features#workspace): Keep up to 3 products together, with separate numbers for each.
 
 ## Coming next
 
-- Google search growth, listing optimization, finding conversations, results attribution, competitor gaps and experiments are not available yet.
+- [Google search growth](https://growloop-mcads.lovable.app/features#coming-next): Coming next, not available yet. See which pages and searches bring organic visitors, and what to improve.
+- [Listing optimization](https://growloop-mcads.lovable.app/features#coming-next): Coming next, not available yet. Improve how your product appears in directories and listings.
+- [Finding conversations](https://growloop-mcads.lovable.app/features#coming-next): Coming next, not available yet. Find buyers asking on Reddit, Hacker News and X, with reply drafts you post yourself.
+- [Results](https://growloop-mcads.lovable.app/features#coming-next): Coming next, not available yet. See which actions brought signups.
+- [Competitor gaps](https://growloop-mcads.lovable.app/features#coming-next): Coming next, not available yet. Find opportunities your competitors are missing.
+- [Experiments](https://growloop-mcads.lovable.app/features#coming-next): Coming next, not available yet. Compare changes and learn which one helps your product grow.
 
 ## Pages
 
-- [Home](/): What Growloop is and how it works.
-- [Features](/features): What is live today and what is coming next.
-- [Privacy](/privacy): What data is collected and how to ask for deletion.
+- [Home](https://growloop-mcads.lovable.app/): What Growloop is and how it works.
+- [Features](https://growloop-mcads.lovable.app/features): What is live today and what is coming next.
+- [Privacy](https://growloop-mcads.lovable.app/privacy): What data is collected and how to ask for deletion.
 
 ## Contact
 
-- Email: hello@mcads.co
+- [Email](mailto:hello@mcads.co): Contact Growloop.

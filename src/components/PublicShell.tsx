@@ -28,7 +28,7 @@ export function WaitlistLink({ children = 'Join the beta waitlist', onClick }: {
 export function PublicShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   return <div className="public-site">
-    <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:z-[60] focus:bg-card focus:p-4 focus:text-primary">Skip to content</a>
+    <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:z-[60] focus:bg-card focus:p-4 focus:text-foreground">Skip to content</a>
     <header className="sticky top-0 z-40 border-b bg-card">
       <nav aria-label="Public" className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 py-3 sm:px-8 lg:px-12">
         <Link to="/" aria-label="Growloop home"><Logo /></Link>
@@ -40,6 +40,6 @@ export function PublicShell({ children }: { children: ReactNode }) {
       </nav>
     </header>
     {children}
-    <footer className="border-t bg-card"><div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:px-12"><div className="flex flex-col justify-between gap-8 md:flex-row"><div><Link to="/" aria-label="Growloop home"><Logo /></Link><p className="mt-4 text-sm text-muted-foreground">Find the leak. Fix it. Prove it worked.</p></div><nav aria-label="Footer" className="flex flex-wrap items-center gap-x-6 gap-y-2"><Link to="/features" className="public-nav-link">Features</Link><Link to="/privacy" className="public-nav-link">Privacy</Link><PublicAccountLink />{CONTACT_EMAIL && <a className="public-nav-link" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>}</nav></div><div className="mt-10 flex items-center justify-between border-t pt-6 text-xs text-muted-foreground"><span>© 2026 Growloop</span><span className="rounded-sm bg-secondary px-2 py-1 font-semibold">Beta</span></div></div></footer>
+    <footer className="ink-field border-t"><div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:px-12"><div className="flex flex-col justify-between gap-8 md:flex-row"><div><Link to="/" aria-label="Growloop home"><Logo /></Link><p className="mt-4 text-sm text-muted-foreground">Find the leak. Fix it. Prove it worked.</p></div><nav aria-label="Footer" className="flex flex-wrap items-center gap-x-6 gap-y-2"><Link to="/features" className="public-nav-link">Features</Link><Link to="/privacy" className="public-nav-link">Privacy</Link><PublicAccountLink />{CONTACT_EMAIL && <a className="public-nav-link" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>}</nav></div><div className="mt-10 flex items-center justify-between border-t pt-6 text-xs text-muted-foreground"><span>© 2026 Growloop</span><span className="rounded-sm bg-secondary px-2 py-1 font-semibold">Beta</span></div></div></footer>
   </div>;
 }

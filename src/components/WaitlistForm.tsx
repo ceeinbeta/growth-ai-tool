@@ -30,7 +30,7 @@ export function WaitlistForm() {
     } catch { setError('We couldn’t save your details. Please try again.'); }
     finally { setBusy(false); }
   }
-  if (success) return <div role="status" className="flex gap-4 py-10"><Check className="mt-1 h-6 w-6 shrink-0 text-primary" /><p className="max-w-md text-xl leading-relaxed">{WAITLIST_SUCCESS}</p></div>;
+  if (success) return <div role="status" className="flex gap-4 py-10"><Check className="mt-1 h-6 w-6 shrink-0 text-foreground" /><p className="max-w-md text-xl leading-relaxed">{WAITLIST_SUCCESS}</p></div>;
   return <form onSubmit={submit} noValidate className="space-y-6">
     <div><Label htmlFor="waitlist-email">Email <span className="text-muted-foreground">(required)</span></Label><Input id="waitlist-email" type="email" autoComplete="email" required value={email} onChange={e => setEmail(e.target.value)} className="mt-2 h-12 bg-card" placeholder="you@yourapp.com" /></div>
     <div><Label htmlFor="waitlist-website">Your website <span className="text-muted-foreground">(optional)</span></Label><Input id="waitlist-website" autoComplete="url" value={website} onChange={e => setWebsite(e.target.value)} className="mt-2 h-12 bg-card" placeholder="yourapp.com" /></div>
@@ -39,6 +39,6 @@ export function WaitlistForm() {
     <div className="flex items-start gap-3"><Checkbox id="waitlist-consent" checked={consent} onCheckedChange={value => setConsent(value === true)} aria-required="true" className="mt-1" /><Label htmlFor="waitlist-consent" className="text-sm leading-relaxed">{WAITLIST_CONSENT}</Label></div>
     {error && <p id="waitlist-error" role="alert" className="rounded-sm bg-danger-soft p-3 text-sm text-destructive">{error}</p>}
     <Button type="submit" disabled={busy} className="h-12 w-full sm:w-auto" size="lg">{busy ? 'Joining…' : 'Join the beta waitlist'}<ArrowRight /></Button>
-    <p className="text-xs text-muted-foreground">Free during the beta. <Link to="/privacy" className="text-primary underline underline-offset-4">How we use your details</Link></p>
+    <p className="text-xs text-muted-foreground">Free during the beta. <Link to="/privacy" className="text-foreground underline underline-offset-4">How we use your details</Link></p>
   </form>;
 }

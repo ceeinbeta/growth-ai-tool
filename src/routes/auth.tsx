@@ -63,7 +63,7 @@ function AuthPage() {
               <p className="mt-2 text-sm text-muted-foreground">
                 We sent a sign-in link to <span className="font-medium text-foreground">{email.trim()}</span>. Open it on this device to sign in.
               </p>
-              <button className="mt-4 text-sm font-medium text-primary hover:underline" onClick={() => setSent(false)}>
+              <button className="mt-4 text-sm font-medium text-foreground hover:underline" onClick={() => setSent(false)}>
                 Use a different email
               </button>
             </div>

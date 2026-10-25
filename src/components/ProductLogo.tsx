@@ -15,5 +15,5 @@ export function ProductLogo({ name, path, size = 32 }: { name: string; path: str
   if (path && url && broken !== url) {
     return <img src={url} alt="" width={size} height={size} onError={() => setBroken(url)} className={`${box} shrink-0 border bg-card object-contain`} />;
   }
-  return <span aria-hidden className={`${box} flex shrink-0 items-center justify-center bg-primary font-display font-bold text-primary-foreground`}>{name.charAt(0).toUpperCase()}</span>;
+  return <span aria-hidden className={`${box} flex shrink-0 items-center justify-center bg-foreground font-display font-bold text-background`}>{name.charAt(0).toUpperCase()}</span>;
 }

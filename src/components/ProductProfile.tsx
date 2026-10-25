@@ -25,7 +25,7 @@ function Editable({ label, value, disabled, save, multiline = false }: { label: 
   }
   return <div className="min-w-0"><Label className="mb-2 block">{label}</Label>
     {multiline ? <Textarea aria-label={label} value={draft} disabled={disabled} maxLength={500} onChange={e => { setDraft(e.target.value); setStatus(""); }} onBlur={blur} rows={2} /> : <Input aria-label={label} value={draft} disabled={disabled} onChange={e => { setDraft(e.target.value); setStatus(""); }} onBlur={blur} />}
-    <p role="status" className={`mt-1 min-h-5 text-xs ${status === "Saved" ? "text-primary" : "text-muted-foreground"}`}>{status === "Saved" && <Check className="mr-1 inline h-3 w-3" />}{status}</p>
+    <p role="status" className={`mt-1 min-h-5 text-xs ${status === "Saved" ? "text-foreground" : "text-muted-foreground"}`}>{status === "Saved" && <Check className="mr-1 inline h-3 w-3" />}{status}</p>
   </div>;
 }
 
@@ -95,8 +95,8 @@ export function ProductProfile({ product }: { product: Product }) {
   }
   const disabled = busy || editing;
   return <section aria-label="Product profile" className="mt-8 rounded-lg border bg-card p-5 sm:p-6">
-    <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg">Product profile</h2>{product.profiled_at && <span className="text-xs font-medium text-muted-foreground">{product.profile_source === "edited" ? "AI-written · Edited by you" : "AI-written"}</span>}</div>
-    {busy && <p role="status" className="mt-4 flex items-center gap-2 text-sm text-primary"><LoaderCircle className="h-4 w-4 animate-spin motion-reduce:animate-none" />Profiling {product.name}…</p>}
+    <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg">Product profile</h2>{product.profiled_at && <span className="status-chip status-ai">{product.profile_source === "edited" ? "AI-written · Edited by you" : "AI-written"}</span>}</div>
+    {busy && <p role="status" className="mt-4 flex items-center gap-2 text-sm text-foreground"><LoaderCircle className="h-4 w-4 animate-spin motion-reduce:animate-none" />Profiling {product.name}…</p>}
     {(error || loadError) && <div role="alert" className="mt-4 rounded-sm bg-danger-soft p-3 text-sm text-destructive">{error || "Couldn't load the saved profile. Please refresh and try again."}</div>}
     {product.profiled_at && <>
       <p className="mt-3 text-sm text-muted-foreground">Written by AI from what you told us. Check it and fix anything that is off.</p>
@@ -105,7 +105,7 @@ export function ProductProfile({ product }: { product: Product }) {
       </div>
       <div className="mt-4"><h3 className="text-sm font-semibold">Competitors</h3>
         <div className="mt-3 flex flex-wrap gap-2">{data?.competitors.map(c => <div key={c.id} className="flex max-w-full items-center gap-1 rounded-sm border bg-sunken pl-3">
-          <span className="min-w-0 break-words text-sm">{c.name}<span className="ml-2 text-xs text-muted-foreground">{c.source === "ai" ? "AI" : "You"}</span></span>
+          <span className="min-w-0 break-words text-sm">{c.name}<span className={c.source === "ai" ? "ml-2 status-chip status-ai" : "ml-2 font-label text-xs"}>{c.source === "ai" ? "AI-WRITTEN" : "You"}</span></span>
           <Button variant="ghost" size="icon" disabled={disabled} aria-label={`Remove ${c.name}`} title={`Remove ${c.name}`} onClick={() => remove("competitors", c.id)}><X className="h-3 w-3" /></Button>
         </div>)}</div>
         <form className="mt-3 flex gap-2" onSubmit={e => { e.preventDefault(); void add("competitor"); }}><Input aria-label="Add competitor" placeholder="Add competitor" maxLength={120} value={competitor} onChange={e => setCompetitor(e.target.value)} disabled={disabled || (data?.competitors.length ?? 0) >= 8} /><Button type="submit" variant="outline" size="icon" aria-label="Add competitor" title="Add competitor" disabled={disabled || !competitor.trim() || (data?.competitors.length ?? 0) >= 8}><Plus className="h-4 w-4" /></Button></form>
@@ -116,7 +116,7 @@ export function ProductProfile({ product }: { product: Product }) {
         {(data?.questions.length ?? 0) >= 10 && <p className="mt-2 text-xs text-muted-foreground">10 questions used. Remove one to add another.</p>}
       </div>
     </>}
-    {product.profiled_at && !busy && (product.profile_confirmed_at ? <p className="mt-5 flex items-center gap-2 text-sm text-primary"><Check className="h-4 w-4" />You confirmed this profile.</p> : <Button className="mt-5 mr-3" disabled={disabled} onClick={() => void confirmProfile()}><ThumbsUp className="mr-2 h-4 w-4" />Looks right</Button>)}
+    {product.profiled_at && !busy && (product.profile_confirmed_at ? <p className="mt-5 flex items-center gap-2 text-sm text-foreground"><Check className="h-4 w-4" />You confirmed this profile.</p> : <Button className="mt-5 mr-3" disabled={disabled} onClick={() => void confirmProfile()}><ThumbsUp className="mr-2 h-4 w-4" />Looks right</Button>)}
     {!busy && <Button variant="outline" className="mt-5" disabled={editing} onClick={() => product.profiled_at ? setConfirm(true) : void run()}><RefreshCw className="mr-2 h-4 w-4" />{error ? "Try again" : product.profiled_at ? "Run the profile again" : "Profile this product"}</Button>}
     <AlertDialog open={confirm} onOpenChange={setConfirm}><AlertDialogContent><AlertDialogTitle>Run the profile again?</AlertDialogTitle><AlertDialogDescription>This replaces AI-written fields and items. Anything you added or edited stays.</AlertDialogDescription><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => void run()}>Run profile</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
   </section>;

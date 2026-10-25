@@ -21,6 +21,7 @@
 
 
 ## Growloop architecture
+- Visual roles use global semantic tokens and shared source/status chips; all legacy primary text usages must remain foreground, not primary. Why: lime is a fill-only insight/CTA/status color and text must retain AA contrast.
 - Manual visibility engine choices use a per-product browser preference and server-side connected-engine validation; why: remembered choices must not bypass key availability.
 - Visibility reads classify legacy empty excerpts as unusable without database writes; why: sample math must exclude empty answers while preserving historical rows and spend.
 - Funnel aggregation uses security-invoker ordered first-match chains and computed defaults; step edits use an atomic member-scoped replacement RPC to avoid reorder collisions.

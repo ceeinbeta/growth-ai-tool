@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { ArrowRight, Check, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SourceChip } from "@/components/SourceChip";
 import { Progress } from "@/components/ui/progress";
 import { stageLabel, useActiveProduct } from "@/components/AppShell";
 import { ProductProfile } from "@/components/ProductProfile";
@@ -68,19 +69,19 @@ function ProductOverview({ product, footer, onDeleted }: { product: Product; foo
 
   return (
     <div className="mx-auto max-w-3xl">
-      <header className="flex flex-wrap items-start gap-4">
+      <header className="grid grid-cols-[56px_minmax(0,1fr)] items-start gap-4 sm:flex sm:flex-wrap max-sm:[&>button]:col-span-2 max-sm:[&>button]:justify-self-end">
         <ProductLogo name={product.name} path={product.logo_path} size={56} />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="min-w-0 break-words text-3xl font-extrabold">{product.name}</h1>
-            <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${product.stage === "live" ? "bg-selected text-primary" : "bg-sunken text-muted-foreground"}`}>{stageLabel(product.stage)}</span>
+            <span className={`status-chip ${product.stage === "live" ? "status-live" : "status-coming"}`}>{stageLabel(product.stage)}</span>
           </div>
-          <a href={`https://${product.url}`} target="_blank" rel="noopener noreferrer" className="mt-1 inline-block break-all text-sm font-medium text-primary hover:underline">{product.url}</a>
+          <a href={`https://${product.url}`} target="_blank" rel="noopener noreferrer" className="mt-1 inline-block break-all text-sm font-medium text-foreground hover:underline">{product.url}</a>
         </div>
         <EditProductDialog product={product} onDeleted={onDeleted} />
       </header>
       <p className={`mt-4 whitespace-pre-line text-foreground ${more ? "" : "line-clamp-2"}`}>{product.description}</p>
-      {product.description.length > 140 && <button className="mt-1 text-sm font-medium text-primary hover:underline" onClick={() => setMore(m => !m)} aria-expanded={more}>{more ? "Show less" : "Show more"}</button>}
+      {product.description.length > 140 && <button className="mt-1 text-sm font-medium text-foreground hover:underline" onClick={() => setMore(m => !m)} aria-expanded={more}>{more ? "Show less" : "Show more"}</button>}
 
       {overview.error ? <div className="mt-8"><ErrorState text="We couldn't load your setup progress." onRetry={() => void overview.refetch()} /></div>
         : !items ? <div className="mt-8 space-y-4"><Skeleton className="h-28 w-full" /><Skeleton className="h-64 w-full" /></div>
@@ -110,13 +111,13 @@ function ItemLink({ item, className, children, onProfile }: { item: ChecklistIte
 function NextAction({ items, onProfile }: { items: ChecklistItem[]; onProfile: () => void }) {
   const next = nextAction(items);
   return (
-    <section aria-label="Next best action" className="mt-8 rounded-lg border border-primary/40 bg-selected p-5">
-      <p className="text-xs font-semibold uppercase tracking-wide text-primary">Next best action</p>
+    <section aria-label="Next best action" className="mt-8 rounded-lg border border-foreground bg-card p-6">
+      <p className="text-xs font-semibold uppercase tracking-wide text-foreground">Next best action</p>
       {next ? <>
         <h2 className="mt-1 text-xl">{next.title}</h2>
         {next.result && <p className="mt-1 text-sm text-muted-foreground">{next.result}</p>}
         <Button asChild className="mt-4"><ItemLink item={next} onProfile={onProfile}>{next.action}<ArrowRight className="ml-2 h-4 w-4" /></ItemLink></Button>
-      </> : <p className="mt-1 text-base">You're set up. Next: run an AI visibility check weekly. <Link to="/ai-search-visibility" className="font-medium text-primary underline">Open AI search visibility</Link></p>}
+      </> : <p className="mt-1 text-base">You're set up. Next: run an AI visibility check weekly. <Link to="/ai-search-visibility" className="font-medium text-foreground underline">Open AI search visibility</Link></p>}
     </section>
   );
 }
@@ -130,9 +131,9 @@ function Checklist({ items, onProfile }: { items: ChecklistItem[]; onProfile: ()
       <ul className="mt-4 divide-y">
         {items.map(item => {
           const body = <>
-            <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border ${item.done ? "border-primary bg-primary text-primary-foreground" : ""}`} aria-hidden>{item.done && <Check className="h-3.5 w-3.5" />}</span>
+            <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border ${item.done ? "border-foreground bg-primary text-primary-foreground" : ""}`} aria-hidden>{item.done && <Check className="h-3.5 w-3.5" />}</span>
             <span className="min-w-0 flex-1"><span className="block text-sm font-medium">{item.title}<span className="sr-only">{item.done ? " (done)" : item.soon ? "" : " (not done)"}</span></span>{item.result && <span className="block text-xs text-muted-foreground">{item.result}</span>}</span>
-            {item.soon && <span className="rounded-full bg-sunken px-2 py-0.5 text-[11px] font-semibold text-muted-foreground">Coming next</span>}
+            {item.soon && <span className="status-chip status-coming">Coming next</span>}
           </>;
           return <li key={item.key}>{item.soon
             ? <div aria-disabled="true" className="flex items-center gap-3 py-3 text-muted-foreground">{body}</div>
@@ -148,14 +149,14 @@ function Tile({ label, value, source, empty }: { label: string; value: string | 
     <div className="rounded-lg border bg-card p-4">
       <p className="text-sm text-muted-foreground">{label}</p>
       {value !== undefined ? <p className="mt-1 font-display text-3xl font-bold tabular-nums">{value}</p> : <p className="mt-2 text-sm font-semibold">No data yet</p>}
-      <p className="mt-1 text-xs text-muted-foreground">{value !== undefined ? source : empty}</p>
+      <p className="mt-2 text-xs text-muted-foreground">{value !== undefined && <SourceChip text={source} />}{value !== undefined ? source : empty}</p>
     </div>
   );
 }
 
 function Tiles({ product, hasEvents, totals, check, hasAudit, openLeaks }: { product: Product; hasEvents: boolean; totals: { visits: number; visitors: number; signups: number; waitlist: number }; check: { date: string; usableRuns: number; pct: number } | null; hasAudit: boolean; openLeaks: number }) {
   const measured = "Measured by your tracking snippet";
-  const install = <Link to="/integrations" className="text-primary underline">Install tracking</Link>;
+  const install = <Link to="/integrations" className="text-foreground underline">Install tracking</Link>;
   const date = check ? new Date(check.date).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : "";
   const fmt = (n: number) => n.toLocaleString();
   return (
@@ -163,8 +164,8 @@ function Tiles({ product, hasEvents, totals, check, hasAudit, openLeaks }: { pro
       <Tile label="Visits (7 days)" value={hasEvents ? fmt(totals.visits) : undefined} source={measured} empty={install} />
       <Tile label="Unique visitors (7 days)" value={hasEvents ? fmt(totals.visitors) : undefined} source={measured} empty={install} />
       <Tile label={product.stage === "prelaunch" ? "Waitlist joins (7 days)" : "Signups (7 days)"} value={hasEvents ? fmt(product.stage === "prelaunch" ? totals.waitlist : totals.signups) : undefined} source={measured} empty={install} />
-      <Tile label="Mentioned by AI assistants" value={check && check.usableRuns > 0 ? `${check.pct}%` : undefined} source={`Sample of ${check?.usableRuns ?? 0} usable runs. From your last AI check on ${date}`} empty={<Link to="/ai-search-visibility" className="text-primary underline">Run an AI visibility check</Link>} />
-      <Tile label="Open leaks" value={hasAudit ? fmt(openLeaks) : undefined} source="From your latest page audit" empty={<Link to="/conversion-leaks" className="text-primary underline">Run a page audit</Link>} />
+      <Tile label="Mentioned by AI assistants" value={check && check.usableRuns > 0 ? `${check.pct}%` : undefined} source={`Sample of ${check?.usableRuns ?? 0} usable runs. From your last AI check on ${date}`} empty={<Link to="/ai-search-visibility" className="text-foreground underline">Run an AI visibility check</Link>} />
+      <Tile label="Open leaks" value={hasAudit ? fmt(openLeaks) : undefined} source="From your latest page audit" empty={<Link to="/conversion-leaks" className="text-foreground underline">Run a page audit</Link>} />
     </div>
   );
 }
@@ -175,7 +176,7 @@ function ProfileSummary({ product, onEdit }: { product: Product; onEdit: () => v
     <section aria-label="Product profile" className="mt-8 rounded-lg border bg-card p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-lg">Product profile</h2>
-        {product.profiled_at && <span className="text-xs font-medium text-muted-foreground">{product.profile_source === "edited" ? "AI-written · Edited by you" : "AI-written"}</span>}
+        {product.profiled_at && <span className="status-chip status-ai">{product.profile_source === "edited" ? "AI-written · Edited by you" : "AI-written"}</span>}
       </div>
       {product.profiled_at ? <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
         <div className="sm:col-span-2"><dt className="text-muted-foreground">One-line summary</dt><dd className="mt-0.5">{product.one_liner || "—"}</dd></div>

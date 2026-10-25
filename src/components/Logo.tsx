@@ -5,13 +5,13 @@ export function Logo({ className = "" }: { className?: string }) {
         <path
           d="M20.86 10.44 A9 9 0 1 1 13.56 3.14"
           fill="none"
-          className="stroke-primary"
+          className="stroke-current"
           strokeWidth="3"
           strokeLinecap="round"
         />
         <circle cx="18.4" cy="5.6" r="2.73" className="fill-signal" />
       </svg>
-      <span className="font-display text-xl font-extrabold tracking-tight text-foreground">growloop</span>
+      <span className="font-display text-xl font-extrabold text-current">growloop</span>
     </span>
   );
 }

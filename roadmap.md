@@ -1,3 +1,8 @@
+# Page fetching and visibility copy
+- [ ] Add bounded same-site page extraction, fetch reservations, provenance and paste fallback.
+- [ ] Explain usable-only visibility engines and individual failures.
+- [ ] Run mocked serialized tests and preview checks; do not publish or touch real data.
+
 # Review fixes
 - [x] Repair robots and add regression checks; discovery origin is centralized with a static refresh command.
 - [x] Change sidebar Soon to Coming next; outline public header, expanded-profile confirmation and check opener while confirming; budget-stop and one connection label already correct.

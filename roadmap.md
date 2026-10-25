@@ -1,3 +1,8 @@
+# Founder d7 re-theme
+- [ ] Replace global tokens, typography, controls and logo/favicon; audit all visual usages without behavior changes.
+- [ ] Apply labeled source chips, chart colors and AI teaching treatments.
+- [ ] Run mocked serial tests and browser/contrast/focus checks without writes; document contrast exceptions; do not publish.
+
 # Public redesign B2
 - [x] Rebuild home, add Features, update shared public navigation/footer.
 - [x] Add public sitemap and preserve robots exclusions.

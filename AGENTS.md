@@ -45,6 +45,6 @@
 - Technical audits are rule-based only (no AI calls): same-site bounded fetches, service-only hourly reservation and atomic save RPCs, hand-written fix copy in src/lib/technical-audit.ts. Why: free per run and no fabricated markup or claims.
 
 - Public feature facts are shared by home and Features; public navigation uses router links with home hashes for section jumps. Why: one honest feature inventory and consistent navigation.
-- Public discovery stays static: `src/lib/public-discovery.ts` owns the origin and public/private paths; run `bun run refresh:discovery` after changing them to refresh robots and the three-page sitemap without lastmod. Why: one domain setting, no private URLs.
+- Public discovery stays static: `src/lib/public-discovery.ts` owns the origin, public/private paths and llms update date; run `bun run refresh:discovery` after changes to refresh robots, sitemap without lastmod and llms.txt derived from public-features. Why: one domain and feature inventory, no private URLs or stale discovery copy.
 - Server-only libraries stay excluded from browser dep pre-bundling; why: linkedom breaks it and blanks client pages in dev.
 - Signed-in navigation lives in src/lib/nav.ts for sidebar and mobile drawer; Coming next items are never links.

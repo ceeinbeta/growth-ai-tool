@@ -1,0 +1,35 @@
+import {describe,it,expect,vi} from 'vitest';
+import {render,screen,fireEvent,waitFor} from '@testing-library/react';
+import {QueryClient,QueryClientProvider} from '@tanstack/react-query';
+const mocks=vi.hoisted(()=>({data:{opportunities:[] as any[],drafts:[] as any[],scans:[] as any[],terms:['team docs']},scan:vi.fn(),change:vi.fn(),draft:vi.fn(),edit:vi.fn(),save:vi.fn()}));
+vi.mock('@tanstack/react-router',()=>({createFileRoute:()=> (config:any)=>config}));
+vi.mock('@/components/AppShell',()=>({useActiveProduct:()=>({active:{id:'11111111-1111-4111-8111-111111111111',name:'Notebook',category:'team docs',audience:'engineers'}})}));
+vi.mock('@/lib/conversations-data',()=>({conversationsQuery:()=>({queryKey:['conversations','11111111-1111-4111-8111-111111111111'],queryFn:async()=>mocks.data})}));
+vi.mock('@/lib/profile-data',()=>({profileQuery:()=>({queryKey:['profile'],queryFn:async()=>({competitors:[],questions:[]})})}));
+vi.mock('@/lib/conversations.functions',()=>({scanConversations:mocks.scan,changeConversation:mocks.change,draftConversationReply:mocks.draft,editConversationDraft:mocks.edit,saveConversationTerms:mocks.save}));
+vi.mock('@tanstack/react-start',()=>({useServerFn:(fn:any)=>fn}));
+vi.mock('sonner',()=>({toast:{success:vi.fn()}}));
+import {Route} from '@/routes/_authenticated/conversations';
+const item={id:'o1',product_id:'11111111-1111-4111-8111-111111111111',source:'hn',external_id:'123',url:'https://news.ycombinator.com/item?id=123',title:'Ask HN: Searching docs?',excerpt:'Any tool to search team docs?',author_handle:'reader',posted_at:'2026-10-25T12:00:00Z',created_at:'2026-10-25T12:00:00Z',updated_at:'2026-10-25T12:00:00Z',points:40,comments:4,score:80,score_parts:{intent:90,fit:80,reach:60,ease:95},status:'new',notes:''};
+describe('mocked founder flow with no requests or rows',()=>{
+ it('scans, reads results, saves, drafts, edits, copies and manually marks replied',async()=>{
+  mocks.data={opportunities:[],drafts:[],scans:[],terms:['team docs']};
+  mocks.scan.mockImplementation(async()=>{mocks.data={...mocks.data,opportunities:[{...item}],scans:[{id:'s1',created_at:item.created_at,status:'done',found:1,new_count:1}]};return {ok:true,error:null};});
+  mocks.change.mockImplementation(async({data}:any)=>{mocks.data={...mocks.data,opportunities:mocks.data.opportunities.map(o=>({...o,status:data.status ?? o.status,notes:data.notes ?? o.notes}))};return {ok:true};});
+  mocks.draft.mockImplementation(async()=>{mocks.data={...mocks.data,drafts:[{id:'d1',opportunity_id:'o1',product_id:item.product_id,text:'Start by listing the documents you need to search.',edited_text:null}],opportunities:[{...item,status:'drafted'}]};return {ok:true};});
+  mocks.edit.mockImplementation(async({data}:any)=>{mocks.data={...mocks.data,drafts:mocks.data.drafts.map(d=>({...d,edited_text:data.text}))};return {ok:true};});
+  const copy=vi.fn(async()=>{});Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:copy}});
+  const Component=Route.component as ()=>any;const client=new QueryClient({defaultOptions:{queries:{retry:false}}});render(<QueryClientProvider client={client}><Component/></QueryClientProvider>);
+  await screen.findByRole('button',{name:'Scan Hacker News'});
+  fireEvent.change(screen.getByLabelText('One term per line · up to 10'),{target:{value:'team documentation'}});
+  fireEvent.click(screen.getByRole('button',{name:'Scan Hacker News'}));
+  await screen.findByRole('heading',{name:item.title});expect(mocks.scan).toHaveBeenCalledWith({data:{productId:item.product_id,terms:['team documentation']}});
+  fireEvent.click(screen.getByRole('button',{name:/^Save$/}));await waitFor(()=>expect(mocks.data.opportunities[0].status).toBe('saved'));
+  fireEvent.change(screen.getByLabelText('Status'),{target:{value:'all'}});await screen.findByRole('heading',{name:item.title});
+  fireEvent.click(screen.getByRole('button',{name:'Draft a reply'}));await screen.findByLabelText('AI-written. Edit before you post.');
+  fireEvent.change(screen.getByLabelText('AI-written. Edit before you post.'),{target:{value:'Edited helpful reply.'}});fireEvent.click(screen.getByRole('button',{name:'Save edits'}));await waitFor(()=>expect(mocks.data.drafts[0].edited_text).toBe('Edited helpful reply.'));
+  fireEvent.click(screen.getByRole('button',{name:/^Copy$/}));await waitFor(()=>expect(copy).toHaveBeenCalledWith('Edited helpful reply.'));expect(mocks.data.opportunities[0].status).toBe('drafted');
+  fireEvent.click(screen.getByRole('button',{name:'I replied'}));await waitFor(()=>expect(mocks.data.opportunities[0].status).toBe('replied'));
+  expect(mocks.draft).toHaveBeenCalledTimes(1);expect(mocks.scan).toHaveBeenCalledTimes(1);
+ });
+});

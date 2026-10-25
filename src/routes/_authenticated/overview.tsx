@@ -2,7 +2,7 @@ import { ActionRow, ActionHeader } from '@/components/ActionRow';
 import { createFileRoute, Link, useLocation } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Activity, ArrowRight, Check, Package } from "lucide-react";
+import { Activity, ArrowRight, Check, FileSearch, Package, Search, Users, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SourceChip } from "@/components/SourceChip";
 import { Progress } from "@/components/ui/progress";

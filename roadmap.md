@@ -92,3 +92,4 @@
 - [x] Update theme/type safeguards and design rules; 267 mocked tests passed serially, 53 database tests skipped for no-write safety. Preview build OK; requested eight screens captured at 1280px and 390px, no overflow/page errors. Contrast, keyboard focus and reduced motion checked; existing 40px/44px button sizing retained. No data writes, AI calls or publishing.
 
 - [x] Type scale 1px smaller (shared tokens, 11px floor); "Coming next" label renamed to "Soon" everywhere. Rule: unbuilt features carry a visible "Soon" pill.
+- [x] Overview compacted to four sections (header+next step, KPIs, funnel|activity+setup, collapsible profile); 1280 height 1648→808.

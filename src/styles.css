@@ -339,6 +339,4 @@ a.nav-item:hover { background: var(--sunken); }
 .table-scroll tbody tr { height: 40px; }
 .compact-panel { min-width: 0; border: 1px solid var(--border); border-radius: var(--radius-app); background: var(--card); padding: 16px; }
 .responsive-details > summary { cursor: pointer; }
-@media (min-width: 1024px) {
-  .responsive-details > div { display: block; }
-}
+.question-scroll { max-height: 420px; }

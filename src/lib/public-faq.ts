@@ -28,7 +28,7 @@ export function landingJsonLd(origin: string) {
   return JSON.stringify({
     '@context': 'https://schema.org',
     '@graph': [
-      { '@type': 'Organization', name: 'Growloop', url: origin, email: CONTACT_EMAIL },
+      { '@type': 'Organization', name: 'Growloop', url: origin, email: CONTACT_EMAIL, logo: new URL('/favicon.svg', origin).href },
       { '@type': 'WebSite', name: 'Growloop', url: origin },
       {
         '@type': 'SoftwareApplication',

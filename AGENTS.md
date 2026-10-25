@@ -21,7 +21,7 @@
 
 
 ## Growloop architecture
-- Use global visual tokens/source chips, never lime text on light. Button owns sizing; ActionRow/ActionHeader and dialog footers own placement, not screen-specific heights/margins. Why: accessible, consistent responsive actions.
+- Brand identity 01 (d15) supersedes d7 through styles.css; Logo uses shared brand-mark geometry; refresh assets with scripts/refresh-brand.ts. Why: one brand source. Button owns sizing; ActionRow owns placement; preserve type scale.
 - Manual visibility engine choices use a per-product browser preference and server-side connected-engine validation; why: remembered choices must not bypass key availability.
 - Visibility reads classify legacy empty excerpts as unusable without database writes; why: sample math must exclude empty answers while preserving historical rows and spend.
 - Funnel aggregation uses security-invoker ordered first-match chains and computed defaults; step edits use an atomic member-scoped replacement RPC to avoid reorder collisions.

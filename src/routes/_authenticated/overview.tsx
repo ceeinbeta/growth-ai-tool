@@ -1,8 +1,8 @@
-import { ActionRow, ActionHeader } from '@/components/ActionRow';
+import { ActionRow } from '@/components/ActionRow';
 import { createFileRoute, Link, useLocation } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Activity, ArrowRight, Check, FileSearch, Package, Search, Users, Wrench } from "lucide-react";
+import { Activity, ArrowRight, Package, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SourceChip } from "@/components/SourceChip";
 import { Progress } from "@/components/ui/progress";
@@ -15,9 +15,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { overviewQuery } from "@/lib/overview-data";
 import { trackingQuery, type TrackingSummary } from "@/lib/tracking-data";
 import { conversionQuery } from "@/lib/conversion-data";
-import { profileQuery } from "@/lib/profile-data";
 import { buildChecklist, progress, relativeTime, type ChecklistItem } from "@/lib/setup-checklist";
-import { pickNextStep, loopSteps, loopStatusText, type NextStepFacts } from "@/lib/next-step";
+import { pickNextStep, loopSteps, loopStatusText, type NextStep, type NextStepFacts } from "@/lib/next-step";
 import { worstStep, type FunnelSummary } from "@/lib/funnel";
 import { KPI_PERIODS, parsePeriod, changeVsPrevious, conversionRate, formatPct, type Change, type KpiPeriod } from "@/lib/kpi";
 import type { Product } from "@/lib/workspace";
@@ -55,18 +54,19 @@ function Overview() {
   const next = data.products.find(p => p.id !== active.id);
   return <ProductOverview key={active.id} product={active} footer={`${used} of ${max} products used on the Standard plan`} onDeleted={() => next && setActive(next.id)} />;
 }
-
 const MEASURED = "Measured by your tracking snippet";
 
+// Desktop layout is at most four top-level sections (data-overview-section):
+// header + next step, KPIs, funnel | activity + setup, product profile.
 function ProductOverview({ product, footer, onDeleted }: { product: Product; footer: string; onDeleted: () => void }) {
   const days = parsePeriod(Route.useSearch().days);
   const overview = useQuery(overviewQuery(product.id));
   const tracking = useQuery(trackingQuery(product.id, days));
   const funnel = useQuery(conversionQuery(product.id, days));
-  const [more, setMore] = useState(false);
-  const [editProfile, setEditProfile] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const location = useLocation();
-  useEffect(() => { if (location.hash === "profile") setEditProfile(true); }, [location.hash]);
+  useEffect(() => { if (location.hash === "profile") setProfileOpen(true); }, [location.hash]);
+  const openProfile = () => { setProfileOpen(true); requestAnimationFrame(() => { const el = document.getElementById("profile"); el?.scrollIntoView({ behavior: "smooth" }); el?.focus({ preventScroll: true }); }); };
 
   const items = overview.data ? buildChecklist({
     profiled: !!product.profiled_at,
@@ -81,69 +81,59 @@ function ProductOverview({ product, footer, onDeleted }: { product: Product; foo
     hasTechnicalAudit: !!overview.data.technicalAudit,
     usableVisibilityRuns: overview.data.lastCheck?.usableRuns ?? 0, leaksInProgressOrDone: overview.data.leaksWorked,
   } : null;
-
-  const stamps = overview.data ? [
-    overview.data.lastEventAt, overview.data.audit?.created_at,
-    (overview.data.technicalAudit as { created_at?: string } | null)?.created_at, overview.data.lastCheck?.date,
-  ].filter((s): s is string => !!s) : [];
-  const lastUpdated = stamps.length ? stamps.reduce((a, b) => (Date.parse(a) > Date.parse(b) ? a : b)) : null;
+  const next = facts ? pickNextStep(facts) : null;
+  const setupDone = items ? progress(items) : null;
+  const setupComplete = !!setupDone && setupDone.done === setupDone.total;
 
   return (
-    <div className="mx-auto max-w-[1200px]">
-      <ActionHeader action={<EditProductDialog product={product} onDeleted={onDeleted} />}><div className="flex min-w-0 items-start gap-4">
-        <ProductLogo name={product.name} path={product.logo_path} size={56} />
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="min-w-0 break-words text-3xl font-extrabold">{product.name}</h1>
-            <span className={`status-chip ${product.stage === "live" ? "status-live" : "status-coming"}`}>{stageLabel(product.stage)}</span>
+    <div className="mx-auto flex max-w-[1200px] flex-col gap-4">
+      <section data-overview-section aria-label="Product and next step" className="flex flex-col gap-3">
+        <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 items-center gap-3">
+            <ProductLogo name={product.name} path={product.logo_path} size={32} />
+            <div className="min-w-0">
+              <div className="flex min-w-0 flex-wrap items-center gap-2">
+                <h1 className="min-w-0 truncate text-2xl">{product.name}</h1>
+                <span className={`status-chip ${product.stage === "live" ? "status-live" : "status-coming"}`}>{stageLabel(product.stage)}</span>
+                {setupComplete && <span className="status-chip status-live">Setup complete</span>}
+              </div>
+              <p className="flex min-w-0 flex-wrap items-center gap-x-2 text-sm text-muted-foreground">
+                <a href={`https://${product.url}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center break-all font-medium text-foreground hover:underline sm:min-h-0">{product.url}</a>
+                <span aria-hidden className="hidden sm:inline">·</span><span>{footer}</span>
+              </p>
+            </div>
           </div>
-          <a href={`https://${product.url}`} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex min-h-11 items-center break-all text-sm font-medium text-foreground hover:underline sm:min-h-0">{product.url}</a>
-          {lastUpdated && <p className="mt-1 text-xs text-muted-foreground">Last activity {relativeTime(lastUpdated)}</p>}
-        </div>
-      </div>
-      </ActionHeader>
-      <p className={`mt-4 whitespace-pre-line text-foreground ${more ? "" : "line-clamp-2"}`}>{product.description}</p>
-      {product.description.length > 140 && <Button variant="link" onClick={() => setMore(m => !m)} aria-expanded={more}>{more ? "Show less" : "Show more"}</Button>}
+          <ActionRow className="shrink-0"><PeriodControl days={days} /><EditProductDialog product={product} onDeleted={onDeleted} /></ActionRow>
+        </header>
+        {overview.error ? <ErrorState text="We couldn't load your setup progress." onRetry={() => void overview.refetch()} />
+          : !facts || !next ? <Skeleton className="h-16 w-full" />
+          : <NextStepBar facts={facts} next={next} onProfile={openProfile} />}
+      </section>
 
-      {overview.error ? <div className="mt-6"><ErrorState text="We couldn't load your setup progress." onRetry={() => void overview.refetch()} /></div>
-        : !facts ? <div className="mt-4"><Skeleton className="h-24 w-full" /></div>
-        : <NextStepCard facts={facts} onProfile={() => setEditProfile(true)} />}
-
-      <section className="mt-4" aria-labelledby="numbers-heading">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 id="numbers-heading" className="text-xl">Your numbers</h2>
-          <PeriodControl days={days} />
-        </div>
-        {tracking.error || funnel.error ? <div className="mt-4"><ErrorState text="We couldn't load your numbers." onRetry={() => { void tracking.refetch(); void funnel.refetch(); }} /></div>
-          : !tracking.data || !funnel.data ? <div className="mt-3 grid grid-cols-2 gap-4 lg:grid-cols-4">{[0, 1, 2, 3].map(i => <Skeleton key={i} className="h-28" />)}</div>
+      <section data-overview-section aria-labelledby="numbers-heading">
+        <h2 id="numbers-heading" className="sr-only">Your numbers · {days} days</h2>
+        {tracking.error || funnel.error ? <ErrorState text="We couldn't load your numbers." onRetry={() => { void tracking.refetch(); void funnel.refetch(); }} />
+          : !tracking.data || !funnel.data ? <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">{[0, 1, 2, 3].map(i => <Skeleton key={i} className="h-[88px]" />)}</div>
           : <KpiRow product={product} days={days} totals={tracking.data.totals} summary={funnel.data.summary} hasEvents={overview.data ? overview.data.eventCount > 0 : tracking.data.recent.length > 0} />}
       </section>
 
-      {overview.data && funnel.data && missingSteps(overview.data, funnel.data.summary.total_visitors).length >= 2
-        ? <SetupCard steps={missingSteps(overview.data, funnel.data.summary.total_visitors)} />
-        : <div className="mt-4 grid items-start gap-4 lg:grid-cols-12">
+      <section data-overview-section aria-label="Funnel, activity and setup" className="grid items-start gap-4 lg:grid-cols-12">
         <div className="lg:col-span-7">
           {funnel.error ? <ErrorState text="We couldn't load your funnel." onRetry={() => void funnel.refetch()} />
-            : !funnel.data ? <Skeleton className="h-56 w-full" />
+            : !funnel.data ? <Skeleton className="h-48 w-full" />
             : <FunnelCard product={product} summary={funnel.data.summary} days={days} />}
         </div>
-        <div className="lg:col-span-5">
-          {!overview.data ? <Skeleton className="h-56 w-full" /> : <RecentActivity data={overview.data} />}
+        <div className="flex flex-col gap-4 lg:col-span-5">
+          {!overview.data ? <Skeleton className="h-48 w-full" /> : <RecentActivity data={overview.data} events={tracking.data?.recent ?? []} />}
+          {items && !setupComplete && <Checklist items={items.filter(i => i.key !== next?.key)} all={items} onProfile={openProfile} />}
         </div>
-      </div>}
+      </section>
 
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-12">
-        <div className="lg:col-span-7">
-          {!items ? <Skeleton className="h-48 w-full" /> : <Checklist items={items} onProfile={() => setEditProfile(true)} />}
-        </div>
-        <div className="lg:col-span-5">{facts && <LoopStrip facts={facts} />}</div>
-      </div>
-
-      <div id="profile" className="mt-4 scroll-mt-24 focus:outline-none">
-        {editProfile ? <ProductProfile product={product} /> : <ProfileSummary product={product} onEdit={() => setEditProfile(true)} />}
-      </div>
-
-      <p className="mt-6 border-t pt-3 text-xs text-muted-foreground">{footer}</p>
+      <section data-overview-section id="profile" tabIndex={-1} aria-label="Product profile" className="scroll-mt-24 focus:outline-none">
+        {profileOpen
+          ? <div data-profile-expanded className="flex flex-col gap-2"><ProductProfile product={product} /><ActionRow><Button variant="link" onClick={() => setProfileOpen(false)} aria-expanded="true" aria-controls="profile">Collapse profile</Button></ActionRow></div>
+          : <ProfileSummary product={product} onEdit={() => setProfileOpen(true)} />}
+      </section>
     </div>
   );
 }
@@ -153,7 +143,7 @@ function PeriodControl({ days }: { days: KpiPeriod }) {
     <div role="group" aria-label="Time period" className="inline-flex rounded-md border bg-card p-1">
       {KPI_PERIODS.map(d => (
         <Link key={d} to="." search={{ days: d }} aria-pressed={d === days} aria-current={d === days ? "true" : undefined}
-          className={`inline-flex min-h-11 items-center rounded-sm px-3 text-sm font-medium sm:min-h-0 ${d === days ? "bg-selected selected-state" : "text-muted-foreground hover:text-foreground"}`}>
+          className={`inline-flex min-h-11 items-center rounded-sm px-3 text-sm font-medium sm:min-h-8 ${d === days ? "bg-selected selected-state" : "text-muted-foreground hover:text-foreground"}`}>
           {d} days
         </Link>
       ))}
@@ -161,18 +151,16 @@ function PeriodControl({ days }: { days: KpiPeriod }) {
   );
 }
 
-function ChangeLine({ change }: { change: Change }) {
-  if (change.kind === "none") return <p className="mt-2 text-xs text-muted-foreground">Not enough data yet — {change.reason}</p>;
-  return <p className="mt-2 text-xs text-muted-foreground tabular-nums">{change.text}</p>;
-}
-
 function KpiTile({ label, value, change, source, empty }: { label: string; value: string | undefined; change?: Change | undefined; source: string; empty?: React.ReactNode }) {
+  const changeText = change ? (change.kind === "none" ? undefined : change.text) : undefined;
   return (
-    <div className="rounded-lg border bg-card p-4">
-      <p className="nav-group-label text-muted-foreground">{label}</p>
-      {value !== undefined ? <p className="mt-2 font-display text-3xl font-bold tabular-nums">{value}</p> : <p className="mt-3 text-sm font-semibold">No data yet</p>}
-      {value !== undefined && change && <ChangeLine change={change} />}
-      <div className="mt-2 text-xs text-muted-foreground">{value !== undefined ? <span title={source}><SourceChip text={source} /></span> : empty}</div>
+    <div className="flex min-w-0 flex-col gap-1 rounded-lg border bg-card p-4">
+      <p className="truncate text-xs font-semibold text-muted-foreground" title={label}>{label}</p>
+      {value !== undefined ? <p className="truncate font-display text-2xl font-semibold tabular-nums" title={value}>{value}</p> : <p className="text-sm font-semibold">No data yet</p>}
+      <div className="flex min-w-0 flex-wrap items-center gap-2 text-xs text-muted-foreground">
+        {value !== undefined ? <span title={source}><SourceChip text={source} inline /></span> : empty}
+        {value !== undefined && changeText && <span className="tabular-nums" title={change?.kind === "none" ? undefined : `${changeText} vs previous ${label.split(" · ")[1] ?? "period"}`}>{changeText}</span>}
+      </div>
     </div>
   );
 }
@@ -189,12 +177,12 @@ function KpiRow({ product, days, totals, summary, hasEvents }: { product: Produc
   const worst = worstStep(summary, product.stage);
   const fmt = (n: number) => n.toLocaleString();
   return (
-    <div className="mt-3 grid grid-cols-2 gap-4 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
       <KpiTile label={`Visitors · ${days} days`} value={hasEvents ? fmt(totals.visitors) : undefined} change={changeVsPrevious(totals.visitors, totals.prev_visitors)} source={MEASURED} empty={install} />
       <KpiTile label={product.stage === "prelaunch" ? `Waitlist joins · ${days} days` : `Signups · ${days} days`} value={hasEvents ? fmt(conversions) : undefined} change={changeVsPrevious(conversions, prevConversions)} source={MEASURED} empty={install} />
       <KpiTile label={`Conversion rate · ${days} days`} value={hasEvents && rate !== null ? formatPct(rate) : undefined} change={rateChange} source={MEASURED} empty={install} />
       <KpiTile label="Biggest leak step" value={worst ? worst.step.label : undefined} source={worst?.benchmark ? "Benchmark" : MEASURED}
-        empty={summary.total_visitors < 100 ? <span>Not enough data yet — fewer than 100 visitors at the first step. <Link to="/conversion-leaks" className="text-foreground underline">See your funnel</Link></span> : <Link to="/conversion-leaks" className="text-foreground underline">See your funnel</Link>} />
+        empty={<Link to="/conversion-leaks" className="text-foreground underline" title={summary.total_visitors < 100 ? "Needs 100 visitors at the first step" : undefined}>{summary.total_visitors < 100 ? "Needs 100 visitors" : "See your funnel"}</Link>} />
     </div>
   );
 }
@@ -202,176 +190,136 @@ function KpiRow({ product, days, totals, summary, hasEvents }: { product: Produc
 function FunnelCard({ product, summary, days }: { product: Product; summary: FunnelSummary; days: KpiPeriod }) {
   const worst = worstStep(summary, product.stage);
   return (
-    <section aria-labelledby="funnel-heading" className="rounded-lg border bg-card p-5">
+    <section aria-labelledby="funnel-heading" className="rounded-lg border bg-card p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 id="funnel-heading" className="text-xl">Funnel · {days} days</h2>
-        <span className="ml-auto shrink-0"><SourceChip text={MEASURED} inline /></span>
+        <span className="ml-auto flex shrink-0 items-center gap-3"><SourceChip text={MEASURED} inline /><Link to="/conversion-leaks" className="text-sm font-medium text-foreground underline">Open conversion leaks</Link></span>
       </div>
       {summary.total_visitors === 0 ? (
-        <EmptyRow icon={Users} text="No visitors recorded in this period yet." action="Install tracking" to="/integrations" hash="tracking" />
+        <div className="mt-2 flex min-w-0 flex-wrap items-center gap-3">
+          <Users className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+          <p className="min-w-0 flex-1 text-sm text-muted-foreground">No visitors recorded in this period yet.</p>
+          <Link to="/integrations" hash="tracking" className="shrink-0 text-sm font-medium text-foreground underline">Install tracking</Link>
+        </div>
       ) : (
-        <ol className="mt-4 divide-y">
+        <ol className="mt-2 divide-y">
           {summary.steps.map(s => (
-            <li key={s.position} className="flex items-center gap-3 py-3">
-              <span className="min-w-0 flex-1">
-                <span className="block text-sm font-medium">{s.label}{worst?.step.position === s.position && <span className="status-chip status-warning ml-2">Biggest drop-off</span>}</span>
-                {s.position > 1 && <span className="block text-xs text-muted-foreground tabular-nums">{formatPct(s.rate_from_previous)} of the previous step</span>}
-              </span>
-              <span className="font-display text-lg font-bold tabular-nums">{s.visitors.toLocaleString()}</span>
+            <li key={s.position} className="flex min-h-10 items-center gap-3 py-2">
+              <span className="min-w-0 flex-1 truncate text-sm font-medium" title={s.label}>{s.label}{worst?.step.position === s.position && <span className="status-chip status-warning ml-2">Biggest drop-off</span>}</span>
+              {s.position > 1 && <span className="shrink-0 text-xs text-muted-foreground tabular-nums">{formatPct(s.rate_from_previous)} of previous</span>}
+              <span className="w-16 shrink-0 text-right font-display text-md font-semibold tabular-nums">{s.visitors.toLocaleString()}</span>
             </li>
           ))}
         </ol>
       )}
-      {summary.total_visitors > 0 && summary.total_visitors < 100 && <p className="mt-3 text-xs text-muted-foreground">Not enough data yet to flag a worst step — that needs 100 visitors at the first step.</p>}
-      <ActionRow className="mt-4"><Button asChild variant="outline"><Link to="/conversion-leaks">Open conversion leaks</Link></Button></ActionRow>
+      {summary.total_visitors > 0 && summary.total_visitors < 100 && <p className="mt-2 text-xs text-muted-foreground">A worst step is flagged after 100 visitors at the first step.</p>}
     </section>
   );
 }
 
-type Missing = { key: string; icon: typeof Users; text: string; action: string; to: string; hash?: string };
-function missingSteps(data: { audit: unknown; technicalAudit: unknown; lastCheck: unknown }, visitors: number): Missing[] {
-  const out: Missing[] = [];
-  if (visitors === 0) out.push({ key: "visits", icon: Users, text: "No visits recorded in this period.", action: "Install tracking", to: "/integrations", hash: "tracking" });
-  if (!data.audit) out.push({ key: "audit", icon: FileSearch, text: "No page audit yet.", action: "Run a page audit", to: "/conversion-leaks" });
-  if (!data.technicalAudit) out.push({ key: "tech", icon: Wrench, text: "No technical audit yet.", action: "Run a technical audit", to: "/technical-audit" });
-  if (!data.lastCheck) out.push({ key: "ai", icon: Search, text: "No AI visibility check yet.", action: "Run a check", to: "/ai-search-visibility" });
-  return out;
-}
-
-function EmptyRow({ icon: Icon, text, action, to, hash }: Omit<Missing, "key">) {
-  return (
-    <div className="mt-3 flex min-w-0 flex-wrap items-center gap-3 py-1">
-      <Icon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-      <p className="min-w-0 flex-1 text-sm text-muted-foreground">{text}</p>
-      <Link to={to} {...(hash ? { hash } : {})} className="shrink-0 text-sm font-medium text-foreground underline">{action}</Link>
-    </div>
-  );
-}
-
-function SetupCard({ steps }: { steps: Missing[] }) {
-  return (
-    <section aria-labelledby="setup-missing-heading" className="mt-4 rounded-lg border bg-card p-5">
-      <h2 id="setup-missing-heading" className="text-xl">Set up</h2>
-      <ul className="mt-1 divide-y">
-        {steps.map(({ key, ...s }) => <li key={key}><EmptyRow {...s} /></li>)}
-      </ul>
-    </section>
-  );
-}
-
-function RecentActivity({ data }: { data: { lastEventAt: string | null; audit: { created_at: string } | null; technicalAudit: unknown; lastCheck: { date: string } | null } }) {
+type RecentEvent = { id: string; name: string; path: string | null; created_at: string };
+function RecentActivity({ data, events }: { data: { audit: { created_at: string } | null; technicalAudit: unknown; lastCheck: { date: string } | null }; events: RecentEvent[] }) {
   const tech = data.technicalAudit as { created_at?: string } | null;
-  const rows: { label: string; at: string | null; to: string; action: string }[] = [
-    { label: "Tracking snippet last seen", at: data.lastEventAt, to: "/integrations", action: "Install tracking" },
-    { label: "Last page audit", at: data.audit?.created_at ?? null, to: "/conversion-leaks", action: "Run a page audit" },
-    { label: "Last technical audit", at: tech?.created_at ?? null, to: "/technical-audit", action: "Run a technical audit" },
-    { label: "Last AI visibility check", at: data.lastCheck?.date ?? null, to: "/ai-search-visibility", action: "Run a check" },
-  ];
+  const rows = [
+    ...events.slice(0, 5).map(e => ({ key: e.id, label: e.name === "pageview" ? `Visit ${e.path ?? "/"}` : `Event: ${e.name}`, at: e.created_at })),
+    ...(data.audit ? [{ key: "audit", label: "Page audit saved", at: data.audit.created_at }] : []),
+    ...(tech?.created_at ? [{ key: "tech", label: "Technical audit run", at: tech.created_at }] : []),
+    ...(data.lastCheck ? [{ key: "ai", label: "AI visibility check", at: data.lastCheck.date }] : []),
+  ].sort((a, b) => Date.parse(b.at) - Date.parse(a.at)).slice(0, 5);
   return (
-    <section aria-labelledby="activity-heading" className="rounded-lg border bg-card p-5">
-      <div className="flex items-center gap-2"><Activity className="size-5 text-muted-foreground" aria-hidden /><h2 id="activity-heading" className="text-xl">Recent activity</h2></div>
-      <ul className="mt-2 divide-y">
-        {rows.map(r => (
-          <li key={r.label} className="flex items-center justify-between gap-3 py-2">
-            <span className="min-w-0">
-              <span className="block text-sm font-medium">{r.label}</span>
-              <span className="block text-xs text-muted-foreground">{r.at ? relativeTime(r.at) : "Not yet"}</span>
-            </span>
-            {!r.at && <Link to={r.to} className="shrink-0 text-sm font-medium text-foreground underline">{r.action}</Link>}
-          </li>
-        ))}
-      </ul>
+    <section aria-labelledby="activity-heading" className="rounded-lg border bg-card p-4">
+      <div className="flex items-center justify-between gap-3">
+        <h2 id="activity-heading" className="flex items-center gap-2 text-xl"><Activity className="size-4 text-muted-foreground" aria-hidden />Recent activity</h2>
+        <Link to="/integrations" hash="tracking" className="text-sm font-medium text-foreground underline">View all</Link>
+      </div>
+      {rows.length === 0 ? <p className="mt-2 text-sm text-muted-foreground">Nothing recorded yet.</p> : (
+        <ul className="mt-1 divide-y">
+          {rows.map(r => (
+            <li key={r.key} className="flex h-10 items-center justify-between gap-3">
+              <span className="min-w-0 truncate text-sm" title={r.label}>{r.label}</span>
+              <time dateTime={r.at} title={new Date(r.at).toLocaleString()} className="shrink-0 text-xs text-muted-foreground">{relativeTime(r.at)}</time>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }
 
 function ItemLink({ item, className, children, onProfile }: { item: ChecklistItem; className?: string; children: React.ReactNode; onProfile: () => void }) {
-  if (item.key === "profile") return <button type="button" className={className} onClick={() => { onProfile(); requestAnimationFrame(() => document.getElementById("profile")?.scrollIntoView({ behavior: "smooth" })); }}>{children}</button>;
+  if (item.key === "profile") return <button type="button" className={className} onClick={onProfile}>{children}</button>;
   return <Link to={item.to} className={className}>{children}</Link>;
 }
 
-function NextStepCard({ facts, onProfile }: { facts: NextStepFacts; onProfile: () => void }) {
-  const next = pickNextStep(facts);
+function NextStepBar({ facts, next, onProfile }: { facts: NextStepFacts; next: NextStep; onProfile: () => void }) {
+  const loop = loopSteps(facts);
   const button = next.key === "profile"
-    ? <Button onClick={() => { onProfile(); requestAnimationFrame(() => document.getElementById("profile")?.scrollIntoView({ behavior: "smooth" })); }}>{next.action}<ArrowRight /></Button>
+    ? <Button onClick={onProfile}>{next.action}<ArrowRight /></Button>
     : <Button asChild><Link to={next.to.split("#")[0]!} {...(next.to.includes("#") ? { hash: next.to.split("#")[1]! } : {})}>{next.action}<ArrowRight /></Link></Button>;
   return (
-    <section aria-labelledby="next-step-heading" className="mt-4 flex flex-col gap-3 rounded-lg border border-foreground bg-card p-5 md:flex-row md:items-center md:justify-between">
-      <div className="min-w-0">
-        <p className="nav-group-label text-foreground">Next best step</p>
-        <h2 id="next-step-heading" className="mt-1 text-xl">{next.title}</h2>
-        <p className="mt-1 text-sm text-muted-foreground">{next.text}</p>
+    <div aria-labelledby="next-step-heading" role="region" className="flex flex-col gap-3 rounded-lg border border-foreground bg-card px-4 py-3 lg:flex-row lg:items-center">
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5 overflow-hidden lg:flex-row lg:items-baseline lg:gap-3">
+        <p className="nav-group-label shrink-0 text-foreground">Next best step</p>
+        <h2 id="next-step-heading" className="min-w-0 max-w-full truncate text-md font-semibold lg:max-w-[50%] lg:shrink-0">{next.title}</h2>
+        <p className="min-w-0 truncate text-sm text-muted-foreground" title={next.text}>{next.text}</p>
       </div>
-      <ActionRow className="shrink-0">{button}</ActionRow>
-    </section>
-  );
-}
-
-function LoopStrip({ facts }: { facts: NextStepFacts }) {
-  const loop = loopSteps(facts);
-  return (
-    <section aria-labelledby="loop-heading" className="rounded-lg border bg-card p-5">
-      <h2 id="loop-heading" className="text-xl">Find the leak, fix it, prove it worked</h2>
-      <ol className="mt-4 grid gap-2">
-        {loop.map((step, i) => (
-          <li key={step.key} aria-current={step.status === "current" ? "step" : undefined} className={`flex items-center justify-between gap-3 rounded-sm border px-3 py-2 ${step.status === "current" ? "bg-selected selected-state" : ""}`}>
-            <span className="text-sm font-semibold">{i + 1}. {step.label}</span>
-            <span className={`status-chip ${step.status === "done" ? "status-live" : "status-coming"}`}>{loopStatusText[step.status]}</span>
+      <ol aria-label="Find, fix, prove" className="flex shrink-0 flex-wrap items-center gap-1.5">
+        {loop.map(step => (
+          <li key={step.key} aria-current={step.status === "current" ? "step" : undefined}
+            className={`status-chip ${step.status === "done" ? "status-live" : "status-coming"} ${step.status === "current" ? "border-foreground" : ""}`}
+            title={`${step.label}: ${loopStatusText[step.status]}`}>
+            <span aria-hidden>{({ find: "Find", fix: "Fix", prove: "Prove" } as const)[step.key]}: {loopStatusText[step.status]}</span><span className="sr-only">{step.label}: {loopStatusText[step.status]}</span>
           </li>
         ))}
       </ol>
-    </section>
+      <ActionRow className="shrink-0">{button}</ActionRow>
+    </div>
   );
 }
 
-function Checklist({ items, onProfile }: { items: ChecklistItem[]; onProfile: () => void }) {
-  const p = progress(items);
-  const complete = p.done === p.total;
+function Checklist({ items, all, onProfile }: { items: ChecklistItem[]; all: ChecklistItem[]; onProfile: () => void }) {
+  const p = progress(all);
   const [open, setOpen] = useState(false);
-  const collapsed = complete && !open;
+  const pending = items.filter(i => !i.done);
   return (
-    <section aria-labelledby="setup-heading" className="rounded-lg border bg-card p-5">
+    <section aria-labelledby="setup-heading" className="rounded-lg border bg-card p-4">
       <div className="flex items-center justify-between gap-3">
-        <h2 id="setup-heading" className="text-xl">Setup</h2>
-        {complete
-          ? <Button variant="link" onClick={() => setOpen(o => !o)} aria-expanded={open}>{collapsed ? `All ${p.total} done — show` : "Hide"}</Button>
-          : <span className="text-sm font-medium tabular-nums">{p.done} of {p.total} done</span>}
+        <h2 id="setup-heading" className="text-md font-semibold">Setup <span className="font-normal tabular-nums text-muted-foreground">{p.done} of {p.total} done</span></h2>
+        {pending.length > 0 && <Button variant="link" onClick={() => setOpen(o => !o)} aria-expanded={open} aria-controls="setup-list">{open ? "Hide" : "Show steps"}</Button>}
       </div>
-      {collapsed ? <p className="mt-2 text-sm text-muted-foreground">You're set up. Next: run an AI visibility check weekly.</p> : <>
-        <Progress value={(p.done / p.total) * 100} className="mt-3 h-2" aria-label={`${p.done} of ${p.total} done`} />
-        <ul className="mt-4 divide-y">
-          {items.map(item => {
-            const body = <>
-              <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border ${item.done ? "border-foreground bg-primary text-primary-foreground" : ""}`} aria-hidden>{item.done && <Check className="h-3.5 w-3.5" />}</span>
-              <span className="min-w-0 flex-1"><span className="block text-sm font-medium">{item.title}<span className="sr-only">{item.done ? " (done)" : item.soon ? "" : " (not done)"}</span></span>{item.result && <span className="block text-xs text-muted-foreground">{item.result}</span>}</span>
-              {item.soon && <span className="status-chip status-coming">Soon</span>}
-            </>;
-            return <li key={item.key}>{item.soon
-              ? <div aria-disabled="true" className="flex items-center gap-3 py-3 text-muted-foreground">{body}</div>
-              : <ItemLink item={item} onProfile={onProfile} className="flex w-full items-center gap-3 rounded-sm py-3 text-left hover:bg-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{body}</ItemLink>}</li>;
-          })}
-        </ul>
-      </>}
+      <Progress value={(p.done / p.total) * 100} className="mt-2 h-1.5" aria-label={`${p.done} of ${p.total} done`} />
+      {open && <ul id="setup-list" className="mt-2 divide-y">
+        {pending.map(item => {
+          const body = <>
+            <span className="h-4 w-4 shrink-0 rounded-full border" aria-hidden />
+            <span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{item.title}<span className="sr-only">{item.soon ? "" : " (not done)"}</span></span>{item.result && <span className="block truncate text-xs text-muted-foreground">{item.result}</span>}</span>
+            {item.soon && <span className="status-chip status-coming">Soon</span>}
+          </>;
+          return <li key={item.key}>{item.soon
+            ? <div aria-disabled="true" className="flex min-h-10 items-center gap-3 py-1.5 text-muted-foreground">{body}</div>
+            : <ItemLink item={item} onProfile={onProfile} className="flex min-h-10 w-full items-center gap-3 rounded-sm py-1.5 text-left hover:bg-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{body}</ItemLink>}</li>;
+        })}
+      </ul>}
     </section>
   );
 }
 
 function ProfileSummary({ product, onEdit }: { product: Product; onEdit: () => void }) {
-  const { data } = useQuery(profileQuery(product.id));
+  const confirmed = !!product.profile_confirmed_at || product.profile_edited_fields.length > 0;
   return (
-    <section aria-label="Product profile" className="rounded-lg border bg-card p-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-xl">Product profile</h2>
-        {product.profiled_at && <span className="status-chip status-ai">{product.profile_source === "edited" ? "AI-written · Edited by you" : "AI-written"}</span>}
+    <div className="flex flex-col gap-3 rounded-lg border bg-card p-4 sm:flex-row sm:items-center">
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <h2 className="text-md font-semibold">Product profile</h2>
+          {product.profiled_at
+            ? <><span className="status-chip status-ai">{product.profile_source === "edited" ? "AI-written · Edited by you" : "AI-written"}</span><span className={`status-chip ${confirmed ? "status-live" : "status-coming"}`}>{confirmed ? "Confirmed" : "Not confirmed"}</span></>
+            : <span className="status-chip status-coming">Not profiled yet</span>}
+        </div>
+        <p className="truncate text-sm text-muted-foreground" title={[product.one_liner, product.audience].filter(Boolean).join(" · ")}>
+          {product.profiled_at ? <>{product.one_liner || product.description}{product.audience && <> · For {product.audience}</>}</> : product.description}
+        </p>
       </div>
-      {product.profiled_at ? <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
-        <div className="sm:col-span-2"><dt className="text-muted-foreground">One-line summary</dt><dd className="mt-0.5">{product.one_liner || "—"}</dd></div>
-        <div><dt className="text-muted-foreground">Who it's for</dt><dd className="mt-0.5">{product.audience || "—"}</dd></div>
-        <div><dt className="text-muted-foreground">Category</dt><dd className="mt-0.5">{product.category || "—"}</dd></div>
-        <div><dt className="text-muted-foreground">Competitors</dt><dd className="mt-0.5">{data ? data.competitors.length : "…"}</dd></div>
-        <div><dt className="text-muted-foreground">Buyer questions</dt><dd className="mt-0.5">{data ? data.questions.length : "…"}</dd></div>
-      </dl> : <p className="mt-3 text-sm text-muted-foreground">Not profiled yet. Growloop reads what you told us and writes a short profile you can check.</p>}
-      <ActionRow className="mt-4"><Button variant="outline" onClick={onEdit}>{product.profiled_at ? "Edit profile" : "Open profile"}</Button></ActionRow>
-    </section>
+      <ActionRow className="shrink-0"><Button variant="outline" onClick={onEdit} aria-expanded="false" aria-controls="profile">{product.profiled_at ? "Edit profile" : "Open profile"}</Button></ActionRow>
+    </div>
   );
 }

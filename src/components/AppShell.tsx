@@ -138,7 +138,7 @@ export function AppShell() {
     <Ctx.Provider value={{ data, active, setActive }}>
       <div className="flex min-h-screen w-full flex-col md:flex-row">
         <header className="sticky top-0 z-30 flex items-center justify-between border-b bg-sidebar px-4 py-3 md:hidden">
-          <Link to="/overview"><Logo /></Link>
+          <Link to="/overview" className="flex min-h-11 items-center"><Logo /></Link>
           <Sheet open={drawer} onOpenChange={setDrawer}>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" aria-label="Open menu"><Menu /></Button>

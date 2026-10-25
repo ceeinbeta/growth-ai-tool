@@ -85,7 +85,7 @@ function ProductOverview({ product, footer, onDeleted }: { product: Product; foo
             <h1 className="min-w-0 break-words text-3xl font-extrabold">{product.name}</h1>
             <span className={`status-chip ${product.stage === "live" ? "status-live" : "status-coming"}`}>{stageLabel(product.stage)}</span>
           </div>
-          <a href={`https://${product.url}`} target="_blank" rel="noopener noreferrer" className="mt-1 inline-block break-all text-sm font-medium text-foreground hover:underline">{product.url}</a>
+          <a href={`https://${product.url}`} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex min-h-11 items-center break-all text-sm font-medium text-foreground hover:underline sm:min-h-0">{product.url}</a>
         </div>
         </div>
       </ActionHeader>

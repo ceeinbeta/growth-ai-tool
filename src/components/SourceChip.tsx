@@ -1,6 +1,6 @@
 export const sourceTypes = ['live', 'coming', 'sample', 'measured', 'estimated', 'benchmark', 'ai'] as const;
 export type SourceType = typeof sourceTypes[number];
-export const sourceLabels: Record<SourceType, string> = { live: 'LIVE', coming: 'COMING NEXT', sample: 'SAMPLE DATA', measured: 'MEASURED', estimated: 'ESTIMATED', benchmark: 'BENCHMARK', ai: 'AI-written' };
+export const sourceLabels: Record<SourceType, string> = { live: 'LIVE', coming: 'SOON', sample: 'SAMPLE DATA', measured: 'MEASURED', estimated: 'ESTIMATED', benchmark: 'BENCHMARK', ai: 'AI-written' };
 export function StatusChip({ type }: { type: SourceType }) {
   return <span className={`status-chip status-${type}`}>{sourceLabels[type]}</span>;
 }

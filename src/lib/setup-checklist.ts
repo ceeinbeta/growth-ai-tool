@@ -21,7 +21,7 @@ export function relativeTime(iso: string, now = Date.now()) {
   return `${Math.round(h / 24)} days ago`;
 }
 
-/** Completion comes only from real recorded data. The "Coming next" item is never counted. */
+/** Completion comes only from real recorded data. The "Soon" item is never counted. */
 export function buildChecklist(f: SetupFacts, now = Date.now()): ChecklistItem[] {
   return [
     { key: "profile", title: "Review your product profile", done: f.profiled && f.profileReviewed, result: f.profiled && f.profileReviewed ? "Reviewed by you" : f.profiled ? "Written by AI, waiting for your check" : undefined, to: "/overview#profile", action: "Review the profile" },

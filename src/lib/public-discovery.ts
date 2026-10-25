@@ -18,7 +18,7 @@ export function discoverySitemap() {
 
 export function discoveryLlms() {
   const pageNames = ['Home', 'Features', 'Privacy'];
-  const pageDescriptions = ['What Growloop is and how it works.', 'What is live today and what is coming next.', 'What data is collected and how to ask for deletion.'];
+  const pageDescriptions = ['What Growloop is and how it works.', 'What is live today and what is coming soon.', 'What data is collected and how to ask for deletion.'];
   return [
     '# Growloop', '',
     '> Growloop is a growth app for solo founders that finds why your product is not growing, helps you fix it, and measures what happens next.', '',
@@ -27,8 +27,8 @@ export function discoveryLlms() {
     'AI search visibility is built to check ChatGPT, Perplexity and Claude; engines are connected one by one during the beta, so some may show as not connected.', '',
     '## Live today', '',
     ...liveFeatures.map(f => `- [${f.name}](${DISCOVERY_ORIGIN}/features#${f.id}): ${f.promise}`), '',
-    '## Coming next', '',
-    ...upcomingFeatures.map(f => `- [${f.name}](${DISCOVERY_ORIGIN}/features#coming-next): Coming next, not available yet. ${f.promise}`), '',
+    '## Soon', '',
+    ...upcomingFeatures.map(f => `- [${f.name}](${DISCOVERY_ORIGIN}/features#coming-next): Soon, not available yet. ${f.promise}`), '',
     '## Pages', '',
     ...PUBLIC_DISCOVERY_PATHS.map((path, i) => `- [${pageNames[i]}](${DISCOVERY_ORIGIN}${path}): ${pageDescriptions[i]}`), '',
     '## Contact', '',

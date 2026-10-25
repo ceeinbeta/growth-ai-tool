@@ -344,7 +344,7 @@ function Checklist({ items, onProfile }: { items: ChecklistItem[]; onProfile: ()
             const body = <>
               <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border ${item.done ? "border-foreground bg-primary text-primary-foreground" : ""}`} aria-hidden>{item.done && <Check className="h-3.5 w-3.5" />}</span>
               <span className="min-w-0 flex-1"><span className="block text-sm font-medium">{item.title}<span className="sr-only">{item.done ? " (done)" : item.soon ? "" : " (not done)"}</span></span>{item.result && <span className="block text-xs text-muted-foreground">{item.result}</span>}</span>
-              {item.soon && <span className="status-chip status-coming">Coming next</span>}
+              {item.soon && <span className="status-chip status-coming">Soon</span>}
             </>;
             return <li key={item.key}>{item.soon
               ? <div aria-disabled="true" className="flex items-center gap-3 py-3 text-muted-foreground">{body}</div>

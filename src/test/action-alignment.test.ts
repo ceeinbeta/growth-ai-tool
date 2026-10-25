@@ -61,9 +61,9 @@ describe('shared type scale', () => {
   });
   it('defines the scale tokens and public clamp classes in the theme', () => {
     const css = readFileSync('src/styles.css', 'utf8');
-    for (const token of ['--text-xs: 12px', '--text-sm: 13px', '--text-base: 15px', '--text-md: 16px', '--text-lg: 17px', '--text-xl: 20px', '--text-3xl: 27px', '--text-nav: 14px']) expect(css).toContain(token);
-    expect(css).toContain('clamp(34px, 5vw, 52px)');
-    expect(css).toContain('clamp(26px, 3.4vw, 36px)');
+    for (const token of ['--text-xs: 11px', '--text-sm: 12px', '--text-base: 14px', '--text-md: 15px', '--text-lg: 16px', '--text-xl: 19px', '--text-3xl: 26px', '--text-nav: 13px']) expect(css).toContain(token);
+    expect(css).toContain('clamp(33px, 4.9vw, 51px)');
+    expect(css).toContain('clamp(25px, 3.3vw, 35px)');
     expect(css).toContain('max-width: 1120px');
     expect(css).toContain('max-width: 68ch');
   });

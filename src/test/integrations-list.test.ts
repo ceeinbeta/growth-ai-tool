@@ -26,8 +26,8 @@ describe('integrations page honesty', () => {
   const page = readFileSync('src/routes/_authenticated/integrations.tsx', 'utf8');
   it('coming-next cards are not links and carry the visible label', () => {
     expect(page).toContain('aria-disabled="true"');
-    expect(page).toContain('Coming next');
-    const comingSection = page.slice(page.indexOf('Coming next'));
+    expect(page).toContain('Soon');
+    const comingSection = page.slice(page.indexOf('Soon'));
     expect(comingSection).not.toContain('<Link');
   });
   it('states nothing connects today', () => {

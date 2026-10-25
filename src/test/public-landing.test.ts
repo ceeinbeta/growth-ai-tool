@@ -44,7 +44,7 @@ describe('landing SEO and GEO metadata', () => {
     expect(llms).toContain('# Growloop');
     expect(llms).toContain('hello@mcads.co');
     expect(llms).toContain('Technical audit');
-    expect(llms).toContain('Coming next');
+    expect(llms).toContain('Soon');
     expect(llms).toContain('[Features](https://growloop-mcads.lovable.app/features)');
   });
   it('lists the technical audit and page audit by address as live features', () => {

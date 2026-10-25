@@ -18,19 +18,19 @@ AI search visibility is built to check ChatGPT, Perplexity and Claude; engines a
 - [Product profile](https://growloop-mcads.lovable.app/features#profile): Put your product, audience and buyer questions in one editable place.
 - [Multi-product workspace](https://growloop-mcads.lovable.app/features#workspace): Keep up to 3 products together, with separate numbers for each.
 
-## Coming next
+## Soon
 
-- [Google search growth](https://growloop-mcads.lovable.app/features#coming-next): Coming next, not available yet. See which pages and searches bring organic visitors, and what to improve.
-- [Listing optimization](https://growloop-mcads.lovable.app/features#coming-next): Coming next, not available yet. Improve how your product appears in directories and listings.
-- [Finding conversations](https://growloop-mcads.lovable.app/features#coming-next): Coming next, not available yet. Find buyers asking on Reddit, Hacker News and X, with reply drafts you post yourself.
-- [Results](https://growloop-mcads.lovable.app/features#coming-next): Coming next, not available yet. See which actions brought signups.
-- [Competitor gaps](https://growloop-mcads.lovable.app/features#coming-next): Coming next, not available yet. Find opportunities your competitors are missing.
-- [Experiments](https://growloop-mcads.lovable.app/features#coming-next): Coming next, not available yet. Compare changes and learn which one helps your product grow.
+- [Google search growth](https://growloop-mcads.lovable.app/features#coming-next): Soon, not available yet. See which pages and searches bring organic visitors, and what to improve.
+- [Listing optimization](https://growloop-mcads.lovable.app/features#coming-next): Soon, not available yet. Improve how your product appears in directories and listings.
+- [Finding conversations](https://growloop-mcads.lovable.app/features#coming-next): Soon, not available yet. Find buyers asking on Reddit, Hacker News and X, with reply drafts you post yourself.
+- [Results](https://growloop-mcads.lovable.app/features#coming-next): Soon, not available yet. See which actions brought signups.
+- [Competitor gaps](https://growloop-mcads.lovable.app/features#coming-next): Soon, not available yet. Find opportunities your competitors are missing.
+- [Experiments](https://growloop-mcads.lovable.app/features#coming-next): Soon, not available yet. Compare changes and learn which one helps your product grow.
 
 ## Pages
 
 - [Home](https://growloop-mcads.lovable.app/): What Growloop is and how it works.
-- [Features](https://growloop-mcads.lovable.app/features): What is live today and what is coming next.
+- [Features](https://growloop-mcads.lovable.app/features): What is live today and what is coming soon.
 - [Privacy](https://growloop-mcads.lovable.app/privacy): What data is collected and how to ask for deletion.
 
 ## Contact

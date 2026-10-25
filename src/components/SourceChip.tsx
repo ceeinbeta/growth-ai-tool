@@ -6,5 +6,6 @@ export function StatusChip({ type }: { type: SourceType }) {
 }
 export function SourceChip({ text }: { text: string }) {
   const type = /measured/i.test(text) ? 'measured' : /sample/i.test(text) ? 'sample' : /estimated/i.test(text) ? 'estimated' : /benchmark/i.test(text) ? 'benchmark' : /audit|AI-written/i.test(text) ? 'ai' : null;
+  if (type === 'sample') return <><span className="status-chip status-sample">SAMPLE RUNS</span><br /></>;
   return type ? <><StatusChip type={type} /><br /></> : null;
 }

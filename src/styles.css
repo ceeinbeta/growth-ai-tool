@@ -194,3 +194,5 @@ label:has(input[type="radio"]:checked), [role="radio"][data-state="checked"] { b
 .ink-field :where(a,button,input,textarea,select,[tabindex]):focus-visible { outline-color: var(--ring) !important; }
 [class*="uppercase"][class*="text-xs"], [class*="uppercase"][class*="text-sm"], time, [class*="tabular-nums"][class*="text-xs"] { font-family: var(--font-label); font-weight: 500; }
 .public-site article:not([class*="rounded"]) { border-radius: 0; }
+
+button[class*="max-sm:"] { min-width: 0; }

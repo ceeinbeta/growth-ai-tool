@@ -1,8 +1,9 @@
 # Finding conversations — Hacker News
-- [ ] Approve plan; build private opportunity/search-term/draft/scan storage and atomic limits.
-- [ ] Add bounded HN scans, explainable scoring, manual status/notes and on-demand guarded reply drafts.
-- [ ] Add /conversations, navigation/Overview integration and honest public inventory/discovery updates.
-- [ ] Run mocked serial safety/interaction tests; inspect desktop/mobile screenshots; leave zero test rows and do not publish.
+- [x] Plan archived; private opportunity/search-term/draft/scan storage and atomic limits applied.
+- [x] Add bounded HN scans, explainable scoring, manual status/notes and on-demand guarded reply drafts.
+- [x] Add /conversations, navigation/Overview integration and honest HN-only public inventory/discovery updates.
+- [x] 320 tests passed serially, 53 database checks skipped; signed-in read-only and mocked desktop/mobile screens captured; no test rows, external scans, AI calls or publishing.
+- [ ] Live HN/AI request verification and actual database isolation/limit execution remain unverified; parked at user credit wrap-up.
 
 # Technical audit slice
 - [x] Finish visibility engine row, Admin/table overflow, Overview width, tracking/install columns and matching loading layouts; inspect requested screenshots and run mocked serial checks.

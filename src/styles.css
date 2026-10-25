@@ -294,3 +294,24 @@ a.nav-item:hover { background: var(--sunken); }
 .product-switcher-name { font-size: 13px; font-weight: 600; line-height: 20px; }
 .product-switcher-stage { font-size: 11px; line-height: 16px; color: var(--muted-foreground); }
 .sidebar-account { font-size: 13px; }
+
+/* Homepage hero: decorative backdrop, highlight bar and pill shapes (tokens only). */
+.hero-backdrop::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    radial-gradient(circle at 50% 38%, transparent 219px, color-mix(in srgb, var(--brand-green) 14%, transparent) 220px, transparent 221px),
+    radial-gradient(circle at 50% 38%, transparent 379px, color-mix(in srgb, var(--brand-green) 10%, transparent) 380px, transparent 381px),
+    radial-gradient(circle at 50% 38%, transparent 559px, color-mix(in srgb, var(--brand-green) 7%, transparent) 560px, transparent 561px);
+}
+.hero-backdrop::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--ink) 5%, transparent) 1.5px, transparent 2px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(ellipse at 50% 30%, var(--ink) 0%, transparent 70%);
+}
+.hero-backdrop > * { position: relative; z-index: 1; }
+.hero-h1 { max-width: 18ch; letter-spacing: -0.055em; }
+.hero-highlight { color: var(--ink); background: linear-gradient(transparent 58%, var(--brand-bright) 58%, var(--brand-bright) 92%, transparent 92%); padding-inline: .08em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.announce-pill { border-radius: 999px; }
+.hero-pill { border-radius: var(--radius-public); box-shadow: var(--hero-shadow); }
+@media (min-width: 640px) { .hero-pill, .hero-pill .hero-pill-button { border-radius: 999px; } }

@@ -1,3 +1,8 @@
+# Review fixes
+- [ ] Repair robots and add regression checks; keep discovery origin easy to change.
+- [ ] Review upcoming labels and CTA hierarchy; verify budget-stop and connection labels.
+- [ ] Run mocked serial tests and preview checks without data writes; do not publish.
+
 # Founder d7 re-theme
 - [x] Replace global tokens, typography, controls and logo/favicon; audit all visual usages without behavior changes.
 - [x] Apply labeled source chips, chart colors and AI teaching treatments.

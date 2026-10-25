@@ -99,7 +99,7 @@ function ProductOverview({ product, footer, onDeleted }: { product: Product; foo
               </div>
               <p className="flex min-w-0 flex-wrap items-center gap-x-2 text-sm text-muted-foreground">
                 <a href={`https://${product.url}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center break-all font-medium text-foreground hover:underline sm:min-h-0">{product.url}</a>
-                <span aria-hidden>·</span><span>{footer}</span>
+                <span aria-hidden className="hidden sm:inline">·</span><span>{footer}</span>
               </p>
             </div>
           </div>
@@ -258,9 +258,9 @@ function NextStepBar({ facts, next, onProfile }: { facts: NextStepFacts; next: N
     : <Button asChild><Link to={next.to.split("#")[0]!} {...(next.to.includes("#") ? { hash: next.to.split("#")[1]! } : {})}>{next.action}<ArrowRight /></Link></Button>;
   return (
     <div aria-labelledby="next-step-heading" role="region" className="flex flex-col gap-3 rounded-lg border border-foreground bg-card px-4 py-3 lg:flex-row lg:items-center">
-      <div className="flex min-w-0 flex-1 flex-col gap-0.5 lg:flex-row lg:items-baseline lg:gap-3">
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5 overflow-hidden lg:flex-row lg:items-baseline lg:gap-3">
         <p className="nav-group-label shrink-0 text-foreground">Next best step</p>
-        <h2 id="next-step-heading" className="shrink-0 text-md font-semibold">{next.title}</h2>
+        <h2 id="next-step-heading" className="min-w-0 max-w-full truncate text-md font-semibold lg:max-w-[50%] lg:shrink-0">{next.title}</h2>
         <p className="min-w-0 truncate text-sm text-muted-foreground" title={next.text}>{next.text}</p>
       </div>
       <ol aria-label="Find, fix, prove" className="flex shrink-0 flex-wrap items-center gap-1.5">

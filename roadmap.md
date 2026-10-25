@@ -1,4 +1,5 @@
 # Technical audit slice
+- [ ] Compact visibility summary, chart, questions, fixes and history; verify mocked interactions and desktop/mobile heights without writes or provider calls.
 - [x] Add rule-based technical audit page, tables, reservation/save functions, sidebar link and next-step entry.
 - [x] Mocked serial tests passed; real-site run not exercised (would write rows to the founder's product); not published.
 

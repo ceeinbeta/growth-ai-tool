@@ -1,9 +1,10 @@
 import { ActionRow, ActionHeader } from '@/components/ActionRow';
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { ArrowRight, Check } from 'lucide-react';
+import { ArrowRight, Check, Plug } from 'lucide-react';
 import { PublicShell, WaitlistLink } from '@/components/PublicShell';
 import { PublicStatus } from '@/components/PublicStatus';
 import { liveFeatures, upcomingFeatures } from '@/lib/public-features';
+import { COMING_INTEGRATIONS } from '@/lib/integrations';
 import { publicHead } from '@/lib/public-head';
 import { getPublicOrigin } from '@/lib/public-origin.functions';
 

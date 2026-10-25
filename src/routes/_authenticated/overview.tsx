@@ -23,7 +23,7 @@ import { KPI_PERIODS, parsePeriod, changeVsPrevious, conversionRate, formatPct, 
 import type { Product } from "@/lib/workspace";
 
 export const Route = createFileRoute("/_authenticated/overview")({
-  validateSearch: (search: Record<string, unknown>) => ({ days: parsePeriod(search.days) }),
+  validateSearch: (search: Record<string, unknown>): { days?: KpiPeriod } => (search['days'] === undefined ? {} : { days: parsePeriod(search['days']) }),
   head: () => ({
     meta: [
       { title: "Overview — Growloop" },
@@ -59,7 +59,7 @@ function Overview() {
 const MEASURED = "Measured by your tracking snippet";
 
 function ProductOverview({ product, footer, onDeleted }: { product: Product; footer: string; onDeleted: () => void }) {
-  const { days } = Route.useSearch();
+  const days = parsePeriod(Route.useSearch().days);
   const overview = useQuery(overviewQuery(product.id));
   const tracking = useQuery(trackingQuery(product.id, days));
   const funnel = useQuery(conversionQuery(product.id, days));

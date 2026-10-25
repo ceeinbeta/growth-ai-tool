@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signInLinkErrorMessage } from "@/lib/auth-errors";
 import { ActionRow } from '@/components/ActionRow';
+import { PageLoading } from '@/components/PageLoading';
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -27,6 +28,7 @@ export const Route = createFileRoute("/auth")({
     if (data.session) throw redirect({ to: "/overview" });
   },
   component: AuthPage,
+  pendingComponent: PageLoading,
 });
 
 const emailSchema = z.string().trim().email().max(255);

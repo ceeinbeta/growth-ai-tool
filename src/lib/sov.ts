@@ -56,6 +56,8 @@ export type SovRunRow = {
   engine: string;
   question: string;
   status: "done" | "failed";
+  error?: string | null;
+  answer_excerpt?: string | null;
 };
 export type SovMentionRow = { run_id: string; name: string; rank: number; kind: MentionKind };
 
@@ -144,4 +146,15 @@ export function engineErrorMessage(status: number, body: string): string {
   if (status === 404) return "The model or endpoint was not found. The provider may have renamed it.";
   if (status >= 500) return "The provider had a server error. Try again later.";
   return "The connection test failed. Try again later.";
+}
+
+/** Only interpret known persisted categories; never expose stored provider text. */
+export function unusableEngineReason(runs: { error?: string | null; answer_excerpt?: string | null }[]): string {
+  const codes = runs.map(r => (r.error ?? '').split(' — ')[0]?.toLowerCase());
+  if (codes.some(c => c === '401' || c === '403' || c === 'http 401' || c === 'http 403')) return 'key rejected';
+  if (codes.some(c => c === '402' || c === 'http 402')) return 'provider account out of credit';
+  if (codes.some(c => c === '429' || c === 'http 429')) return 'provider rate limited';
+  if (codes.some(c => c === 'timeout')) return 'request timed out';
+  if (!runs.length || runs.every(r => !r.error || r.error.startsWith('empty answer —'))) return 'no usable answers';
+  return 'the engine could not complete its runs';
 }

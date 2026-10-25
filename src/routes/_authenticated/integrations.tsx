@@ -35,11 +35,11 @@ function Integrations() {
     <PageHeader title="Integrations" purpose="Connect the sources Growloop measures from. Only real data shows in your numbers." />
     {active ? <>
       <p className="mt-2 text-sm text-muted-foreground">{active.name} · {active.url}</p>
-      <h2 className="mt-8 text-xl">Live now</h2>
+      <h2 className="mt-6 text-xl">Live now</h2>
       <div id="tracking" className="mt-4 scroll-mt-24 focus:outline-none"><WebsiteTracking key={active.id} product={active} /></div>
       <EngineCards key={`e-${active.id}`} product={active} />
     </> : <div className="mt-6">{data ? <EmptyState icon={Plug} text="Add a product to get its tracking snippet." action="Add product" to="/products/new" /> : <BlockSkeleton />}</div>}
-    <h2 className="mt-10 text-xl">Coming next</h2>
+    <h2 className="mt-6 text-xl">Coming next</h2>
     <p className="mt-1 text-sm text-muted-foreground">These are not built yet. Nothing here connects to your accounts today.</p>
     <ul className="mt-4 grid gap-4 sm:grid-cols-2">
       {COMING_INTEGRATIONS.map(i => <li key={i.name} aria-disabled="true" className="flex cursor-default flex-col gap-2 rounded-lg border bg-card p-5">
@@ -70,7 +70,7 @@ function EngineCards({ product }: { product: Product }) {
     {engines.map(e => <li key={e.id} className="grid grid-rows-[auto_1fr_auto_auto] gap-2 rounded-lg border bg-card p-5">
       <div className="flex flex-wrap items-center gap-2"><h3 className="flex-1 text-base">{e.label}</h3>{data && <span className={`status-chip ${e.connected ? 'status-live' : 'status-coming'}`}>{e.connected ? 'Connected' : 'Not connected'}</span>}</div>
       <p className="text-sm text-muted-foreground">{ENGINE_GIVES[e.id as EngineId]}</p>
-      <p className="min-h-5 break-words text-xs text-muted-foreground" aria-live="polite">{results[e.id]?.text ?? (data && !e.connected ? 'Add its key in Project Settings → Secrets.' : '')}</p>
+      <p className="break-words text-xs text-muted-foreground empty:hidden" aria-live="polite">{results[e.id]?.text ?? (data && !e.connected ? 'Add its key in Project Settings → Secrets.' : '')}</p>
       <ActionRow>{e.connected && <Button variant="link" disabled={results[e.id]?.ok === null} onClick={() => runTest(e.id as EngineId)}>Test connection</Button>}</ActionRow>
     </li>)}
   </ul>;

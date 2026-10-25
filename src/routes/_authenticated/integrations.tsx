@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 import { useState } from 'react';
 import { Plug } from 'lucide-react';
-import { BlockSkeleton, EmptyState } from '@/components/States';
+import { PageSkeleton, EmptyState } from '@/components/States';
 import { useActiveProduct } from '@/components/AppShell';
 import { WebsiteTracking } from '@/components/WebsiteTracking';
 import { PageHeader } from '@/components/PageHeader';
@@ -32,6 +32,7 @@ const ENGINE_GIVES: Record<EngineId, string> = {
 
 function Integrations() {
   const { active, data } = useActiveProduct();
+  if (!data) return <PageSkeleton variant="integrations" />;
   return <PageShell>
     <PageHeader title="Integrations" purpose="Connect the sources Growloop measures from. Only real data shows in your numbers." />
     {active ? <>
@@ -41,7 +42,7 @@ function Integrations() {
         <EngineCards key={`e-${active.id}`} product={active} />
         <div id="tracking" className="scroll-mt-24 focus:outline-none"><WebsiteTracking key={active.id} product={active} /></div>
       </section>
-    </> : <div className="mt-6">{data ? <EmptyState icon={Plug} text="Add a product to get its tracking snippet." action="Add product" to="/products/new" /> : <BlockSkeleton />}</div>}
+    </> : <div className="mt-6">{data ? <EmptyState icon={Plug} text="Add a product to get its tracking snippet." action="Add product" to="/products/new" /> : <PageSkeleton variant="integrations" />}</div>}
     <section aria-labelledby="soon-heading">
     <h2 id="soon-heading" className="text-xl">Soon</h2>
     <p className="mt-1 text-sm text-muted-foreground">These are not built yet. Nothing here connects to your accounts today.</p>

@@ -45,11 +45,11 @@ function Overview() {
   const used = data.products.length;
   if (!active) {
     return (
-      <div className="mx-auto w-full max-w-lg">
+      <PageShell>
         <h1 className="sr-only">Overview</h1>
         <EmptyState icon={Package} text="Add your first product. Growloop will show its setup steps and numbers here." action="Add product" to="/products/new" />
         <p className="mt-6 text-center text-xs text-muted-foreground">{used} of {max} products used on the Standard plan</p>
-      </div>
+      </PageShell>
     );
   }
   const next = data.products.find(p => p.id !== active.id);

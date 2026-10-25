@@ -318,6 +318,8 @@ a.nav-item:hover { background: var(--sunken); }
 
 /* Signed-in page layout: one shared frame and grid for every app page. */
 :root { --page-max: 1600px; }
+:root { --app-sticky-offset: 72px; }
+@media (min-width: 768px) { :root { --app-sticky-offset: 0px; } }
 .page-shell { width: 100%; max-width: var(--page-max); margin-inline: auto; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
 .page-shell > * { margin-block: 0 !important; }
 .page-shell p:not([class*="max-w"]), .page-shell li > p { max-width: 75ch; }
@@ -337,6 +339,10 @@ a.nav-item:hover { background: var(--sunken); }
 .table-scroll { overflow: auto; max-height: 360px; }
 .table-scroll thead th { position: sticky; top: 0; z-index: 1; background: var(--card); }
 .table-scroll tbody tr { height: 40px; }
+.table-scroll { width: 100%; min-width: 0; }
+.table-scroll th { height: 40px; }
+.table-scroll td { padding-block: 0; }
+.page-shell :is(input, select, textarea) { min-width: 0; }
 .compact-panel { min-width: 0; border: 1px solid var(--border); border-radius: var(--radius-app); background: var(--card); padding: 16px; }
 .responsive-details > summary { cursor: pointer; }
 .question-scroll { max-height: 420px; }

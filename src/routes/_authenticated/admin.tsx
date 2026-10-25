@@ -89,7 +89,7 @@ function AdminContent() {
       <PageHeader title="Admin" purpose="Invite people into the beta and keep an eye on limits. Growloop never sends emails for you." />
       {error && <p role="alert" className="mt-4 rounded-sm bg-danger-soft p-3 text-sm text-destructive">{error}</p>}
 
-      {!s ? <PageSkeleton variant="admin" /> : (
+      {!s ? <PageSkeleton variant="admin" embedded /> : (
         <>
           <section aria-label="Summary" className="mt-6 grid gap-3 rounded-lg border bg-card p-4 sm:grid-cols-3">
             <div><p className="nav-group-label">Beta seats used</p><p className="mt-1 text-2xl font-extrabold tabular-nums">{s.invited_count} of {s.beta_seat_limit}</p></div>

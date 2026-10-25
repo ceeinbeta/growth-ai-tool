@@ -45,7 +45,7 @@ function TechnicalAudit() {
     <PageShell>
       <PageHeader title="Technical audit" purpose="Check whether Google and AI assistants can find, read and understand your site. These checks remove common blockers; they do not by themselves improve rankings or recommendations." action={action} />
       {error && <p role="alert" className="mt-4 rounded-sm bg-danger-soft p-3 text-sm text-destructive">{error}</p>}
-      {active ? <TechnicalProduct key={active.id} product={active} busy={busy} onRerun={() => void start(active.id)} /> : <div className="mt-6">{data ? <EmptyState icon={Wrench} text="Add a product to check its site." action="Add product" to="/products/new" /> : <PageSkeleton variant="technical" />}</div>}
+      {active ? <TechnicalProduct key={active.id} product={active} busy={busy} onRerun={() => void start(active.id)} /> : <div className="mt-6">{data ? <EmptyState icon={Wrench} text="Add a product to check its site." action="Add product" to="/products/new" /> : <PageSkeleton variant="technical" embedded />}</div>}
     </PageShell>
   );
 }
@@ -53,7 +53,7 @@ function TechnicalAudit() {
 function TechnicalProduct({ product, busy, onRerun }: { product: Product; busy: boolean; onRerun: () => void }) {
   const { data, error, refetch } = useQuery(technicalAuditQuery(product.id));
   if (error) return <div className="mt-6"><ErrorState text="We couldn't load the technical audit." onRetry={() => void refetch()} /></div>;
-  if (!data) return <PageSkeleton variant="technical" />;
+  if (!data) return <PageSkeleton variant="technical" embedded />;
   if (!data.latest) return <div className="mt-6"><EmptyState icon={Wrench} text={`No technical audit yet for ${product.name}. Run one to check ${product.url}.`} action="Run technical audit" onClick={onRerun} /></div>;
 
   const attention = data.findings.filter(f => f.status === 'attention');

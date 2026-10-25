@@ -59,7 +59,7 @@ function TechnicalProduct({ product, busy, onRerun }: { product: Product; busy: 
   const first = attention[0];
   return (
     <>
-      <p className="mt-2 break-words text-sm text-muted-foreground">Audited <a href={data.latest.fetched_url} target="_blank" rel="noreferrer" className="text-foreground underline">{data.latest.fetched_url}</a> on {new Date(data.latest.fetched_at).toLocaleString()}</p>
+      <p className="mt-2 break-words text-sm text-muted-foreground">Audited <a href={data.latest.fetched_url} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center text-foreground underline sm:min-h-0">{data.latest.fetched_url}</a> on {new Date(data.latest.fetched_at).toLocaleString()}</p>
       <section aria-labelledby="tech-summary" className="mt-6 rounded-lg border border-foreground bg-card p-5">
         <h2 id="tech-summary" className="text-lg">Summary</h2>
         <p className="mt-2 text-sm"><SourceChip text="Measured from your site's own pages" />{attention.length === 0 ? 'All checks passed.' : `${attention.length} check${attention.length === 1 ? '' : 's'} need${attention.length === 1 ? 's' : ''} attention.`}{data.latest.unknown_count > 0 ? ` ${data.latest.unknown_count} could not be checked.` : ''}</p>

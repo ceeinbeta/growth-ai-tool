@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { getSovEngineStatus, testEngineConnection } from '@/lib/sov.functions';
 import { ENGINES, type EngineId } from '@/lib/engine-prices';
 import type { Product } from '@/lib/workspace';
-import { COMING_INTEGRATIONS } from '@/lib/integrations';
+import { COMING_INTEGRATIONS, requestIntegrationHref } from '@/lib/integrations';
 
 export const Route = createFileRoute('/_authenticated/integrations')({
   head: () => ({ meta: [
@@ -35,15 +35,17 @@ function Integrations() {
     <PageHeader title="Integrations" purpose="Connect the sources Growloop measures from. Only real data shows in your numbers." />
     {active ? <>
       <p className="mt-2 text-sm text-muted-foreground">{active.name} · {active.url}</p>
-      <div id="tracking" className="scroll-mt-24"><WebsiteTracking key={active.id} product={active} /></div>
-      <h2 className="mt-10 text-lg">AI engines</h2>
+      <h2 className="mt-8 text-xl">Live now</h2>
+      <div id="tracking" className="mt-4 scroll-mt-24"><WebsiteTracking key={active.id} product={active} /></div>
       <EngineCards key={`e-${active.id}`} product={active} />
     </> : <div className="mt-6">{data ? <EmptyState icon={Plug} text="Add a product to get its tracking snippet." action="Add product" to="/products/new" /> : <BlockSkeleton />}</div>}
-    <h2 className="mt-10 text-lg">Coming next</h2>
+    <h2 className="mt-10 text-xl">Coming next</h2>
+    <p className="mt-1 text-sm text-muted-foreground">These are not built yet. Nothing here connects to your accounts today.</p>
     <ul className="mt-4 grid gap-4 sm:grid-cols-2">
       {COMING_INTEGRATIONS.map(i => <li key={i.name} aria-disabled="true" className="flex cursor-default flex-col gap-2 rounded-lg border bg-card p-5">
         <div className="flex items-center gap-3"><h3 className="flex-1 text-base">{i.name}</h3><span className="status-chip status-coming">Coming next</span></div>
         <p className="text-sm text-muted-foreground">{i.gives}</p>
+        <a href={requestIntegrationHref(i.name)} className="mt-auto text-sm font-medium text-foreground underline">Request this integration</a>
       </li>)}
     </ul>
   </div>;

@@ -39,7 +39,10 @@ describe('sidebar navigation', () => {
     render(<SidebarNav isAdmin />);
     expect(screen.getByRole('link', { name: 'Admin' }).getAttribute('href')).toBe('/admin');
   });
-  it('lists the four Coming next integrations', () => {
-    expect(COMING_INTEGRATIONS.map(i => i.name)).toEqual(['PostHog', 'Google Analytics', 'Stripe', 'Google Search Console']);
+  it('lists the Coming next integrations in the promised order', () => {
+    expect(COMING_INTEGRATIONS.map(i => i.name)).toEqual([
+      'Google Search Console', 'Google Analytics', 'PostHog', 'Stripe',
+      'Bing Webmaster Tools', 'Slack', 'Notion / CSV export',
+    ]);
   });
 });

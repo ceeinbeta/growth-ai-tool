@@ -127,6 +127,13 @@
       "when": 1792940777884,
       "tag": "0017_technical_audit_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1792943228502,
+      "tag": "0018_tracking_summary_period",
+      "breakpoints": true
     }
   ]
 }

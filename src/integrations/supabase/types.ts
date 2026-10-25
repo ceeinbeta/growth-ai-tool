@@ -1162,7 +1162,7 @@ export type Database = {
       sov_budget_info: { Args: { p_product_id?: string }; Returns: Json }
       sov_month_spend: { Args: { p_exclude_check?: string }; Returns: Json }
       submit_waitlist: { Args: { entry: Json }; Returns: boolean }
-      tracking_summary: { Args: { pid: string }; Returns: Json }
+      tracking_summary: { Args: { days?: number; pid: string }; Returns: Json }
       unique_visitors: { Args: { days: number; pid: string }; Returns: number }
     }
     Enums: {

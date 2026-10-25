@@ -115,7 +115,7 @@
 
 /* Public pages reuse the existing brand tokens. */
 .public-site { letter-spacing: 0; }
-.public-site :is(a, button, input):focus-visible { outline: 2px solid var(--ring); outline-offset: 4px; }
+.public-site :is(a, button, input):focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 .public-site :is(section[id], main[id]) { scroll-margin-top: 100px; }
 .public-container { width: 100%; max-width: 1280px; margin-inline: auto; padding-inline: 20px; }
 .public-section { padding-block: 64px; }
@@ -126,7 +126,7 @@
 @media (min-width: 640px) { .public-container { padding-inline: 32px; } }
 @media (min-width: 1024px) { .public-container { padding-inline: 48px; } .public-section { padding-block: 88px; } .public-heading { font-size: 40px; } }
 @layer base {
-  a:focus-visible { outline: 2px solid var(--ring); outline-offset: 4px; }
+  a:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
   html { scroll-behavior: smooth; }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 }
@@ -143,7 +143,7 @@
 }
 :where(a,button,input,textarea,select,[tabindex],[role="button"],[role="checkbox"],[role="radio"]):focus-visible {
   outline: 2px solid var(--ring) !important;
-  outline-offset: 4px !important;
+  outline-offset: 2px !important;
   transition-property: background-color, color, border-color, opacity, transform !important;
   box-shadow: 0 0 0 2px var(--background) !important;
 }
@@ -189,3 +189,8 @@
 label:has(input[type="radio"]:checked), [role="radio"][data-state="checked"] { box-shadow: inset 0 -2px var(--foreground); }
 [class*="text-destructive"]:not([class*="bg-danger-soft"]) { text-decoration-color: var(--destructive); }
 .public-site .public-heading { max-width: 900px; }
+
+/* Keyboard outlines are Ink with a two-pixel Paper separator. */
+.ink-field :where(a,button,input,textarea,select,[tabindex]):focus-visible { outline-color: var(--ring) !important; }
+[class*="uppercase"][class*="text-xs"], [class*="uppercase"][class*="text-sm"], time, [class*="tabular-nums"][class*="text-xs"] { font-family: var(--font-label); font-weight: 500; }
+.public-site article:not([class*="rounded"]) { border-radius: 0; }

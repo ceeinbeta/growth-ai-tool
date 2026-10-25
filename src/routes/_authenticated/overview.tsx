@@ -69,9 +69,9 @@ function ProductOverview({ product, footer, onDeleted }: { product: Product; foo
 
   return (
     <div className="mx-auto max-w-3xl">
-      <header className="flex flex-wrap items-start gap-4">
+      <header className="flex flex-wrap items-start gap-4 max-sm:[&>button]:ml-auto">
         <ProductLogo name={product.name} path={product.logo_path} size={56} />
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 max-sm:basis-[calc(100%-72px)]">
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="min-w-0 break-words text-3xl font-extrabold">{product.name}</h1>
             <span className={`status-chip ${product.stage === "live" ? "status-live" : "status-coming"}`}>{stageLabel(product.stage)}</span>

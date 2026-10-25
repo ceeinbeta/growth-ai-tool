@@ -4,7 +4,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Growloop brand tokens. Hex values are the exact brand colors. */
+/* Founder d7: exact playbook colors with documented derived neutrals below. */
 
 @theme inline {
   --font-label: "DM Mono", ui-monospace, monospace;
@@ -173,3 +173,18 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
+
+.ink-field {
+  --foreground: #F6F8F3; --card-foreground: #F6F8F3;
+  --muted-foreground: #F6F8F3; --border: rgba(246,248,243,.3);
+  --primary-foreground: #17211D;
+  background: #17211D; color: #F6F8F3;
+}
+.ink-field a { color: var(--foreground); }
+.ink-field .logo-mark { color: var(--foreground); }
+.ink-field .public-nav-link { color: var(--foreground); }
+.ink-field [class*="bg-secondary"] { background: transparent; border: 1px solid var(--foreground); }
+:where([class*="bg-card"][class*="rounded"], [role="dialog"]) { border-radius: 12px; box-shadow: none; }
+label:has(input[type="radio"]:checked), [role="radio"][data-state="checked"] { box-shadow: inset 0 -2px var(--foreground); }
+[class*="text-destructive"]:not([class*="bg-danger-soft"]) { text-decoration-color: var(--destructive); }
+.public-site .public-heading { max-width: 900px; }

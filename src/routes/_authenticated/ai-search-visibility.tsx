@@ -269,7 +269,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
       </div>
       {budget?.scope === "platform" && (
         <p className="mt-2 text-sm text-muted-foreground">
-          Spent this month {usd(budget.spent_usd)} of ${budget.budget_usd} (estimated)
+          <span className="status-chip status-estimated">Estimated</span> Spent this month {usd(budget.spent_usd)} of ${budget.budget_usd} (estimated)
           {budget.spent_usd >= budget.budget_usd * 0.8 && (
             <span className="ml-2 font-medium text-warning">Near the monthly budget.</span>
           )}
@@ -277,7 +277,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
       )}
       {budget?.scope === "product" && (
         <p className="mt-2 text-sm text-muted-foreground">
-          This product's estimated spend this month: {usd(budget.own_spend_usd)} — {budget.status}.
+          <span className="status-chip status-estimated">Estimated</span> This product's estimated spend this month: {usd(budget.own_spend_usd)} — {budget.status}.
         </p>
       )}
 
@@ -299,7 +299,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
             ))}
           </fieldset>
           <p className="mt-1 text-sm text-muted-foreground">
-            This will make about {callCount} calls, estimated cost about {usd(estimate)}. Costs are estimates from
+            <span className="status-chip status-estimated">Estimated</span> This will make about {callCount} calls, estimated cost about {usd(estimate)}. Costs are estimates from
             published prices, not exact bills.
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -359,7 +359,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
               </div>
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              Measured by asking {(latestDone.engines ?? []).join(", ")} your buyer questions {latestDone.runs_per_question} times each on{" "}
+              <span className="status-chip status-measured">Measured</span> by asking {(latestDone.engines ?? []).join(", ")} your buyer questions {latestDone.runs_per_question} times each on{" "}
               {new Date(latestDone.started_at).toLocaleDateString()}. AI answers vary, so treat this as a sample, not a
               ranking.
             </p>

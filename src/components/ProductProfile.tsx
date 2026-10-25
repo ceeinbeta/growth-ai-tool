@@ -105,7 +105,7 @@ export function ProductProfile({ product }: { product: Product }) {
       </div>
       <div className="mt-4"><h3 className="text-sm font-semibold">Competitors</h3>
         <div className="mt-3 flex flex-wrap gap-2">{data?.competitors.map(c => <div key={c.id} className="flex max-w-full items-center gap-1 rounded-sm border bg-sunken pl-3">
-          <span className="min-w-0 break-words text-sm">{c.name}<span className="ml-2 text-xs text-muted-foreground">{c.source === "ai" ? "AI" : "You"}</span></span>
+          <span className="min-w-0 break-words text-sm">{c.name}<span className={c.source === "ai" ? "ml-2 status-chip status-ai" : "ml-2 font-label text-xs"}>{c.source === "ai" ? "AI-WRITTEN" : "You"}</span></span>
           <Button variant="ghost" size="icon" disabled={disabled} aria-label={`Remove ${c.name}`} title={`Remove ${c.name}`} onClick={() => remove("competitors", c.id)}><X className="h-3 w-3" /></Button>
         </div>)}</div>
         <form className="mt-3 flex gap-2" onSubmit={e => { e.preventDefault(); void add("competitor"); }}><Input aria-label="Add competitor" placeholder="Add competitor" maxLength={120} value={competitor} onChange={e => setCompetitor(e.target.value)} disabled={disabled || (data?.competitors.length ?? 0) >= 8} /><Button type="submit" variant="outline" size="icon" aria-label="Add competitor" title="Add competitor" disabled={disabled || !competitor.trim() || (data?.competitors.length ?? 0) >= 8}><Plus className="h-4 w-4" /></Button></form>

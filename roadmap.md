@@ -1,5 +1,5 @@
 # Technical audit slice
-- [ ] Finish visibility engine row, Admin/table overflow, Overview width, tracking/install columns and matching loading layouts; inspect requested screenshots and run mocked serial checks.
+- [x] Finish visibility engine row, Admin/table overflow, Overview width, tracking/install columns and matching loading layouts; inspect requested screenshots and run mocked serial checks.
 - [x] Compact visibility summary, chart, questions, fixes and history; mocked interactions and read-only desktop/mobile checks without writes or provider calls.
 - [x] Add rule-based technical audit page, tables, reservation/save functions, sidebar link and next-step entry.
 - [x] Mocked serial tests passed; real-site run not exercised (would write rows to the founder's product); not published.

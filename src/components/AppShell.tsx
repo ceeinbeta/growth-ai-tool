@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { getStoredActive, setStoredActive, workspaceQuery, type Product, type WorkspaceData } from "@/lib/workspace";
 import { isAdminQuery } from "@/lib/admin";
+import { Button } from '@/components/ui/button';
 
 type ActiveCtx = { data: WorkspaceData | undefined; active: Product | null; setActive: (id: string) => void };
 const Ctx = createContext<ActiveCtx>({ data: undefined, active: null, setActive: () => {} });
@@ -117,9 +118,9 @@ export function AppShell() {
 
           <div className="mt-auto border-t px-5 py-4">
             <p className="truncate text-sm text-muted-foreground" title={user.email}>{user.email}</p>
-            <button onClick={signOut} className="mt-2 inline-flex items-center gap-2 text-sm font-medium text-foreground hover:underline">
+            <Button variant="link" onClick={signOut}>
               <LogOut className="h-4 w-4" /> Sign out
-            </button>
+            </Button>
           </div>
         </aside>
 

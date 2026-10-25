@@ -2,6 +2,7 @@ import * as React from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
 
 import { cn } from "@/lib/utils";
+import { ActionRow } from '@/components/ActionRow';
 
 const Drawer = ({
   shouldScaleBackground = true,
@@ -23,7 +24,7 @@ const DrawerOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DrawerPrimitive.Overlay
     ref={ref}
-    className={cn("fixed inset-0 z-50 bg-black/80", className)}
+    className={cn("fixed inset-0 z-50 bg-overlay", className)}
     {...props}
   />
 ));
@@ -56,7 +57,7 @@ const DrawerHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivEleme
 DrawerHeader.displayName = "DrawerHeader";
 
 const DrawerFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("mt-auto flex flex-col gap-2 p-4", className)} {...props} />
+  <ActionRow className={cn("mt-auto p-4", className)} {...props} />
 );
 DrawerFooter.displayName = "DrawerFooter";
 

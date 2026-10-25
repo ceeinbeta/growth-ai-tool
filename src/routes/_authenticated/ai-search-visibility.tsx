@@ -270,9 +270,9 @@ function VisibilityPage({ productId, productName }: { productId: string; product
         fixes={data?.fixes ?? []} budget={budget} onAddCompetitor={addCompetitor}
         action={running ? <Button disabled>{progress ? `${progress.finished} of ${progress.total} runs finished` : "Check running…"}</Button> : <Button variant={confirming ? "outline" : "default"} onClick={openConfirmation} disabled={!connected.length || !questions.length}>Run a check</Button>}
         settings={<>
-      <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <div className="mt-5 grid grid-cols-1 gap-3">
         {(engineStatus?.engines ?? ENGINES.map((e) => ({ id: e.id, label: e.label, connected: false, testsToday: 0 }))).map((e) => (
-          <div key={e.id} className="grid min-w-0 grid-rows-[auto_auto_1fr_auto] gap-2 rounded-lg border bg-card p-4 text-xs">
+          <div key={e.id} className="grid min-w-0 gap-2 border-b py-3 text-xs">
             <span className="font-semibold">{e.label}</span>
             <span className={e.connected ? "text-foreground" : "text-muted-foreground"}>{e.connected ? "Connected" : "Not connected"}</span>
             {testResults[e.id] && <div><span className="break-words text-muted-foreground">{testResults[e.id]?.text}</span></div>}
@@ -284,7 +284,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
           </div>
         ))}
       </div>
-      <section className="mt-6 rounded-xl border bg-card p-5">
+      <section className="mt-4 border-t pt-3">
         <h2 className="text-lg">Automatic checks</h2>
         <label className="mt-2 flex items-center gap-2 text-sm">
           <input

@@ -24,8 +24,8 @@ describe("visibility dialog interactions", () => {
     expect(screen.getByText(/from usable answers by asking Claude your buyer questions/)).toBeInTheDocument();
     expect(screen.getByText('OpenAI: no usable answers')).toBeInTheDocument();
     expect(screen.getByText('Perplexity: key rejected')).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: /^Perplexity$/ }));
-    expect(screen.getAllByText('Perplexity: key rejected')).toHaveLength(2);
+    fireEvent.mouseDown(screen.getByRole('tab', { name: /^Perplexity$/ }), { button: 0, ctrlKey: false });
+    expect(screen.getAllByText('Perplexity: key rejected')).toHaveLength(1);
     expect(screen.queryByText(/raw-secret-payload/)).toBeNull();
   });
   beforeEach(() => { localStorage.clear(); state.runs = []; state.checks = null; state.test.mockReset(); state.start.mockReset(); });
@@ -67,7 +67,7 @@ describe("visibility dialog interactions", () => {
     fireEvent.click(testButton);
     await screen.findByText("Test passed just now");
     for (const label of ["OpenAI", "Claude"]) {
-      const card = screen.getByText(label, { exact: true }).parentElement;
+      const card = screen.getAllByText(label, { exact: true }).find(el => el.tagName === "SPAN")?.parentElement;
       if (!card) throw new Error(`Missing ${label} card`);
       expect(within(card).getAllByText("Connected", { exact: true })).toHaveLength(1);
     }
@@ -96,7 +96,7 @@ describe("visibility dialog interactions", () => {
     render(<state.component />);
     expect(screen.getAllByText("OpenAI: 0 of 1 runs succeeded — No usable answers in this check")).toHaveLength(2);
     expect(screen.getByText("Claude: 1 of 1 runs succeeded")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: /^OpenAI$/ }));
+    fireEvent.mouseDown(screen.getByRole("tab", { name: /^OpenAI$/ }), { button: 0, ctrlKey: false });
     expect(screen.getByText("No usable answers in this check", { exact: true })).toBeInTheDocument();
     expect(screen.queryByText(/was not recommended in these usable answers/)).toBeNull();
   });

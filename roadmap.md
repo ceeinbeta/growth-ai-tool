@@ -1,7 +1,7 @@
 # Review fixes
-- [ ] Repair robots and add regression checks; keep discovery origin easy to change.
-- [ ] Review upcoming labels and CTA hierarchy; verify budget-stop and connection labels.
-- [ ] Run mocked serial tests and preview checks without data writes; do not publish.
+- [x] Repair robots and add regression checks; discovery origin is centralized with a static refresh command.
+- [x] Change sidebar Soon to Coming next; outline public header, expanded-profile confirmation and check opener while confirming; budget-stop and one connection label already correct.
+- [x] 180 mocked tests passed serially; 50 integration tests skipped; public/signed-in read-only desktop and mobile navigation checks passed with no runtime errors, data writes or publishing.
 
 # Founder d7 re-theme
 - [x] Replace global tokens, typography, controls and logo/favicon; audit all visual usages without behavior changes.

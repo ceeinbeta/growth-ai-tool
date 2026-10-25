@@ -5,11 +5,12 @@ export type NextStepFacts = {
   eventCount: number;
   funnelSteps: number;
   hasAudit: boolean;
+  hasTechnicalAudit: boolean;
   usableVisibilityRuns: number;
   leaksInProgressOrDone: number;
 };
 
-export type NextStepKey = "profile" | "tracking" | "funnel" | "audit" | "visibility" | "leak";
+export type NextStepKey = "profile" | "tracking" | "funnel" | "audit" | "technical" | "visibility" | "leak";
 
 export type NextStep = { key: NextStepKey; title: string; text: string; action: string; to: string };
 
@@ -18,6 +19,7 @@ const STEPS: Record<NextStepKey, NextStep> = {
   tracking: { key: "tracking", title: "Install website tracking", text: "No visits have been recorded yet. Add the tracking code to your site to start measuring.", action: "Install tracking", to: "/integrations#tracking" },
   funnel: { key: "funnel", title: "Set up your funnel steps", text: "You are using the default funnel. Add the pages and events that matter for your product.", action: "Edit the funnel", to: "/conversion-leaks" },
   audit: { key: "audit", title: "Run a page audit", text: "Get AI-written suggestions for the page where visitors drop off.", action: "Run a page audit", to: "/conversion-leaks" },
+  technical: { key: "technical", title: "Run a technical audit", text: "Check whether Google and AI assistants can find, read and understand your site.", action: "Run a technical audit", to: "/technical-audit" },
   visibility: { key: "visibility", title: "Run an AI visibility check", text: "See whether AI assistants recommend your product when buyers ask.", action: "Run a check", to: "/ai-search-visibility" },
   leak: { key: "leak", title: "Review your biggest leak", text: "Your setup is in place. Pick the top leak from your latest audit and work on it.", action: "Open conversion leaks", to: "/conversion-leaks" },
 };
@@ -27,6 +29,7 @@ export function pickNextStep(f: NextStepFacts): NextStep {
   if (f.eventCount === 0) return STEPS.tracking;
   if (f.funnelSteps === 0) return STEPS.funnel;
   if (!f.hasAudit) return STEPS.audit;
+  if (!f.hasTechnicalAudit) return STEPS.technical;
   if (f.usableVisibilityRuns === 0) return STEPS.visibility;
   return STEPS.leak;
 }

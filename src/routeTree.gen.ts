@@ -19,6 +19,7 @@ import { Route as AuthenticatedAiSearchVisibilityRouteImport } from './routes/_a
 import { Route as AuthenticatedConversionLeaksRouteImport } from './routes/_authenticated/conversion-leaks'
 import { Route as AuthenticatedIntegrationsRouteImport } from './routes/_authenticated/integrations'
 import { Route as AuthenticatedOverviewRouteImport } from './routes/_authenticated/overview'
+import { Route as AuthenticatedTechnicalAuditRouteImport } from './routes/_authenticated/technical-audit'
 import { Route as ApiCollectRouteImport } from './routes/api/collect'
 import { Route as AuthenticatedProductsNewRouteImport } from './routes/_authenticated/products.new'
 import { Route as ApiPublicCollectRouteImport } from './routes/api/public/collect'
@@ -77,6 +78,12 @@ const AuthenticatedOverviewRoute = AuthenticatedOverviewRouteImport.update({
   path: '/overview',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedTechnicalAuditRoute =
+  AuthenticatedTechnicalAuditRouteImport.update({
+    id: '/technical-audit',
+    path: '/technical-audit',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ApiCollectRoute = ApiCollectRouteImport.update({
   id: '/api/collect',
   path: '/api/collect',
@@ -115,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/conversion-leaks': typeof AuthenticatedConversionLeaksRoute
   '/integrations': typeof AuthenticatedIntegrationsRoute
   '/overview': typeof AuthenticatedOverviewRoute
+  '/technical-audit': typeof AuthenticatedTechnicalAuditRoute
   '/api/collect': typeof ApiCollectRoute
   '/products/new': typeof AuthenticatedProductsNewRoute
   '/api/public/collect': typeof ApiPublicCollectRoute
@@ -131,6 +139,7 @@ export interface FileRoutesByTo {
   '/conversion-leaks': typeof AuthenticatedConversionLeaksRoute
   '/integrations': typeof AuthenticatedIntegrationsRoute
   '/overview': typeof AuthenticatedOverviewRoute
+  '/technical-audit': typeof AuthenticatedTechnicalAuditRoute
   '/api/collect': typeof ApiCollectRoute
   '/products/new': typeof AuthenticatedProductsNewRoute
   '/api/public/collect': typeof ApiPublicCollectRoute
@@ -149,6 +158,7 @@ export interface FileRoutesById {
   '/_authenticated/conversion-leaks': typeof AuthenticatedConversionLeaksRoute
   '/_authenticated/integrations': typeof AuthenticatedIntegrationsRoute
   '/_authenticated/overview': typeof AuthenticatedOverviewRoute
+  '/_authenticated/technical-audit': typeof AuthenticatedTechnicalAuditRoute
   '/api/collect': typeof ApiCollectRoute
   '/_authenticated/products/new': typeof AuthenticatedProductsNewRoute
   '/api/public/collect': typeof ApiPublicCollectRoute
@@ -167,6 +177,7 @@ export interface FileRouteTypes {
     | '/conversion-leaks'
     | '/integrations'
     | '/overview'
+    | '/technical-audit'
     | '/api/collect'
     | '/products/new'
     | '/api/public/collect'
@@ -183,6 +194,7 @@ export interface FileRouteTypes {
     | '/conversion-leaks'
     | '/integrations'
     | '/overview'
+    | '/technical-audit'
     | '/api/collect'
     | '/products/new'
     | '/api/public/collect'
@@ -200,6 +212,7 @@ export interface FileRouteTypes {
     | '/_authenticated/conversion-leaks'
     | '/_authenticated/integrations'
     | '/_authenticated/overview'
+    | '/_authenticated/technical-audit'
     | '/api/collect'
     | '/_authenticated/products/new'
     | '/api/public/collect'
@@ -291,6 +304,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOverviewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/technical-audit': {
+      id: '/_authenticated/technical-audit'
+      path: '/technical-audit'
+      fullPath: '/technical-audit'
+      preLoaderRoute: typeof AuthenticatedTechnicalAuditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/collect': {
       id: '/api/collect'
       path: '/api/collect'
@@ -335,6 +355,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedConversionLeaksRoute: typeof AuthenticatedConversionLeaksRoute
   AuthenticatedIntegrationsRoute: typeof AuthenticatedIntegrationsRoute
   AuthenticatedOverviewRoute: typeof AuthenticatedOverviewRoute
+  AuthenticatedTechnicalAuditRoute: typeof AuthenticatedTechnicalAuditRoute
   AuthenticatedProductsNewRoute: typeof AuthenticatedProductsNewRoute
 }
 
@@ -344,6 +365,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedConversionLeaksRoute: AuthenticatedConversionLeaksRoute,
   AuthenticatedIntegrationsRoute: AuthenticatedIntegrationsRoute,
   AuthenticatedOverviewRoute: AuthenticatedOverviewRoute,
+  AuthenticatedTechnicalAuditRoute: AuthenticatedTechnicalAuditRoute,
   AuthenticatedProductsNewRoute: AuthenticatedProductsNewRoute,
 }
 

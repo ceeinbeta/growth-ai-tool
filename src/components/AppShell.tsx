@@ -24,7 +24,7 @@ export const useActiveProduct = () => useContext(Ctx);
 
 export const stageLabel = (s: Product["stage"]) => (s === "live" ? "Live" : "Pre-launch");
 
-const itemClass = "flex items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium text-foreground hover:bg-sunken";
+const itemClass = "flex items-center gap-3 rounded-sm px-3 py-2 text-nav font-medium text-foreground hover:bg-sunken";
 const activeClass = "bg-selected text-foreground selected-state";
 
 export function SidebarNav({ isAdmin, onNavigate }: { isAdmin: boolean; onNavigate?: () => void }) {
@@ -37,7 +37,7 @@ export function SidebarNav({ isAdmin, onNavigate }: { isAdmin: boolean; onNaviga
             {group.items.map((item) => (
               <li key={item.label}>
                 {item.soon ? (
-                  <span aria-disabled="true" className="flex cursor-default items-center gap-3 px-3 py-2 text-sm text-muted-foreground">
+                  <span aria-disabled="true" className="flex cursor-default items-center gap-3 px-3 py-2 text-nav text-muted-foreground">
                     <span className="flex-1">{item.label}</span>
                     <span className="status-chip status-coming">Coming next</span>
                   </span>

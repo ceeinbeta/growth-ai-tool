@@ -56,7 +56,7 @@ function AuthPage() {
     <main className="flex min-h-screen items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <Logo />
-        <h1 className="mt-10 text-4xl font-extrabold leading-tight">Find the leak. Fix it. Prove it worked.</h1>
+        <h1 className="mt-10 text-3xl font-extrabold leading-tight">Find the leak. Fix it. Prove it worked.</h1>
         <div className="mt-8 rounded-xl border bg-card p-6">
           {sent ? (
             <div role="status">

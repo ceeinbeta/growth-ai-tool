@@ -4,6 +4,7 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
+    "refresh:discovery": "bun scripts/refresh-discovery.ts",
     "dev": "vite dev",
     "build": "vite build",
     "build:dev": "vite build --mode development",

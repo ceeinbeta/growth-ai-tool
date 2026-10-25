@@ -106,7 +106,7 @@ export function AppShell() {
             {soon.map(({ label, icon: Icon }) => (
               <span key={label} aria-disabled="true" className="flex cursor-default items-center gap-3 px-3 py-2 text-sm text-muted-foreground">
                 <Icon className="h-4 w-4" /> <span className="flex-1">{label}</span>
-                <span className="status-chip status-coming">Soon</span>
+                <span className="status-chip status-coming">Coming next</span>
               </span>
             ))}
             <Link to="/integrations" className="flex items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium text-foreground hover:bg-sunken" activeProps={{ className: "bg-selected text-foreground selected-state" }}><Plug className="h-4 w-4" /> Integrations</Link>

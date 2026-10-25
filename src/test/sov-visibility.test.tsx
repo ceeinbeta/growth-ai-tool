@@ -51,7 +51,11 @@ describe("visibility dialog interactions", () => {
     if (!testButton) throw new Error("Missing test button");
     fireEvent.click(testButton);
     await screen.findByText("Test passed just now");
-    expect(screen.getAllByText("Connected")).toHaveLength(2);
+    for (const label of ["OpenAI", "Claude"]) {
+      const card = screen.getByText(label, { exact: true }).parentElement;
+      if (!card) throw new Error(`Missing ${label} card`);
+      expect(within(card).getAllByText("Connected", { exact: true })).toHaveLength(1);
+    }
   });
   it("defaults an engine off after all its last runs failed, but allows retry", () => {
     state.runs = [{ id: "r", check_id: "last", engine: "openai", status: "failed" }];

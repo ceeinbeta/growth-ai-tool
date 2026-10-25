@@ -246,7 +246,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
               {progress ? `${progress.finished} of ${progress.total} runs finished` : "Check running…"}
             </Button>
           ) : (
-            <Button onClick={openConfirmation} disabled={!connected.length || !questions.length}>
+            <Button variant={confirming ? "outline" : "default"} onClick={openConfirmation} disabled={!connected.length || !questions.length}>
               Run a check
             </Button>
           )}

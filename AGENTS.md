@@ -44,4 +44,4 @@
 - Overview setup progress is computed from real rows in src/lib/setup-checklist.ts with tests. Why: completion must never be invented.
 
 - Public feature facts are shared by home and Features; public navigation uses router links with home hashes for section jumps. Why: one honest feature inventory and consistent navigation.
-- The public sitemap is static XML containing only the three public content pages, without lastmod; keep it updated with public route changes. Why: no application-route edits or private URLs in public discovery.
+- Public discovery stays static: `src/lib/public-discovery.ts` owns the origin and public/private paths; run `bun run refresh:discovery` after changing them to refresh robots and the three-page sitemap without lastmod. Why: one domain setting, no private URLs or server sitemap, and current-host canonical metadata stays independent.

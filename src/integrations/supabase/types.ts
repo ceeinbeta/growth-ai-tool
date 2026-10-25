@@ -231,6 +231,32 @@ export type Database = {
           },
         ]
       }
+      conversation_terms: {
+        Row: {
+          product_id: string
+          terms: string[]
+          updated_at: string
+        }
+        Insert: {
+          product_id: string
+          terms: string[]
+          updated_at?: string
+        }
+        Update: {
+          product_id?: string
+          terms?: string[]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_terms_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: true
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           created_at: string
@@ -469,6 +495,74 @@ export type Database = {
           },
         ]
       }
+      opportunities: {
+        Row: {
+          author_handle: string
+          comments: number
+          created_at: string
+          excerpt: string
+          external_id: string
+          id: string
+          notes: string
+          points: number
+          posted_at: string
+          product_id: string
+          score: number
+          score_parts: Json
+          source: string
+          status: string
+          title: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          author_handle?: string
+          comments?: number
+          created_at?: string
+          excerpt: string
+          external_id: string
+          id?: string
+          notes?: string
+          points?: number
+          posted_at: string
+          product_id: string
+          score: number
+          score_parts: Json
+          source?: string
+          status?: string
+          title: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          author_handle?: string
+          comments?: number
+          created_at?: string
+          excerpt?: string
+          external_id?: string
+          id?: string
+          notes?: string
+          points?: number
+          posted_at?: string
+          product_id?: string
+          score?: number
+          score_parts?: Json
+          source?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opportunities_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           aliases: string[]
@@ -577,6 +671,124 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "profile_runs_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reply_draft_runs: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reply_draft_runs_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reply_drafts: {
+        Row: {
+          created_at: string
+          edited_text: string | null
+          id: string
+          model: string
+          opportunity_id: string
+          product_id: string
+          text: string
+        }
+        Insert: {
+          created_at?: string
+          edited_text?: string | null
+          id?: string
+          model: string
+          opportunity_id: string
+          product_id: string
+          text: string
+        }
+        Update: {
+          created_at?: string
+          edited_text?: string | null
+          id?: string
+          model?: string
+          opportunity_id?: string
+          product_id?: string
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reply_drafts_opportunity_id_product_id_fkey"
+            columns: ["opportunity_id", "product_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id", "product_id"]
+          },
+          {
+            foreignKeyName: "reply_drafts_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scan_runs: {
+        Row: {
+          created_at: string
+          finished_at: string | null
+          found: number
+          id: string
+          new_count: number
+          note: string | null
+          product_id: string
+          source: string
+          status: string
+          terms: string[]
+        }
+        Insert: {
+          created_at?: string
+          finished_at?: string | null
+          found?: number
+          id?: string
+          new_count?: number
+          note?: string | null
+          product_id: string
+          source?: string
+          status?: string
+          terms: string[]
+        }
+        Update: {
+          created_at?: string
+          finished_at?: string | null
+          found?: number
+          id?: string
+          new_count?: number
+          note?: string | null
+          product_id?: string
+          source?: string
+          status?: string
+          terms?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scan_runs_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
@@ -1099,6 +1311,10 @@ export type Database = {
         Returns: boolean
       }
       delete_product_as_owner: { Args: { pid: string }; Returns: undefined }
+      edit_reply_draft: {
+        Args: { did: string; draft_text: string; pid: string }
+        Returns: undefined
+      }
       finish_sov_check: {
         Args: { check_id: string; final_cost: number; new_status: string }
         Returns: undefined
@@ -1115,6 +1331,10 @@ export type Database = {
         Returns: string
       }
       reserve_audit_fetch: { Args: { pid: string }; Returns: undefined }
+      reserve_conversation_scan: {
+        Args: { pid: string; query_terms: string[] }
+        Returns: string
+      }
       reserve_install_check: { Args: { pid: string }; Returns: undefined }
       reserve_logo_fetch: { Args: { pid: string }; Returns: undefined }
       reserve_profile_run: { Args: { pid: string }; Returns: string }
@@ -1128,6 +1348,14 @@ export type Database = {
         Returns: string
       }
       reserve_technical_audit: { Args: { pid: string }; Returns: undefined }
+      save_conversation_scan: {
+        Args: { hits: Json; outcome: string; rid: string; safe_note: string }
+        Returns: number
+      }
+      save_conversation_terms: {
+        Args: { pid: string; query_terms: string[] }
+        Returns: undefined
+      }
       save_fetched_page_audit: {
         Args: {
           copy: Json
@@ -1150,6 +1378,15 @@ export type Database = {
         }
         Returns: string
       }
+      save_reply_draft: {
+        Args: {
+          draft_text: string
+          model_name: string
+          oid: string
+          pid: string
+        }
+        Returns: string
+      }
       save_technical_audit: {
         Args: {
           fetch_time: string
@@ -1164,6 +1401,15 @@ export type Database = {
       submit_waitlist: { Args: { entry: Json }; Returns: boolean }
       tracking_summary: { Args: { days?: number; pid: string }; Returns: Json }
       unique_visitors: { Args: { days: number; pid: string }; Returns: number }
+      update_conversation: {
+        Args: {
+          new_notes?: string
+          new_status?: string
+          oid: string
+          pid: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

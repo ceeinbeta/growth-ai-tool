@@ -1,5 +1,6 @@
 // Picks one next step and the Find / Fix / Prove status from real recorded data only.
 export type NextStepFacts = {
+  hasConversationScan?: boolean;
   profiled: boolean;
   profileReviewed: boolean;
   eventCount: number;
@@ -10,7 +11,7 @@ export type NextStepFacts = {
   leaksInProgressOrDone: number;
 };
 
-export type NextStepKey = "profile" | "tracking" | "funnel" | "audit" | "technical" | "visibility" | "leak";
+export type NextStepKey = "profile" | "tracking" | "funnel" | "audit" | "technical" | "visibility" | "conversations" | "leak";
 
 export type NextStep = { key: NextStepKey; title: string; text: string; action: string; to: string };
 
@@ -21,6 +22,7 @@ const STEPS: Record<NextStepKey, NextStep> = {
   audit: { key: "audit", title: "Run a page audit", text: "Get AI-written suggestions for the page where visitors drop off.", action: "Run a page audit", to: "/conversion-leaks" },
   technical: { key: "technical", title: "Run a technical audit", text: "Check whether Google and AI assistants can find, read and understand your site.", action: "Run a technical audit", to: "/technical-audit" },
   visibility: { key: "visibility", title: "Run an AI visibility check", text: "See whether AI assistants recommend your product when buyers ask.", action: "Run a check", to: "/ai-search-visibility" },
+  conversations: { key: "conversations", title: "Scan for conversations", text: "Find public Hacker News posts where someone asks for your kind of product. You post any reply yourself.", action: "Scan Hacker News", to: "/conversations" },
   leak: { key: "leak", title: "Review your biggest leak", text: "Your setup is in place. Pick the top leak from your latest audit and work on it.", action: "Open conversion leaks", to: "/conversion-leaks" },
 };
 
@@ -31,6 +33,7 @@ export function pickNextStep(f: NextStepFacts): NextStep {
   if (!f.hasAudit) return STEPS.audit;
   if (!f.hasTechnicalAudit) return STEPS.technical;
   if (f.usableVisibilityRuns === 0) return STEPS.visibility;
+  if (!f.hasConversationScan) return STEPS.conversations;
   return STEPS.leak;
 }
 

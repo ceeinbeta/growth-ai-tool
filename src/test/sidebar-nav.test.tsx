@@ -17,7 +17,7 @@ describe('sidebar navigation', () => {
   });
   it('renders Soon items as disabled text, not links', () => {
     render(<SidebarNav isAdmin={false} />);
-    for (const label of ['Google search growth', 'Listing optimization', 'Finding conversations', 'Results', 'Competitor gaps', 'Experiments']) {
+    for (const label of ['Google search growth', 'Listing optimization', 'Results', 'Competitor gaps', 'Experiments']) {
       const el = screen.getByText(label).closest('[aria-disabled="true"]');
       expect(el).not.toBeNull();
       expect(screen.getByText(label).closest('a')).toBeNull();
@@ -25,6 +25,7 @@ describe('sidebar navigation', () => {
   });
   it('keeps existing routes as links', () => {
     render(<SidebarNav isAdmin={false} />);
+    expect(screen.getByRole('link', { name: 'Finding conversations' }).getAttribute('href')).toBe('/conversations');
     expect(screen.getByRole('link', { name: 'Overview' }).getAttribute('href')).toBe('/overview');
     expect(screen.getByRole('link', { name: 'Conversion leaks' }).getAttribute('href')).toBe('/conversion-leaks');
     expect(screen.getByRole('link', { name: 'Technical audit' }).getAttribute('href')).toBe('/technical-audit');
@@ -41,7 +42,7 @@ describe('sidebar navigation', () => {
       expect(r.querySelector('.nav-item-label')).not.toBeNull();
     });
     const pills = container.querySelectorAll('.nav-soon-pill');
-    expect(pills.length).toBe(6);
+    expect(pills.length).toBe(5);
     pills.forEach((p) => expect(p.textContent).toBe('Soon'));
   });
   it('defines sidebar sizes on the shared scale', async () => {

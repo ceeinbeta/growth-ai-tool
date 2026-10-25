@@ -73,9 +73,9 @@ describe('logo fetch reuses the install-check validator', () => {
 
 describe('setup checklist', () => {
   const base = { profiled: false, profileReviewed: false, eventCount: 0, lastEventAt: null, visitors30d: 0, hasAudit: false, lastCheck: null };
-  it('counts 5 items and never the coming-next item', () => {
+  it('counts six live setup items', () => {
     const items = buildChecklist(base);
-    expect(progress(items)).toEqual({ done: 0, total: 5 });
+    expect(progress(items)).toEqual({ done: 0, total: 6 });
     expect(nextAction(items)?.key).toBe('profile');
   });
   it('needs a review, not just an AI profile', () => {
@@ -91,9 +91,9 @@ describe('setup checklist', () => {
     expect(buildChecklist({ ...base, lastCheck: { date: '2026-10-01', usableRuns: 0, pct: 0 } })[4]!.done).toBe(false);
     expect(buildChecklist({ ...base, lastCheck: { date: '2026-10-01', usableRuns: 3, pct: 33 } })[4]!.done).toBe(true);
   });
-  it('has no next action when all five are done', () => {
-    const items = buildChecklist({ profiled: true, profileReviewed: true, eventCount: 5, lastEventAt: new Date().toISOString(), visitors30d: 150, hasAudit: true, lastCheck: { date: '2026-10-01', usableRuns: 3, pct: 33 } });
-    expect(progress(items)).toEqual({ done: 5, total: 5 });
+  it('has no next action when all six are done', () => {
+    const items = buildChecklist({ hasConversationScan: true, profiled: true, profileReviewed: true, eventCount: 5, lastEventAt: new Date().toISOString(), visitors30d: 150, hasAudit: true, lastCheck: { date: '2026-10-01', usableRuns: 3, pct: 33 } });
+    expect(progress(items)).toEqual({ done: 6, total: 6 });
     expect(nextAction(items)).toBeNull();
   });
 });

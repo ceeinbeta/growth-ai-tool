@@ -25,7 +25,7 @@ export function ErrorState({ text, onRetry }: { text: string; onRetry: () => voi
   );
 }
 
-export function PageSkeleton({ variant = 'overview', embedded = false }: { embedded?: boolean; variant?: 'overview' | 'visibility' | 'admin' | 'integrations' | 'technical' | 'conversion' }) {
+export function PageSkeleton({ variant = 'overview', embedded = false }: { embedded?: boolean; variant?: 'overview' | 'visibility' | 'admin' | 'integrations' | 'technical' | 'conversion' | 'conversations' }) {
   const cards = (count: number, height = 'h-24') => Array.from({ length: count }, (_, i) => <Skeleton key={i} className={`${height} w-full`} />);
   const Frame = embedded ? 'div' : PageShell;
   return <Frame><div aria-busy="true" aria-label="Loading" className="flex flex-col gap-4">
@@ -35,6 +35,7 @@ export function PageSkeleton({ variant = 'overview', embedded = false }: { embed
     {variant === 'admin' && <><div className="card-grid" data-cols="3">{cards(3)}</div><PageGrid main={<><Skeleton className="h-40 w-full" /><Skeleton className="h-48 w-full" /><Skeleton className="h-48 w-full" /></>} context={<>{cards(2,'h-60')}</>} /><Skeleton className="h-48 w-full" /></>}
     {variant === 'integrations' && <><div className="card-grid" data-cols="3">{cards(3,'h-40')}</div><div className="grid gap-4 lg:grid-cols-2">{cards(2,'h-60')}</div><Skeleton className="h-48 w-full" /><div className="card-grid" data-cols="4">{cards(4,'h-40')}</div></>}
     {variant === 'technical' && <PageGrid main={<><Skeleton className="h-32 w-full" /><div className="card-grid">{cards(8,'h-40')}</div></>} context={<Skeleton className="h-60 w-full" />} />}
+    {variant === 'conversations' && <><div className="card-grid" data-cols="3">{cards(3)}</div><PageGrid main={<><Skeleton className="h-10 w-full" />{cards(3,'h-60')}</>} context={<>{cards(4,'h-40')}</>} /></>}
     {variant === 'conversion' && <PageGrid main={<Skeleton className="h-80 w-full" />} context={<><Skeleton className="h-60 w-full" /><Skeleton className="h-48 w-full" /></>} />}
   </div></Frame>;
 }

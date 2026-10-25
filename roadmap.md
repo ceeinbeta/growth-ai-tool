@@ -9,7 +9,7 @@
 
 # Review fixes
 - [x] Repair robots and add regression checks; discovery origin is centralized with a static refresh command.
-- [x] Change sidebar Soon to Coming next; outline public header, expanded-profile confirmation and check opener while confirming; budget-stop and one connection label already correct.
+- [x] (superseded) Change sidebar Soon to Coming next; outline public header, expanded-profile confirmation and check opener while confirming; budget-stop and one connection label already correct.
 - [x] 180 mocked tests passed serially; 50 integration tests skipped; public/signed-in read-only desktop and mobile navigation checks passed with no runtime errors, data writes or publishing.
 
 # Founder d7 re-theme
@@ -90,3 +90,5 @@
 - [x] Replace shared visual theme, font families, radii and labels while preserving layout, type scale and actions.
 - [x] Replace shared logo and browser/social assets; update leaf metadata and Organization.logo.
 - [x] Update theme/type safeguards and design rules; 267 mocked tests passed serially, 53 database tests skipped for no-write safety. Preview build OK; requested eight screens captured at 1280px and 390px, no overflow/page errors. Contrast, keyboard focus and reduced motion checked; existing 40px/44px button sizing retained. No data writes, AI calls or publishing.
+
+- [x] Type scale 1px smaller (shared tokens, 11px floor); "Coming next" label renamed to "Soon" everywhere. Rule: unbuilt features carry a visible "Soon" pill.

@@ -9,4 +9,3 @@ export const conversationsQuery=(id:string)=>queryOptions({queryKey:['conversati
  for(const r of [opportunities,drafts,scans,terms]) if(r.error) throw r.error;
  return {opportunities:opportunities.data ?? [],drafts:drafts.data ?? [],scans:scans.data ?? [],terms:terms.data?.terms ?? null};
 }});
-export type ConversationsData=Awaited<ReturnType<NonNullable<ReturnType<typeof conversationsQuery>['queryFn']>>>;

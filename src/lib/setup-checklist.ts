@@ -1,4 +1,5 @@
 export type SetupFacts = {
+  hasConversationScan?: boolean;
   profiled: boolean;
   profileReviewed: boolean;
   eventCount: number;
@@ -29,7 +30,7 @@ export function buildChecklist(f: SetupFacts, now = Date.now()): ChecklistItem[]
     { key: "visitors", title: `Collect ${VISITOR_GOAL} visitors`, done: f.visitors30d >= VISITOR_GOAL, result: `${Math.min(f.visitors30d, VISITOR_GOAL)} of ${VISITOR_GOAL} in the last 30 days`, to: "/conversion-leaks", action: "See your funnel" },
     { key: "audit", title: "Run a page audit", done: f.hasAudit, result: f.hasAudit ? "Audit saved" : undefined, to: "/conversion-leaks", action: "Run a page audit" },
     { key: "visibility", title: "Run an AI visibility check", done: !!f.lastCheck && f.lastCheck.usableRuns > 0, result: f.lastCheck && f.lastCheck.usableRuns > 0 ? `Last check ${new Date(f.lastCheck.date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}` : undefined, to: "/ai-search-visibility", action: "Run a check" },
-    { key: "opportunities", title: "Find people asking for your kind of product", done: false, to: "/overview", action: "", soon: true },
+    { key: "opportunities", title: "Find people asking for your kind of product", done: !!f.hasConversationScan, to: "/conversations", action: "Scan for conversations" },
   ];
 }
 

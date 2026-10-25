@@ -73,13 +73,13 @@ function ProductOverview({ product, footer, onDeleted }: { product: Product; foo
     profiled: !!product.profiled_at,
     profileReviewed: !!product.profile_confirmed_at || product.profile_edited_fields.length > 0,
     eventCount: overview.data.eventCount, lastEventAt: overview.data.lastEventAt, visitors30d: overview.data.visitors30d,
-    hasAudit: !!overview.data.audit, lastCheck: overview.data.lastCheck,
+    hasAudit: !!overview.data.audit, lastCheck: overview.data.lastCheck, hasConversationScan: !!overview.data.conversationScan,
   }) : null;
   const facts: NextStepFacts | null = overview.data ? {
     profiled: !!product.profiled_at,
     profileReviewed: !!product.profile_confirmed_at || product.profile_edited_fields.length > 0,
     eventCount: overview.data.eventCount, funnelSteps: overview.data.funnelSteps, hasAudit: !!overview.data.audit,
-    hasTechnicalAudit: !!overview.data.technicalAudit,
+    hasTechnicalAudit: !!overview.data.technicalAudit, hasConversationScan: !!overview.data.conversationScan,
     usableVisibilityRuns: overview.data.lastCheck?.usableRuns ?? 0, leaksInProgressOrDone: overview.data.leaksWorked,
   } : null;
   const next = facts ? pickNextStep(facts) : null;

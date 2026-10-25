@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { SectionSkeleton, ErrorState } from '@/components/States';
+import { PageSkeleton, ErrorState } from '@/components/States';
 import { ConversationList } from '@/components/ConversationList';
 import { useActiveProduct } from '@/components/AppShell';
 import { profileQuery } from '@/lib/profile-data';
@@ -21,7 +21,7 @@ import { scanConversations, saveConversationTerms, changeConversation, draftConv
 import { relativeTime } from '@/lib/setup-checklist';
 export const Route=createFileRoute('/_authenticated/conversations')({head:()=>({meta:[{title:'Finding conversations · Growloop'},{name:'description',content:'Find public Hacker News posts with transparent rule-based scores and replies you post yourself.'},{property:'og:title',content:'Finding conversations · Growloop'},{property:'og:description',content:'Hacker News public posts, transparent scoring and manual replies.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary'},{name:'robots',content:'noindex,nofollow'}]}),component:Conversations});
 function Conversations(){
- const {product}=useActiveProduct(); const qc=useQueryClient();
+ const {active:product}=useActiveProduct(); const qc=useQueryClient();
  const data=useQuery({...conversationsQuery(product?.id ?? ''),enabled:!!product});
  const profile=useQuery({...profileQuery(product?.id ?? ''),enabled:!!product});
  const scan=useServerFn(scanConversations),saveTerms=useServerFn(saveConversationTerms),change=useServerFn(changeConversation),draft=useServerFn(draftConversationReply),edit=useServerFn(editConversationDraft);
@@ -31,8 +31,8 @@ function Conversations(){
  async function action(work:()=>Promise<{ok:boolean;error?:string|null}>){if(busy)return;setBusy(true);setError('');try{const r=await work();if(r.error)setError(r.error);if(r.ok){await Promise.all([qc.invalidateQueries({queryKey:['conversations',product?.id]}),qc.invalidateQueries({queryKey:['overview',product?.id]})]);toast.success('Saved');}}catch{setError('This action could not finish. Please try again.');}finally{setBusy(false);}}
  function parsedTerms(){const r=termsSchema.safeParse(terms.split('\n').map(t=>t.trim()).filter(Boolean));if(!r.success){setError('Use 1–10 plain-text search terms, up to 120 characters each.');return null;}return r.data;}
  if(!product)return <PageShell><PageHeader title="Finding conversations" purpose="Hacker News, public posts"/><p className="text-sm text-muted-foreground">Add a product before scanning for conversations.</p></PageShell>;
- if(data.isPending || profile.isPending)return <PageShell><PageHeader title="Finding conversations" purpose="Hacker News, public posts"/><SectionSkeleton variant="conversations"/></PageShell>;
- if(data.error || profile.error)return <PageShell><ErrorState title="Couldn't load conversations" onRetry={()=>{void data.refetch();void profile.refetch();}}/></PageShell>;
+ if(data.isPending || profile.isPending)return <PageShell><PageHeader title="Finding conversations" purpose="Hacker News, public posts"/><PageSkeleton variant="conversations" embedded/></PageShell>;
+ if(data.error || profile.error)return <PageShell><ErrorState text="Couldn't load conversations" onRetry={()=>{void data.refetch();void profile.refetch();}}/></PageShell>;
  const results=data.data;const items=results.opportunities.filter(o=>(status==='all'||o.status===status)&&o.score>=min);
  const last=results.scans[0];
  return <PageShell>

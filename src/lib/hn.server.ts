@@ -8,11 +8,11 @@ export function parseHnResponse(value: unknown): HnPost[] {
  if(!value || typeof value!=='object' || !('hits' in value) || !Array.isArray(value.hits)) throw new Error('Hacker News returned an unreadable response.');
  return value.hits.slice(0,50).flatMap((v: unknown)=>{
   if(!v || typeof v!=='object') return []; const h=v as Record<string,unknown>;
-  if(h.dead || h.deleted || h.locked || !/^\d+$/.test(String(h.objectID))) return [];
-  const title=plain(h.title ?? h.story_title,300); const posted=String(h.created_at ?? '');
+  if(h['dead'] || h['deleted'] || h['locked'] || !/^\d+$/.test(String(h['objectID']))) return [];
+  const title=plain(h['title'] ?? h['story_title'],300); const posted=String(h['created_at'] ?? '');
   if(!title || !Number.isFinite(Date.parse(posted))) return [];
   const count=(x:unknown)=>typeof x==='number' && Number.isFinite(x) ? Math.max(0,Math.min(2147483647,Math.floor(x))) : 0;
-  return [{external_id:String(h.objectID),url:`https://news.ycombinator.com/item?id=${h.objectID}`,title,excerpt:plain(h.story_text ?? h.comment_text,500),author_handle:plain(h.author,80),posted_at:new Date(posted).toISOString(),points:count(h.points),comments:count(h.num_comments)}];
+  return [{external_id:String(h['objectID']),url:`https://news.ycombinator.com/item?id=${h['objectID']}`,title,excerpt:plain(h['story_text'] ?? h['comment_text'],500),author_handle:plain(h['author'],80),posted_at:new Date(posted).toISOString(),points:count(h['points']),comments:count(h['num_comments'])}];
  });
 }
 export async function fetchHn(query: string, fetcher: typeof fetch = fetch) {

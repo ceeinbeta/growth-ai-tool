@@ -1,7 +1,7 @@
 // Single source for the signed-in sidebar and mobile drawer.
 // Items with `soon` are visible "Soon" labels, never links.
 export type NavItem =
-  | { label: string; to: "/overview" | "/conversion-leaks" | "/technical-audit" | "/ai-search-visibility" | "/integrations" | "/admin"; hash?: string; soon?: false; adminOnly?: boolean }
+  | { label: string; to: "/overview" | "/conversion-leaks" | "/technical-audit" | "/ai-search-visibility" | "/integrations" | "/admin" | "/conversations"; hash?: string; soon?: false; adminOnly?: boolean }
   | { label: string; soon: true };
 
 export type NavGroup = { label: string; items: NavItem[] };
@@ -15,7 +15,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { label: "AI search visibility", to: "/ai-search-visibility" },
       { label: "Google search growth", soon: true },
       { label: "Listing optimization", soon: true },
-      { label: "Finding conversations", soon: true },
+      { label: "Finding conversations", to: "/conversations" },
     ],
   },
   { label: "Analytics", items: [{ label: "Results", soon: true }, { label: "Competitor gaps", soon: true }, { label: "Experiments", soon: true }] },

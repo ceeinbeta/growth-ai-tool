@@ -13,7 +13,7 @@
 - AI profiling uses one authenticated RPC with RLS product reads and privileged usage/reservation writes; keys and providers stay in server-only modules.
 - Database triggers preserve field edit ownership and serialize item caps; atomic profile replacement preserves founder-owned content under concurrent edits.
 - Rolling profile-run reservations are separate from per-call usage so a malformed-output retry counts as one run.
-- Profile and audit reservations share one transaction advisory lock before product locks, preserving separate per-product caps and one combined rolling cap; retries count as one reservation.
+- Profile, audit and reply-draft reservations share one transaction advisory lock before product locks, preserving separate per-product caps and one combined rolling cap; retries count as one reservation.
 - Invite-only signup uses a private service-role-only allow-list and an app-owned BEFORE INSERT auth lifecycle trigger; existing sign-in and the AFTER INSERT workspace trigger remain independent.
 - Invitation and shared-limit database tests create auth fixtures through the admin API and explicitly clean temporary users, invitations, workspaces, and reservations in finally blocks; tests must never send real emails or call AI.
 - Managed auth deletion uses an application lifecycle cleanup trigger for memberships instead of a disallowed direct auth foreign key.
@@ -49,3 +49,5 @@
 - Server-only libraries stay excluded from browser dep pre-bundling; why: linkedom breaks it and blanks client pages in dev.
 - Signed-in navigation lives in src/lib/nav.ts for sidebar and mobile drawer; unbuilt features carry a visible "Soon" pill and are never links.
 - Overview has at most four top-level sections; visibility uses filtered compact results and inline details. Why: keep key data scannable.
+
+- Conversations use fixed-host server-only HN searches, atomic service-only scan/draft reservations and member-read storage; rescans preserve manual status/notes and replies are never submitted. Why: private founder workflow and bounded read-only collection.

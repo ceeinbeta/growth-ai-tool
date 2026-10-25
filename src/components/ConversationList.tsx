@@ -12,7 +12,7 @@ type Draft=Database['public']['Tables']['reply_drafts']['Row'];
 export function ConversationList({items,drafts,busy,onChange,onDraft,onEdit}:{items:Opportunity[];drafts:Draft[];busy:boolean;onChange:(id:string,status?:string,notes?:string)=>Promise<void>;onDraft:(id:string)=>Promise<void>;onEdit:(id:string,text:string)=>Promise<void>}) {
  return <div className="space-y-4">{items.map(o=><ConversationItem key={o.id} item={o} draft={drafts.find(d=>d.opportunity_id===o.id)} busy={busy} onChange={onChange} onDraft={onDraft} onEdit={onEdit}/>)}</div>;
 }
-function ConversationItem({item:o,draft,busy,onChange,onDraft,onEdit}:{item:Opportunity;draft?:Draft;busy:boolean;onChange:(id:string,status?:string,notes?:string)=>Promise<void>;onDraft:(id:string)=>Promise<void>;onEdit:(id:string,text:string)=>Promise<void>}){
+function ConversationItem({item:o,draft,busy,onChange,onDraft,onEdit}:{item:Opportunity;draft:Draft | undefined;busy:boolean;onChange:(id:string,status?:string,notes?:string)=>Promise<void>;onDraft:(id:string)=>Promise<void>;onEdit:(id:string,text:string)=>Promise<void>}){
  const [open,setOpen]=useState(false),[text,setText]=useState(draft?.edited_text ?? draft?.text ?? ''),[notes,setNotes]=useState(o.notes),[copied,setCopied]=useState(false);
  const parts=o.score_parts as unknown as ScoreParts;
  return <article className="compact-panel" aria-label={o.title}>

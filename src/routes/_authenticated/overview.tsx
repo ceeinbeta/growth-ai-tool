@@ -16,7 +16,8 @@ import { overviewQuery } from "@/lib/overview-data";
 import { trackingQuery } from "@/lib/tracking-data";
 import { openLeaksQuery } from "@/lib/conversion-data";
 import { profileQuery } from "@/lib/profile-data";
-import { buildChecklist, nextAction, progress, type ChecklistItem } from "@/lib/setup-checklist";
+import { buildChecklist, progress, type ChecklistItem } from "@/lib/setup-checklist";
+import { pickNextStep, loopSteps, loopStatusText, type NextStepFacts } from "@/lib/next-step";
 import type { Product } from "@/lib/workspace";
 
 export const Route = createFileRoute("/_authenticated/overview")({
@@ -67,6 +68,12 @@ function ProductOverview({ product, footer, onDeleted }: { product: Product; foo
     eventCount: overview.data.eventCount, lastEventAt: overview.data.lastEventAt, visitors30d: overview.data.visitors30d,
     hasAudit: !!overview.data.audit, lastCheck: overview.data.lastCheck,
   }) : null;
+  const facts: NextStepFacts | null = overview.data ? {
+    profiled: !!product.profiled_at,
+    profileReviewed: !!product.profile_confirmed_at || product.profile_edited_fields.length > 0,
+    eventCount: overview.data.eventCount, funnelSteps: overview.data.funnelSteps, hasAudit: !!overview.data.audit,
+    usableVisibilityRuns: overview.data.lastCheck?.usableRuns ?? 0, leaksInProgressOrDone: overview.data.leaksWorked,
+  } : null;
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -86,7 +93,7 @@ function ProductOverview({ product, footer, onDeleted }: { product: Product; foo
 
       {overview.error ? <div className="mt-8"><ErrorState text="We couldn't load your setup progress." onRetry={() => void overview.refetch()} /></div>
         : !items ? <div className="mt-8 space-y-4"><Skeleton className="h-28 w-full" /><Skeleton className="h-64 w-full" /></div>
-        : <><NextAction items={items} onProfile={() => setEditProfile(true)} /><Checklist items={items} onProfile={() => setEditProfile(true)} /></>}
+        : <><NextStepCard facts={facts!} onProfile={() => setEditProfile(true)} /><Checklist items={items} onProfile={() => setEditProfile(true)} /></>}
 
       <section className="mt-8" aria-labelledby="numbers-heading">
         <h2 id="numbers-heading" className="text-lg">Your numbers</h2>
@@ -109,16 +116,26 @@ function ItemLink({ item, className, children, onProfile }: { item: ChecklistIte
   return <Link to={item.to} className={className}>{children}</Link>;
 }
 
-function NextAction({ items, onProfile }: { items: ChecklistItem[]; onProfile: () => void }) {
-  const next = nextAction(items);
+function NextStepCard({ facts, onProfile }: { facts: NextStepFacts; onProfile: () => void }) {
+  const next = pickNextStep(facts);
+  const loop = loopSteps(facts);
+  const button = next.key === "profile"
+    ? <Button onClick={() => { onProfile(); requestAnimationFrame(() => document.getElementById("profile")?.scrollIntoView({ behavior: "smooth" })); }}>{next.action}<ArrowRight /></Button>
+    : <Button asChild><Link to={next.to.split("#")[0]!} {...(next.to.includes("#") ? { hash: next.to.split("#")[1]! } : {})}>{next.action}<ArrowRight /></Link></Button>;
   return (
-    <section aria-label="Next best action" className="mt-8 rounded-lg border border-foreground bg-card p-6">
-      <p className="text-xs font-semibold uppercase tracking-wide text-foreground">Next best action</p>
-      {next ? <>
-        <h2 className="mt-1 text-xl">{next.title}</h2>
-        {next.result && <p className="mt-1 text-sm text-muted-foreground">{next.result}</p>}
-        <ActionRow className="mt-4"><Button asChild><ItemLink item={next} onProfile={onProfile}>{next.action}<ArrowRight /></ItemLink></Button></ActionRow>
-      </> : <p className="mt-1 text-base">You're set up. Next: run an AI visibility check weekly. <Link to="/ai-search-visibility" className="font-medium text-foreground underline">Open AI search visibility</Link></p>}
+    <section aria-labelledby="next-step-heading" className="mt-8 rounded-lg border border-foreground bg-card p-6">
+      <p className="nav-group-label text-foreground">Next best step</p>
+      <h2 id="next-step-heading" className="mt-1 text-xl">{next.title}</h2>
+      <p className="mt-1 text-sm text-muted-foreground">{next.text}</p>
+      <ActionRow className="mt-4">{button}</ActionRow>
+      <ol aria-label="Find the leak, fix it, prove it worked" className="mt-6 grid gap-2 border-t pt-4 sm:grid-cols-3">
+        {loop.map((step, i) => (
+          <li key={step.key} aria-current={step.status === "current" ? "step" : undefined} className={`rounded-sm border px-3 py-2 ${step.status === "current" ? "bg-selected selected-state" : ""}`}>
+            <span className="block text-sm font-semibold">{i + 1}. {step.label}</span>
+            <span className={`status-chip mt-1 ${step.status === "done" ? "status-live" : "status-coming"}`}>{loopStatusText[step.status]}</span>
+          </li>
+        ))}
+      </ol>
     </section>
   );
 }

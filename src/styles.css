@@ -219,3 +219,4 @@ button[class*="max-sm:"] { min-width: 0; }
   .action-row[data-layout="section"] > [data-variant="link"] { margin-inline-end: 0; }
   .action-header { grid-template-columns: minmax(0,1fr) auto; align-items: baseline; }
 }
+.nav-group-label { font-family: var(--font-label); font-weight: 500; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted-foreground); }

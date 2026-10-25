@@ -46,3 +46,4 @@
 - Public feature facts are shared by home and Features; public navigation uses router links with home hashes for section jumps. Why: one honest feature inventory and consistent navigation.
 - Public discovery stays static: `src/lib/public-discovery.ts` owns the origin and public/private paths; run `bun run refresh:discovery` after changing them to refresh robots and the three-page sitemap without lastmod. Why: one domain setting, no private URLs.
 - Server-only libraries stay excluded from browser dep pre-bundling; why: linkedom breaks it and blanks client pages in dev.
+- Signed-in navigation lives in src/lib/nav.ts for sidebar and mobile drawer; Coming next items are never links.

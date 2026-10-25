@@ -240,6 +240,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
     <div className="mx-auto max-w-3xl">
       <ActionHeader action={running ? <Button disabled>{progress ? `${progress.finished} of ${progress.total} runs finished` : "Check running…"}</Button> : <Button variant={confirming ? "outline" : "default"} onClick={openConfirmation} disabled={!connected.length || !questions.length}>Run a check</Button>}>
         <h1 className="text-3xl font-extrabold">AI search visibility</h1>
+        <p className="mt-1 text-sm text-muted-foreground">See how often AI assistants recommend {productName} when buyers ask.</p>
         {latestDone && (
           <span className="text-sm text-muted-foreground">Last checked {relativeTime(latestDone.started_at)}</span>
         )}

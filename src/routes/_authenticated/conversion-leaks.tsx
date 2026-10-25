@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Droplets } from 'lucide-react';
 import { BlockSkeleton, EmptyState, ErrorState } from '@/components/States';
 import { useActiveProduct } from '@/components/AppShell';
+import { PageHeader } from '@/components/PageHeader';
 import { FunnelCard } from '@/components/FunnelCard';
 import { PageAudit } from '@/components/PageAudit';
 import { conversionQuery } from '@/lib/conversion-data';
@@ -15,7 +16,7 @@ export const Route = createFileRoute('/_authenticated/conversion-leaks')({
 });
 function ConversionLeaks() {
   const { active, data } = useActiveProduct();
-  return <div className="mx-auto max-w-3xl"><h1 className="text-3xl font-extrabold">Conversion leaks</h1>{active ? <ConversionProduct key={active.id} product={active} /> : <div className="mt-6">{data ? <EmptyState icon={Droplets} text="Add a product to measure where visitors drop off." action="Add product" to="/products/new" /> : <BlockSkeleton />}</div>}</div>;
+  return <div className="mx-auto max-w-3xl"><PageHeader title="Conversion leaks" purpose="See where visitors drop off and get suggestions for the page that loses the most." />{active ? <ConversionProduct key={active.id} product={active} /> : <div className="mt-6">{data ? <EmptyState icon={Droplets} text="Add a product to measure where visitors drop off." action="Add product" to="/products/new" /> : <BlockSkeleton />}</div>}</div>;
 }
 function ConversionProduct({ product }: { product: Product }) {
   const [days, setDays] = useState<7 | 30 | 90>(30);

@@ -1,5 +1,6 @@
 import { ActionRow } from '@/components/ActionRow';
 import { PageShell } from '@/components/PageLayout';
+import { PageSkeleton } from '@/components/States';
 import { VisibilityResults } from '@/components/VisibilityResults';
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -202,6 +203,8 @@ function VisibilityPage({ productId, productName }: { productId: string; product
 
   const budget = engineStatus?.budget;
 
+  if (!data || !engineStatus) return <PageSkeleton variant="visibility" />;
+
   return (
     <PageShell>
       <header><h1 className="text-3xl font-extrabold">AI search visibility</h1></header>
@@ -269,10 +272,10 @@ function VisibilityPage({ productId, productName }: { productId: string; product
         productName={productName} checks={checks} runs={data?.runs ?? []} mentions={data?.mentions ?? []}
         fixes={data?.fixes ?? []} budget={budget} onAddCompetitor={addCompetitor}
         action={running ? <Button disabled>{progress ? `${progress.finished} of ${progress.total} runs finished` : "Check running…"}</Button> : <Button variant={confirming ? "outline" : "default"} onClick={openConfirmation} disabled={!connected.length || !questions.length}>Run a check</Button>}
-        settings={<>
-      <div className="mt-5 grid grid-cols-1 gap-3">
+        connections={
+      <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
         {(engineStatus?.engines ?? ENGINES.map((e) => ({ id: e.id, label: e.label, connected: false, testsToday: 0 }))).map((e) => (
-          <div key={e.id} className="grid min-w-0 gap-2 border-b py-3 text-xs">
+          <div key={e.id} className="flex min-w-0 flex-wrap items-center gap-2 rounded-lg border bg-card p-3 text-xs">
             <span className="font-semibold">{e.label}</span>
             <span className={e.connected ? "text-foreground" : "text-muted-foreground"}>{e.connected ? "Connected" : "Not connected"}</span>
             {testResults[e.id] && <div><span className="break-words text-muted-foreground">{testResults[e.id]?.text}</span></div>}
@@ -283,7 +286,8 @@ function VisibilityPage({ productId, productName }: { productId: string; product
             )}
           </div>
         ))}
-      </div>
+      </div>}
+        settings={<>
       <section className="mt-4 border-t pt-3">
         <h2 className="text-lg">Automatic checks</h2>
         <label className="mt-2 flex items-center gap-2 text-sm">

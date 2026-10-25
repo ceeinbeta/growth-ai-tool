@@ -13,7 +13,7 @@ import {
   type InviteRow, type WaitlistRow,
 } from '@/lib/admin';
 import { Button } from '@/components/ui/button';
-import { BlockSkeleton } from '@/components/States';
+import { PageSkeleton } from '@/components/States';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
@@ -43,13 +43,13 @@ export const Route = createFileRoute('/_authenticated/admin')({
 
 function AdminPage() {
   const { data: isAdmin, isLoading } = useQuery(isAdminQuery);
-  if (isLoading) return <BlockSkeleton rows={4} />;
+  if (isLoading) return <PageSkeleton variant="admin" />;
   if (!isAdmin) {
     return (
-      <div className="mx-auto max-w-3xl">
+      <PageShell>
         <h1 className="text-3xl font-extrabold">Admin</h1>
         <p className="mt-6">This page is only for the Growloop founder.</p>
-      </div>
+      </PageShell>
     );
   }
   return <AdminContent />;
@@ -89,7 +89,7 @@ function AdminContent() {
       <PageHeader title="Admin" purpose="Invite people into the beta and keep an eye on limits. Growloop never sends emails for you." />
       {error && <p role="alert" className="mt-4 rounded-sm bg-danger-soft p-3 text-sm text-destructive">{error}</p>}
 
-      {!s ? <BlockSkeleton rows={4} /> : (
+      {!s ? <PageSkeleton variant="admin" /> : (
         <>
           <section aria-label="Summary" className="mt-6 grid gap-3 rounded-lg border bg-card p-4 sm:grid-cols-3">
             <div><p className="nav-group-label">Beta seats used</p><p className="mt-1 text-2xl font-extrabold tabular-nums">{s.invited_count} of {s.beta_seat_limit}</p></div>
@@ -99,7 +99,7 @@ function AdminContent() {
 
           <div className="page-grid"><section aria-labelledby="seats-heading" className="page-main">
             <h2 id="seats-heading" className="text-xl font-bold">Beta seats and invites</h2>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="mt-4 grid gap-4">
             <div className="rounded-lg border bg-card p-5">
               <p className="text-sm text-muted-foreground">Beta seats used</p>
               <p className="mt-1 text-3xl font-extrabold">{s.invited_count} of {s.beta_seat_limit}</p>
@@ -111,8 +111,8 @@ function AdminContent() {
             {!invites.data?.length ? (
               <p className="mt-4 text-sm text-muted-foreground">Nobody invited yet.</p>
             ) : (
-              <div className="mt-4 overflow-x-auto rounded-lg border bg-card">
-                <Table>
+              <div className="mt-4 min-w-0 rounded-lg border bg-card">
+                <Table className="min-w-[640px]">
                   <TableHeader>
                     <TableRow><TableHead>Email</TableHead><TableHead>Note</TableHead><TableHead>Status</TableHead><TableHead /></TableRow>
                   </TableHeader>
@@ -123,21 +123,21 @@ function AdminContent() {
                         <TableCell>{row.note ?? '—'}</TableCell>
                         <TableCell>{row.has_account ? `Signed in ${row.last_sign_in_at ? new Date(row.last_sign_in_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'recently'}` : 'Invited, not signed in yet'}</TableCell>
                         <TableCell>
-                          <ActionRow>
-                            <Button size="sm" variant="outline" onClick={() => setInviteFor(row.email)}><Copy className="h-4 w-4" /> Copy invite message</Button>
+                          <div className="flex items-center justify-end gap-1">
+                            <Button size="icon" variant="ghost" aria-label="Copy invite message" title="Copy invite message" onClick={() => setInviteFor(row.email)}><Copy className="h-4 w-4" /></Button>
                             {row.has_account ? (
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <span><Button size="sm" variant="outline" disabled><UserMinus className="h-4 w-4" /> Remove</Button></span>
+                                    <span><Button size="icon" variant="ghost" aria-label="Remove invitation" disabled><UserMinus className="h-4 w-4" /></Button></span>
                                   </TooltipTrigger>
                                   <TooltipContent>This person already has an account, so they can't be removed.</TooltipContent>
                                 </Tooltip>
                               </TooltipProvider>
                             ) : (
-                              <Button size="sm" variant="outline" onClick={() => uninvite(row.email)}><UserMinus className="h-4 w-4" /> Remove</Button>
+                              <Button size="icon" variant="ghost" aria-label="Remove invitation" title="Remove invitation" onClick={() => uninvite(row.email)}><UserMinus className="h-4 w-4" /></Button>
                             )}
-                          </ActionRow>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -152,7 +152,7 @@ function AdminContent() {
 
           <section aria-labelledby="ai-heading" className="page-context">
             <h2 id="ai-heading" className="text-xl font-bold">AI spending and limits</h2>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="mt-4 grid gap-4">
             <div className="rounded-lg border bg-card p-5">
               <div className="flex items-center gap-2">
                 <p className="text-sm text-muted-foreground">AI runs in the last 24 hours</p>
@@ -180,8 +180,8 @@ function AdminContent() {
             {!waitlist.data?.length ? (
               <p className="mt-4 text-sm text-muted-foreground">Nobody on the waitlist yet.</p>
             ) : (
-              <div className="mt-4 overflow-x-auto rounded-lg border bg-card">
-                <Table>
+              <div className="mt-4 min-w-0 rounded-lg border bg-card">
+                <Table className="min-w-[640px]">
                   <TableHeader>
                     <TableRow>
                       <TableHead>Email</TableHead><TableHead>Website</TableHead><TableHead>Stage</TableHead>
@@ -198,13 +198,13 @@ function AdminContent() {
                         <TableCell>{relativeTime(row.created_at)}</TableCell>
                         <TableCell><StatusPill row={row} /></TableCell>
                         <TableCell>
-                          <ActionRow>
+                          <div className="flex items-center justify-end gap-1">
                             {!row.on_allow_list && !row.has_account && (
-                              <Button size="sm" variant="outline" onClick={() => invite(row.email)}><UserPlus className="h-4 w-4" /> Invite</Button>
+                              <Button size="icon" variant="ghost" aria-label="Invite" title="Invite" onClick={() => invite(row.email)}><UserPlus className="h-4 w-4" /></Button>
                             )}
-                            <Button size="sm" variant="outline" onClick={() => setInviteFor(row.email)}><Copy className="h-4 w-4" /> Copy invite message</Button>
-                            <Button size="sm" variant="outline" onClick={() => setDeleteRow(row)}><Trash2 className="h-4 w-4" /> Delete entry</Button>
-                          </ActionRow>
+                            <Button size="icon" variant="ghost" aria-label="Copy invite message" title="Copy invite message" onClick={() => setInviteFor(row.email)}><Copy className="h-4 w-4" /></Button>
+                            <Button size="icon" variant="ghost" aria-label="Delete entry" title="Delete entry" onClick={() => setDeleteRow(row)}><Trash2 className="h-4 w-4" /></Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -296,11 +296,11 @@ function DirectInvite({ invites, onInvite }: { invites: InviteRow[]; onInvite: (
     <section aria-label="Invite someone who is not on the waitlist" className="mt-6 rounded-lg border bg-card p-5">
       <h2 className="text-xl font-bold">Invite someone who is not on the waitlist</h2>
       <form onSubmit={submit} className="mt-4 grid gap-3 sm:grid-cols-2">
-        <div className="min-w-56 flex-1">
+        <div className="min-w-0 flex-1">
           <Label htmlFor="direct-invite-email">Email</Label>
           <Input id="direct-invite-email" type="email" required value={email} onChange={e => setEmail(e.target.value)} className="mt-1" placeholder="founder@theirapp.com" />
         </div>
-        <div className="min-w-56 flex-1">
+        <div className="min-w-0 flex-1">
           <Label htmlFor="direct-invite-note">Note <span className="text-muted-foreground">(optional, only you see this)</span></Label>
           <Input id="direct-invite-note" value={note} onChange={e => setNote(e.target.value)} className="mt-1" placeholder="Met at…" />
         </div>

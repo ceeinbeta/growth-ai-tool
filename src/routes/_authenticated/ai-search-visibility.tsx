@@ -251,7 +251,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
           <div key={e.id} className="grid min-w-0 grid-rows-[auto_auto_1fr_auto] gap-2 rounded-lg border bg-card p-4 text-xs">
             <span className="font-semibold">{e.label}</span>
             <span className={e.connected ? "text-foreground" : "text-muted-foreground"}>{e.connected ? "Connected" : "Not connected"}</span>
-            <div className="min-h-5">{testResults[e.id] && <span className="break-words text-muted-foreground">{testResults[e.id]?.text}</span>}</div>
+            {testResults[e.id] && <div><span className="break-words text-muted-foreground">{testResults[e.id]?.text}</span></div>}
             {e.connected && (
               <Button variant="link" className="justify-self-start" size="sm" disabled={testResults[e.id]?.ok === null} onClick={() => runTest(e.id as EngineId)}>
                 Test connection
@@ -336,7 +336,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
 
       {latestDone && (
         <>
-          <section className="mt-8 rounded-xl border bg-card p-6">
+          <section className="mt-6 rounded-xl border bg-card p-5">
             <div className="flex flex-wrap items-center gap-3">
               <h2 className="text-lg">Share of voice</h2>
               <div className="ml-auto flex gap-1">
@@ -388,7 +388,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
             </div>
           </section>
 
-          <section className="mt-6 rounded-xl border bg-card p-6">
+          <section className="mt-6 rounded-xl border bg-card p-5">
             <h2 className="text-lg">Per question</h2>
             <div className="mt-3 overflow-x-auto">
               <table className="w-full text-sm">
@@ -420,7 +420,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
             </div>
           </section>
 
-          <section className="mt-6 rounded-xl border bg-card p-6">
+          <section className="mt-6 rounded-xl border bg-card p-5">
             <h2 className="text-lg">Trend</h2>
             {trend.length < 2 ? (
               <p className="mt-2 text-sm text-muted-foreground">A trend appears after your second check.</p>
@@ -441,7 +441,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
           </section>
 
           {others.length > 0 && (
-            <section className="mt-6 rounded-xl border bg-card p-6">
+            <section className="mt-6 rounded-xl border bg-card p-5">
               <h2 className="text-lg">Recommended instead of you</h2>
               <p className="mt-1 text-xs text-muted-foreground">Recommended in these runs but not on your competitor list.</p>
               <ul className="mt-3 space-y-2">
@@ -456,7 +456,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
           )}
 
           {latestFixes && (
-            <section className="mt-6 rounded-xl border bg-card p-6 learning-block">
+            <section className="mt-6 rounded-xl border bg-card p-5 learning-block">
               <h2 className="text-lg">How to get cited</h2>
               <p className="mt-1 text-xs text-muted-foreground"><span className="status-chip status-ai">AI-written</span> from your results. Check it before you use it.</p>
               <ul className="mt-3 list-disc space-y-2 pl-5 text-sm">
@@ -492,7 +492,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
         </section>
       )}
 
-      <section className="mt-6 rounded-xl border bg-card p-6">
+      <section className="mt-6 rounded-xl border bg-card p-5">
         <h2 className="text-lg">Automatic checks</h2>
         <label className="mt-2 flex items-center gap-2 text-sm">
           <input

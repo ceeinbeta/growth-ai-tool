@@ -68,7 +68,7 @@ function TechnicalProduct({ product, busy, onRerun }: { product: Product; busy: 
       <section aria-label="Checks" className="mt-6 space-y-4">
         {data.findings.map(f => <FindingCard key={f.id} finding={f} />)}
       </section>
-      <section aria-labelledby="tech-history" className="mt-8">
+      <section aria-labelledby="tech-history" className="mt-6">
         <h2 id="tech-history" className="text-lg">Recent runs</h2>
         <ul className="mt-3 divide-y rounded-lg border bg-card">
           {data.runs.map(r => (

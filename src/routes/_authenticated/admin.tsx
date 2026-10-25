@@ -96,7 +96,7 @@ function AdminContent() {
             <div><p className="nav-group-label">On the waitlist</p><p className="mt-1 text-2xl font-extrabold tabular-nums">{s.waitlist_count}</p></div>
           </section>
 
-          <section aria-labelledby="seats-heading" className="mt-10">
+          <section aria-labelledby="seats-heading" className="mt-6">
             <h2 id="seats-heading" className="text-xl font-bold">Beta seats and invites</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <div className="rounded-lg border bg-card p-5">
@@ -149,7 +149,7 @@ function AdminContent() {
             <DirectInvite invites={invites.data ?? []} onInvite={invite} />
           </section>
 
-          <section aria-labelledby="ai-heading" className="mt-10">
+          <section aria-labelledby="ai-heading" className="mt-6">
             <h2 id="ai-heading" className="text-xl font-bold">AI spending and limits</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <div className="rounded-lg border bg-card p-5">
@@ -174,7 +174,7 @@ function AdminContent() {
             </div>
           </section>
 
-          <section aria-label="Waitlist" className="mt-10">
+          <section aria-label="Waitlist" className="mt-6">
             <h2 className="text-xl font-bold">Waitlist</h2>
             {!waitlist.data?.length ? (
               <p className="mt-4 text-sm text-muted-foreground">Nobody on the waitlist yet.</p>
@@ -292,7 +292,7 @@ function DirectInvite({ invites, onInvite }: { invites: InviteRow[]; onInvite: (
     setNote('');
   };
   return (
-    <section aria-label="Invite someone who is not on the waitlist" className="mt-10 rounded-lg border bg-card p-5">
+    <section aria-label="Invite someone who is not on the waitlist" className="mt-6 rounded-lg border bg-card p-5">
       <h2 className="text-xl font-bold">Invite someone who is not on the waitlist</h2>
       <form onSubmit={submit} className="mt-4 grid gap-3 sm:grid-cols-2">
         <div className="min-w-56 flex-1">

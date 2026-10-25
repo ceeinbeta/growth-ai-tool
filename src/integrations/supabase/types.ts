@@ -842,6 +842,127 @@ export type Database = {
           },
         ]
       }
+      technical_audit_findings: {
+        Row: {
+          audit_id: string
+          check_key: string
+          created_at: string
+          detail: string
+          fix: string
+          id: string
+          position: number
+          product_id: string
+          status: string
+          title: string
+          why: string
+        }
+        Insert: {
+          audit_id: string
+          check_key: string
+          created_at?: string
+          detail: string
+          fix: string
+          id?: string
+          position: number
+          product_id: string
+          status: string
+          title: string
+          why: string
+        }
+        Update: {
+          audit_id?: string
+          check_key?: string
+          created_at?: string
+          detail?: string
+          fix?: string
+          id?: string
+          position?: number
+          product_id?: string
+          status?: string
+          title?: string
+          why?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "technical_audit_findings_audit_id_fkey"
+            columns: ["audit_id"]
+            isOneToOne: false
+            referencedRelation: "technical_audits"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "technical_audit_findings_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      technical_audit_runs: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "technical_audit_runs_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      technical_audits: {
+        Row: {
+          attention_count: number
+          created_at: string
+          fetched_at: string
+          fetched_url: string
+          id: string
+          product_id: string
+          unknown_count: number
+        }
+        Insert: {
+          attention_count?: number
+          created_at?: string
+          fetched_at: string
+          fetched_url: string
+          id?: string
+          product_id: string
+          unknown_count?: number
+        }
+        Update: {
+          attention_count?: number
+          created_at?: string
+          fetched_at?: string
+          fetched_url?: string
+          id?: string
+          product_id?: string
+          unknown_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "technical_audits_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tracking_event_names: {
         Row: {
           name: string
@@ -1006,6 +1127,7 @@ export type Database = {
         }
         Returns: string
       }
+      reserve_technical_audit: { Args: { pid: string }; Returns: undefined }
       save_fetched_page_audit: {
         Args: {
           copy: Json
@@ -1024,6 +1146,15 @@ export type Database = {
           findings: Json
           funnel: Json
           model_name: string
+          pid: string
+        }
+        Returns: string
+      }
+      save_technical_audit: {
+        Args: {
+          fetch_time: string
+          findings: Json
+          page_url: string
           pid: string
         }
         Returns: string

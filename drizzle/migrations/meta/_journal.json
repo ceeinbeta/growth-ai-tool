@@ -120,6 +120,13 @@
       "when": 1792927636722,
       "tag": "0016_page_audit_fetch_provenance",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1792940777884,
+      "tag": "0017_technical_audit_tables",
+      "breakpoints": true
     }
   ]
 }

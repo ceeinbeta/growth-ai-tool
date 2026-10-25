@@ -72,6 +72,7 @@ function ProductOverview({ product, footer, onDeleted }: { product: Product; foo
     profiled: !!product.profiled_at,
     profileReviewed: !!product.profile_confirmed_at || product.profile_edited_fields.length > 0,
     eventCount: overview.data.eventCount, funnelSteps: overview.data.funnelSteps, hasAudit: !!overview.data.audit,
+    hasTechnicalAudit: !!overview.data.technicalAudit,
     usableVisibilityRuns: overview.data.lastCheck?.usableRuns ?? 0, leaksInProgressOrDone: overview.data.leaksWorked,
   } : null;
 

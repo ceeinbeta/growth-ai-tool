@@ -1,3 +1,9 @@
+# Finding conversations — Hacker News
+- [ ] Approve plan; build private opportunity/search-term/draft/scan storage and atomic limits.
+- [ ] Add bounded HN scans, explainable scoring, manual status/notes and on-demand guarded reply drafts.
+- [ ] Add /conversations, navigation/Overview integration and honest public inventory/discovery updates.
+- [ ] Run mocked serial safety/interaction tests; inspect desktop/mobile screenshots; leave zero test rows and do not publish.
+
 # Technical audit slice
 - [x] Finish visibility engine row, Admin/table overflow, Overview width, tracking/install columns and matching loading layouts; inspect requested screenshots and run mocked serial checks.
 - [x] Compact visibility summary, chart, questions, fixes and history; mocked interactions and read-only desktop/mobile checks without writes or provider calls.

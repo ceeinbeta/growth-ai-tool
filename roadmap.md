@@ -80,3 +80,5 @@
 - [x] Shared skeleton, empty and error states; Saved toasts.
 - [x] Product logos (auto fetch, upload, remove) with private storage and hourly limit.
 - [x] Edit and owner-only delete; tests run serially, no rows left; not published.
+
+- [x] Type scale + landing rewrite (d9): shared --text-* scale in styles.css, landing reordered for SEO/GEO with JSON-LD + llms.txt, 243 tests pass, preview-only.

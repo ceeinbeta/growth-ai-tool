@@ -12,8 +12,8 @@ export const Route = createFileRoute('/privacy')({
 
 export function PrivacyPage() {
   return <PublicShell><main id="main-content" className="mx-auto max-w-3xl px-6 py-16 md:py-20">
-    <p className="mb-3 text-sm font-semibold text-foreground">Growloop</p><h1 className="text-4xl">Privacy</h1><p className="mt-4 text-sm text-muted-foreground">Last updated {PRIVACY_UPDATED}</p>
-    <div className="mt-12 space-y-9 text-base leading-relaxed">
+    <p className="mb-3 text-sm font-semibold text-foreground">Growloop</p><h1 className="public-h1">Privacy</h1><p className="mt-4 text-sm text-muted-foreground">Last updated {PRIVACY_UPDATED}</p>
+    <div className="mt-12 space-y-9 text-md">
       <section><h2 className="mb-3 text-xl">What we collect</h2><p className="text-muted-foreground">When you join the beta waitlist, we collect your email, your website and product stage if you provide them, and any campaign source, medium or campaign name present in the link you came from. We also record the time you agreed and the consent wording you agreed to. We do not store your IP address or browser user agent.</p></section>
       <section><h2 className="mb-3 text-xl">Why we collect it</h2><p className="text-muted-foreground">To invite you to the beta and tell you about Growloop. Joining the waitlist does not create an account. The app does not automatically send a confirmation email.</p></section>
       <section><h2 className="mb-3 text-xl">Who sees it</h2><p className="text-muted-foreground">Only the founder can access the waitlist. Your details are not sold or shared.</p></section>

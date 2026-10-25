@@ -430,7 +430,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
                   <div key={t.date} className="flex flex-col items-center gap-1">
                     <span className="text-xs font-medium">{t.pct}%</span>
                     <div className="w-8 rounded-sm border border-foreground bg-primary" style={{ height: `${Math.max(4, t.pct)}px` }} />
-                    <span className="text-[10px] text-muted-foreground">
+                    <span className="text-xs text-muted-foreground">
                       {new Date(t.date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
                     </span>
                   </div>

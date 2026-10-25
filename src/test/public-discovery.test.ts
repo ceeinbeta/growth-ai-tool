@@ -7,7 +7,7 @@ import { discoveryRobots, discoverySitemap } from '@/lib/public-discovery';
 describe('public discovery and feature availability', () => {
   it('keeps six unbuilt capabilities out of the live feature inventory', () => {
     expect(upcomingFeatures.map(f => f.name)).toEqual(['Google search growth', 'Listing optimization', 'Finding conversations', 'Results', 'Competitor gaps', 'Experiments']);
-    expect(liveFeatures.map(f => f.id)).toEqual(['conversion', 'audit', 'tracking', 'visibility', 'profile', 'workspace']);
+    expect(liveFeatures.map(f => f.id)).toEqual(['conversion', 'audit', 'technical', 'tracking', 'visibility', 'profile', 'workspace']);
     expect(liveFeatures.some(f => /Google search|Listing optimization|Finding conversations|Competitor gaps|Experiments/.test(f.name))).toBe(false);
   });
   it('sitemaps only the three public content pages, without fabricated timestamps', () => {

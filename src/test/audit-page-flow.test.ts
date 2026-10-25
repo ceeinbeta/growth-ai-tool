@@ -20,6 +20,12 @@ beforeEach(() => {
 import { afterEach } from 'vitest';
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 describe('fetched audit flow with mocked fetch and AI', () => {
+  it('never returns stored provider details when AI access is paused', async () => {
+    m.from.mockImplementation(() => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: { blocked: true, message: 'raw-provider-secret' } }) }) }) }));
+    const result = await auditPage({ data: { productId: product.id, days: 30, copy: { path: '', headline: 'Actual headline', subheadline: '', button: '', notes: '' } } });
+    expect(result).toEqual({ ok: false, error: 'AI checks are paused until access is restored.' });
+    expect(m.call).not.toHaveBeenCalled();
+  });
   it('reserves fetching, keeps daily AI reservation and usage, saves provenance with findings', async () => {
     const result = await auditPage({ data: { productId: product.id, days: 30, path: '/pricing' } });
     expect(result.ok).toBe(true);

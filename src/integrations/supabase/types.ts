@@ -1403,8 +1403,8 @@ export type Database = {
       unique_visitors: { Args: { days: number; pid: string }; Returns: number }
       update_conversation: {
         Args: {
-          new_notes: string
-          new_status: string
+          new_notes?: string
+          new_status?: string
           oid: string
           pid: string
         }

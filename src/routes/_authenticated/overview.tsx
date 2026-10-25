@@ -268,7 +268,7 @@ function NextStepBar({ facts, next, onProfile }: { facts: NextStepFacts; next: N
           <li key={step.key} aria-current={step.status === "current" ? "step" : undefined}
             className={`status-chip ${step.status === "done" ? "status-live" : "status-coming"} ${step.status === "current" ? "border-foreground" : ""}`}
             title={`${step.label}: ${loopStatusText[step.status]}`}>
-            {step.label}: {loopStatusText[step.status]}
+            <span aria-hidden>{({ find: "Find", fix: "Fix", prove: "Prove" } as const)[step.key]}: {loopStatusText[step.status]}</span><span className="sr-only">{step.label}: {loopStatusText[step.status]}</span>
           </li>
         ))}
       </ol>

@@ -106,42 +106,42 @@ function ProductOverview({ product, footer, onDeleted }: { product: Product; foo
       {product.description.length > 140 && <Button variant="link" onClick={() => setMore(m => !m)} aria-expanded={more}>{more ? "Show less" : "Show more"}</Button>}
 
       {overview.error ? <div className="mt-6"><ErrorState text="We couldn't load your setup progress." onRetry={() => void overview.refetch()} /></div>
-        : !facts ? <div className="mt-6"><Skeleton className="h-36 w-full" /></div>
+        : !facts ? <div className="mt-4"><Skeleton className="h-24 w-full" /></div>
         : <NextStepCard facts={facts} onProfile={() => setEditProfile(true)} />}
 
-      <section className="mt-6" aria-labelledby="numbers-heading">
+      <section className="mt-4" aria-labelledby="numbers-heading">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 id="numbers-heading" className="text-xl">Your numbers</h2>
           <PeriodControl days={days} />
         </div>
         {tracking.error || funnel.error ? <div className="mt-4"><ErrorState text="We couldn't load your numbers." onRetry={() => { void tracking.refetch(); void funnel.refetch(); }} /></div>
-          : !tracking.data || !funnel.data ? <div className="mt-4 grid grid-cols-2 gap-6 lg:grid-cols-4">{[0, 1, 2, 3].map(i => <Skeleton key={i} className="h-32" />)}</div>
+          : !tracking.data || !funnel.data ? <div className="mt-3 grid grid-cols-2 gap-4 lg:grid-cols-4">{[0, 1, 2, 3].map(i => <Skeleton key={i} className="h-28" />)}</div>
           : <KpiRow product={product} days={days} totals={tracking.data.totals} summary={funnel.data.summary} hasEvents={overview.data ? overview.data.eventCount > 0 : tracking.data.recent.length > 0} />}
       </section>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-12">
+      <div className="mt-4 grid items-start gap-4 lg:grid-cols-12">
         <div className="lg:col-span-7">
           {funnel.error ? <ErrorState text="We couldn't load your funnel." onRetry={() => void funnel.refetch()} />
-            : !funnel.data ? <Skeleton className="h-64 w-full" />
+            : !funnel.data ? <Skeleton className="h-56 w-full" />
             : <FunnelCard product={product} summary={funnel.data.summary} days={days} />}
         </div>
         <div className="lg:col-span-5">
-          {!overview.data ? <Skeleton className="h-64 w-full" /> : <RecentActivity data={overview.data} />}
+          {!overview.data ? <Skeleton className="h-56 w-full" /> : <RecentActivity data={overview.data} />}
         </div>
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-12">
+      <div className="mt-4 grid items-start gap-4 lg:grid-cols-12">
         <div className="lg:col-span-7">
           {!items ? <Skeleton className="h-48 w-full" /> : <Checklist items={items} onProfile={() => setEditProfile(true)} />}
         </div>
         <div className="lg:col-span-5">{facts && <LoopStrip facts={facts} />}</div>
       </div>
 
-      <div id="profile" className="mt-6 scroll-mt-24 focus:outline-none">
+      <div id="profile" className="mt-4 scroll-mt-24 focus:outline-none">
         {editProfile ? <ProductProfile product={product} /> : <ProfileSummary product={product} onEdit={() => setEditProfile(true)} />}
       </div>
 
-      <p className="mt-8 border-t pt-4 text-xs text-muted-foreground">{footer}</p>
+      <p className="mt-6 border-t pt-3 text-xs text-muted-foreground">{footer}</p>
     </div>
   );
 }
@@ -166,11 +166,11 @@ function ChangeLine({ change }: { change: Change }) {
 
 function KpiTile({ label, value, change, source, empty }: { label: string; value: string | undefined; change?: Change | undefined; source: string; empty?: React.ReactNode }) {
   return (
-    <div className="rounded-lg border bg-card p-5">
+    <div className="rounded-lg border bg-card p-4">
       <p className="nav-group-label text-muted-foreground">{label}</p>
       {value !== undefined ? <p className="mt-2 font-display text-3xl font-bold tabular-nums">{value}</p> : <p className="mt-3 text-sm font-semibold">No data yet</p>}
       {value !== undefined && change && <ChangeLine change={change} />}
-      <p className="mt-2 text-xs text-muted-foreground">{value !== undefined ? <><SourceChip text={source} /> {source}</> : empty}</p>
+      <div className="mt-2 text-xs text-muted-foreground">{value !== undefined ? <span title={source}><SourceChip text={source} /></span> : empty}</div>
     </div>
   );
 }
@@ -187,7 +187,7 @@ function KpiRow({ product, days, totals, summary, hasEvents }: { product: Produc
   const worst = worstStep(summary, product.stage);
   const fmt = (n: number) => n.toLocaleString();
   return (
-    <div className="mt-4 grid grid-cols-2 gap-6 lg:grid-cols-4">
+    <div className="mt-3 grid grid-cols-2 gap-4 lg:grid-cols-4">
       <KpiTile label={`Visitors · ${days} days`} value={hasEvents ? fmt(totals.visitors) : undefined} change={changeVsPrevious(totals.visitors, totals.prev_visitors)} source={MEASURED} empty={install} />
       <KpiTile label={product.stage === "prelaunch" ? `Waitlist joins · ${days} days` : `Signups · ${days} days`} value={hasEvents ? fmt(conversions) : undefined} change={changeVsPrevious(conversions, prevConversions)} source={MEASURED} empty={install} />
       <KpiTile label={`Conversion rate · ${days} days`} value={hasEvents && rate !== null ? formatPct(rate) : undefined} change={rateChange} source={MEASURED} empty={install} />
@@ -200,7 +200,7 @@ function KpiRow({ product, days, totals, summary, hasEvents }: { product: Produc
 function FunnelCard({ product, summary, days }: { product: Product; summary: FunnelSummary; days: KpiPeriod }) {
   const worst = worstStep(summary, product.stage);
   return (
-    <section aria-labelledby="funnel-heading" className="rounded-lg border bg-card p-6">
+    <section aria-labelledby="funnel-heading" className="rounded-lg border bg-card p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 id="funnel-heading" className="text-xl">Funnel · {days} days</h2>
         <SourceChip text={MEASURED} />
@@ -238,11 +238,11 @@ function RecentActivity({ data }: { data: { lastEventAt: string | null; audit: {
     { label: "Last AI visibility check", at: data.lastCheck?.date ?? null, to: "/ai-search-visibility", action: "Run a check" },
   ];
   return (
-    <section aria-labelledby="activity-heading" className="rounded-lg border bg-card p-6">
+    <section aria-labelledby="activity-heading" className="rounded-lg border bg-card p-5">
       <div className="flex items-center gap-2"><Activity className="size-5 text-muted-foreground" aria-hidden /><h2 id="activity-heading" className="text-xl">Recent activity</h2></div>
-      <ul className="mt-4 divide-y">
+      <ul className="mt-2 divide-y">
         {rows.map(r => (
-          <li key={r.label} className="flex items-center justify-between gap-3 py-3">
+          <li key={r.label} className="flex items-center justify-between gap-3 py-2">
             <span className="min-w-0">
               <span className="block text-sm font-medium">{r.label}</span>
               <span className="block text-xs text-muted-foreground">{r.at ? relativeTime(r.at) : "Not yet"}</span>
@@ -266,11 +266,13 @@ function NextStepCard({ facts, onProfile }: { facts: NextStepFacts; onProfile: (
     ? <Button onClick={() => { onProfile(); requestAnimationFrame(() => document.getElementById("profile")?.scrollIntoView({ behavior: "smooth" })); }}>{next.action}<ArrowRight /></Button>
     : <Button asChild><Link to={next.to.split("#")[0]!} {...(next.to.includes("#") ? { hash: next.to.split("#")[1]! } : {})}>{next.action}<ArrowRight /></Link></Button>;
   return (
-    <section aria-labelledby="next-step-heading" className="mt-6 rounded-lg border border-foreground bg-card p-6">
-      <p className="nav-group-label text-foreground">Next best step</p>
-      <h2 id="next-step-heading" className="mt-1 text-xl">{next.title}</h2>
-      <p className="mt-1 text-sm text-muted-foreground">{next.text}</p>
-      <ActionRow className="mt-4">{button}</ActionRow>
+    <section aria-labelledby="next-step-heading" className="mt-4 flex flex-col gap-3 rounded-lg border border-foreground bg-card p-5 md:flex-row md:items-center md:justify-between">
+      <div className="min-w-0">
+        <p className="nav-group-label text-foreground">Next best step</p>
+        <h2 id="next-step-heading" className="mt-1 text-xl">{next.title}</h2>
+        <p className="mt-1 text-sm text-muted-foreground">{next.text}</p>
+      </div>
+      <ActionRow className="shrink-0">{button}</ActionRow>
     </section>
   );
 }
@@ -278,7 +280,7 @@ function NextStepCard({ facts, onProfile }: { facts: NextStepFacts; onProfile: (
 function LoopStrip({ facts }: { facts: NextStepFacts }) {
   const loop = loopSteps(facts);
   return (
-    <section aria-labelledby="loop-heading" className="rounded-lg border bg-card p-6">
+    <section aria-labelledby="loop-heading" className="rounded-lg border bg-card p-5">
       <h2 id="loop-heading" className="text-xl">Find the leak, fix it, prove it worked</h2>
       <ol className="mt-4 grid gap-2">
         {loop.map((step, i) => (
@@ -298,7 +300,7 @@ function Checklist({ items, onProfile }: { items: ChecklistItem[]; onProfile: ()
   const [open, setOpen] = useState(false);
   const collapsed = complete && !open;
   return (
-    <section aria-labelledby="setup-heading" className="rounded-lg border bg-card p-6">
+    <section aria-labelledby="setup-heading" className="rounded-lg border bg-card p-5">
       <div className="flex items-center justify-between gap-3">
         <h2 id="setup-heading" className="text-xl">Setup</h2>
         {complete
@@ -327,7 +329,7 @@ function Checklist({ items, onProfile }: { items: ChecklistItem[]; onProfile: ()
 function ProfileSummary({ product, onEdit }: { product: Product; onEdit: () => void }) {
   const { data } = useQuery(profileQuery(product.id));
   return (
-    <section aria-label="Product profile" className="rounded-lg border bg-card p-6">
+    <section aria-label="Product profile" className="rounded-lg border bg-card p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-xl">Product profile</h2>
         {product.profiled_at && <span className="status-chip status-ai">{product.profile_source === "edited" ? "AI-written · Edited by you" : "AI-written"}</span>}

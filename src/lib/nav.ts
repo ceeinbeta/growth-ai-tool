@@ -1,14 +1,14 @@
 // Single source for the signed-in sidebar and mobile drawer.
 // Items with `soon` are visible "Coming next" labels, never links.
 export type NavItem =
-  | { label: string; to: "/overview" | "/conversion-leaks" | "/ai-search-visibility" | "/integrations" | "/admin"; hash?: string; soon?: false; adminOnly?: boolean }
+  | { label: string; to: "/overview" | "/conversion-leaks" | "/technical-audit" | "/ai-search-visibility" | "/integrations" | "/admin"; hash?: string; soon?: false; adminOnly?: boolean }
   | { label: string; soon: true };
 
 export type NavGroup = { label: string; items: NavItem[] };
 
 export const NAV_GROUPS: NavGroup[] = [
   { label: "Home", items: [{ label: "Overview", to: "/overview" }] },
-  { label: "Growth audit", items: [{ label: "Conversion leaks", to: "/conversion-leaks" }, { label: "Technical audit", soon: true }] },
+  { label: "Growth audit", items: [{ label: "Conversion leaks", to: "/conversion-leaks" }, { label: "Technical audit", to: "/technical-audit" }] },
   {
     label: "Distribution",
     items: [

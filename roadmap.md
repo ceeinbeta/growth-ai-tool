@@ -83,4 +83,4 @@
 
 - [x] Type scale + landing rewrite (d9): shared --text-* scale in styles.css, landing reordered for SEO/GEO with JSON-LD + llms.txt, 243 tests pass, preview-only.
 - [x] Overview polish + Integrations as a feature: KPI row with 7/30/90 periods, funnel + recent activity, collapsible checklist, Coming-next integration list with mailto requests. 255 tests pass, preview-only.
-- [ ] Landing review: correct FAQ claims and engine availability, synchronize dated absolute llms links with discovery, add copy/inventory tests; preview only.
+- [x] Landing review: corrected shared FAQ claims and beta engine availability; generated dated absolute llms links and feature inventory through discovery refresh. 29 tests passed, 3 skipped; all 10 visible FAQ answers match JSON-LD in preview. No data writes or publishing.

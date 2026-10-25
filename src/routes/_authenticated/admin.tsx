@@ -1,4 +1,5 @@
 import { ActionRow, ActionHeader } from '@/components/ActionRow';
+import { PageHeader } from '@/components/PageHeader';
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -84,22 +85,73 @@ function AdminContent() {
   const s = summary.data;
   return (
     <div className="mx-auto max-w-4xl">
-      <h1 className="text-3xl font-extrabold">Admin</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Invite people into the beta and keep an eye on limits. Growloop never sends emails for you.</p>
+      <PageHeader title="Admin" purpose="Invite people into the beta and keep an eye on limits. Growloop never sends emails for you." />
       {error && <p role="alert" className="mt-4 rounded-sm bg-danger-soft p-3 text-sm text-destructive">{error}</p>}
 
       {!s ? <BlockSkeleton rows={4} /> : (
         <>
-          <section aria-label="Summary" className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-lg border bg-card p-5">
-              <p className="text-sm text-muted-foreground">On the waitlist</p>
-              <p className="mt-1 text-3xl font-extrabold">{s.waitlist_count}</p>
-            </div>
+          <section aria-label="Summary" className="mt-6 grid gap-3 rounded-lg border bg-card p-4 sm:grid-cols-3">
+            <div><p className="nav-group-label">Beta seats used</p><p className="mt-1 text-2xl font-extrabold tabular-nums">{s.invited_count} of {s.beta_seat_limit}</p></div>
+            <div><p className="nav-group-label">AI visibility spend this month</p><p className="mt-1 text-2xl font-extrabold tabular-nums">${s.visibility_spend_this_month.toFixed(2)}</p><span className="status-chip status-estimated">Estimated</span></div>
+            <div><p className="nav-group-label">On the waitlist</p><p className="mt-1 text-2xl font-extrabold tabular-nums">{s.waitlist_count}</p></div>
+          </section>
+
+          <section aria-labelledby="seats-heading" className="mt-10">
+            <h2 id="seats-heading" className="text-xl font-bold">Beta seats and invites</h2>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <div className="rounded-lg border bg-card p-5">
               <p className="text-sm text-muted-foreground">Beta seats used</p>
               <p className="mt-1 text-3xl font-extrabold">{s.invited_count} of {s.beta_seat_limit}</p>
               <SettingEditor label="Seat limit" settingKey="beta_seat_limit" value={s.beta_seat_limit} onSaved={refresh} onError={setError} />
             </div>
+            </div>
+            <div aria-label="Invited people" className="mt-6">
+            <h3 className="text-base font-bold">Invited people</h3>
+            {!invites.data?.length ? (
+              <p className="mt-4 text-sm text-muted-foreground">Nobody invited yet.</p>
+            ) : (
+              <div className="mt-4 overflow-x-auto rounded-lg border bg-card">
+                <Table>
+                  <TableHeader>
+                    <TableRow><TableHead>Email</TableHead><TableHead>Note</TableHead><TableHead>Status</TableHead><TableHead /></TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {invites.data.map(row => (
+                      <TableRow key={row.email}>
+                        <TableCell className="font-medium">{row.email}</TableCell>
+                        <TableCell>{row.note ?? '—'}</TableCell>
+                        <TableCell>{row.has_account ? `Signed in ${row.last_sign_in_at ? new Date(row.last_sign_in_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'recently'}` : 'Invited, not signed in yet'}</TableCell>
+                        <TableCell>
+                          <ActionRow>
+                            <Button size="sm" variant="outline" onClick={() => setInviteFor(row.email)}><Copy className="h-4 w-4" /> Copy invite message</Button>
+                            {row.has_account ? (
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <span><Button size="sm" variant="outline" disabled><UserMinus className="h-4 w-4" /> Remove</Button></span>
+                                  </TooltipTrigger>
+                                  <TooltipContent>This person already has an account, so they can't be removed.</TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            ) : (
+                              <Button size="sm" variant="outline" onClick={() => uninvite(row.email)}><UserMinus className="h-4 w-4" /> Remove</Button>
+                            )}
+                          </ActionRow>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+            </div>
+
+            <DirectInvite invites={invites.data ?? []} onInvite={invite} />
+          </section>
+
+          <section aria-labelledby="ai-heading" className="mt-10">
+            <h2 id="ai-heading" className="text-xl font-bold">AI spending and limits</h2>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <div className="rounded-lg border bg-card p-5">
               <div className="flex items-center gap-2">
                 <p className="text-sm text-muted-foreground">AI runs in the last 24 hours</p>
@@ -118,6 +170,7 @@ function AdminContent() {
               <SettingEditor label="Monthly visibility budget ($)" settingKey="visibility_monthly_budget_usd" value={s.visibility_monthly_budget_usd} onSaved={refresh} onError={setError} />
               <p className="mt-2 text-xs text-muted-foreground"><span className="status-chip status-estimated">Estimated</span> from published engine prices, not exact bills. Visibility checks stop when this budget is reached.</p>
               <p className="mt-2 text-xs text-muted-foreground">AI visibility reading calls in the last 24 hours: {s.visibility_reading_calls_24h}</p>
+            </div>
             </div>
           </section>
 
@@ -160,48 +213,6 @@ function AdminContent() {
             )}
           </section>
 
-          <section aria-label="Invited people" className="mt-10">
-            <h2 className="text-xl font-bold">Invited people</h2>
-            {!invites.data?.length ? (
-              <p className="mt-4 text-sm text-muted-foreground">Nobody invited yet.</p>
-            ) : (
-              <div className="mt-4 overflow-x-auto rounded-lg border bg-card">
-                <Table>
-                  <TableHeader>
-                    <TableRow><TableHead>Email</TableHead><TableHead>Note</TableHead><TableHead>Status</TableHead><TableHead /></TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {invites.data.map(row => (
-                      <TableRow key={row.email}>
-                        <TableCell className="font-medium">{row.email}</TableCell>
-                        <TableCell>{row.note ?? '—'}</TableCell>
-                        <TableCell>{row.has_account ? `Signed in ${row.last_sign_in_at ? new Date(row.last_sign_in_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'recently'}` : 'Invited, not signed in yet'}</TableCell>
-                        <TableCell>
-                          <ActionRow>
-                            <Button size="sm" variant="outline" onClick={() => setInviteFor(row.email)}><Copy className="h-4 w-4" /> Copy invite message</Button>
-                            {row.has_account ? (
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <span><Button size="sm" variant="outline" disabled><UserMinus className="h-4 w-4" /> Remove</Button></span>
-                                  </TooltipTrigger>
-                                  <TooltipContent>This person already has an account, so they can't be removed.</TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            ) : (
-                              <Button size="sm" variant="outline" onClick={() => uninvite(row.email)}><UserMinus className="h-4 w-4" /> Remove</Button>
-                            )}
-                          </ActionRow>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-          </section>
-
-          <DirectInvite invites={invites.data ?? []} onInvite={invite} />
         </>
       )}
 

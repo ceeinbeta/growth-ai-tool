@@ -29,7 +29,7 @@ export const COMING_INTEGRATIONS = [
 ];
 
 const ENGINE_GIVES: Record<EngineId, string> = {
-  openai: 'Lets visibility checks ask ChatGPT about your product.',
+  openai: 'Lets visibility checks ask OpenAI about your product.',
   perplexity: 'Lets visibility checks ask Perplexity about your product.',
   claude: 'Lets visibility checks ask Claude about your product.',
 };

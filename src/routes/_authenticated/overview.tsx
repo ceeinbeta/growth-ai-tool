@@ -137,7 +137,7 @@ function ProductOverview({ product, footer, onDeleted }: { product: Product; foo
         <div className="lg:col-span-5">{facts && <LoopStrip facts={facts} />}</div>
       </div>
 
-      <div id="profile" className="mt-6">
+      <div id="profile" className="mt-6 scroll-mt-24 focus:outline-none">
         {editProfile ? <ProductProfile product={product} /> : <ProfileSummary product={product} onEdit={() => setEditProfile(true)} />}
       </div>
 
@@ -176,7 +176,7 @@ function KpiTile({ label, value, change, source, empty }: { label: string; value
 }
 
 function KpiRow({ product, days, totals, summary, hasEvents }: { product: Product; days: KpiPeriod; totals: TrackingSummary; summary: FunnelSummary; hasEvents: boolean }) {
-  const install = <Link to="/integrations" className="text-foreground underline">Install tracking</Link>;
+  const install = <Link to="/integrations" hash="tracking" className="text-foreground underline">Install tracking</Link>;
   const conversions = product.stage === "prelaunch" ? totals.waitlist : totals.signups;
   const prevConversions = product.stage === "prelaunch" ? totals.prev_waitlist : totals.prev_signups;
   const rate = conversionRate(conversions, totals.visitors);
@@ -208,7 +208,7 @@ function FunnelCard({ product, summary, days }: { product: Product; summary: Fun
       {summary.total_visitors === 0 ? (
         <div className="mt-4">
           <p className="text-sm text-muted-foreground">No visitors recorded in this period yet.</p>
-          <ActionRow className="mt-4"><Button asChild variant="outline"><Link to="/integrations">Install tracking</Link></Button></ActionRow>
+          <ActionRow className="mt-4"><Button asChild variant="outline"><Link to="/integrations" hash="tracking">Install tracking</Link></Button></ActionRow>
         </div>
       ) : (
         <ol className="mt-4 divide-y">

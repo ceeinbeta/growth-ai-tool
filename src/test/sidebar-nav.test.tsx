@@ -32,6 +32,27 @@ describe('sidebar navigation', () => {
     expect(screen.getByRole('link', { name: 'Product profile' }).getAttribute('href')).toBe('/overview#profile');
     expect(screen.getByRole('link', { name: 'Website tracking' }).getAttribute('href')).toBe('/integrations#tracking');
   });
+  it('uses shared single-line sidebar roles with the exact Coming next pill', () => {
+    const { container } = render(<SidebarNav isAdmin />);
+    const rows = container.querySelectorAll('.nav-item');
+    expect(rows.length).toBeGreaterThan(10);
+    rows.forEach((r) => {
+      expect(r.className).not.toMatch(/whitespace-normal|break-words|text-wrap|py-\d|text-(sm|xs|base)/);
+      expect(r.querySelector('.nav-item-label')).not.toBeNull();
+    });
+    const pills = container.querySelectorAll('.nav-soon-pill');
+    expect(pills.length).toBe(6);
+    pills.forEach((p) => expect(p.textContent).toBe('Coming next'));
+  });
+  it('defines sidebar sizes on the shared scale', async () => {
+    const css = (await import('node:fs')).readFileSync('src/styles.css', 'utf8');
+    expect(css).toContain('--sidebar-w: 248px');
+    expect(css).toContain('--text-nav-label: 11px');
+    expect(css).toContain('--text-pill: 10.5px');
+    expect(css).toMatch(/\.nav-item \{[^}]*height: 36px[^}]*white-space: nowrap/);
+    expect(css).toMatch(/\.nav-soon-pill \{[^}]*white-space: nowrap/);
+    expect(css).toMatch(/\.product-switcher \{ height: 56px/);
+  });
   it('shows Admin only to founders', () => {
     const { unmount } = render(<SidebarNav isAdmin={false} />);
     expect(screen.queryByRole('link', { name: 'Admin' })).toBeNull();

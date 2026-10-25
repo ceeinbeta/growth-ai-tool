@@ -1,4 +1,5 @@
 import { ActionRow, ActionHeader } from '@/components/ActionRow';
+import { PageShell } from '@/components/PageLayout';
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -237,7 +238,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
   const budget = engineStatus?.budget;
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <PageShell>
       <ActionHeader action={running ? <Button disabled>{progress ? `${progress.finished} of ${progress.total} runs finished` : "Check running…"}</Button> : <Button variant={confirming ? "outline" : "default"} onClick={openConfirmation} disabled={!connected.length || !questions.length}>Run a check</Button>}>
         <h1 className="text-3xl font-extrabold">AI search visibility</h1>
         <p className="mt-1 text-sm text-muted-foreground">See how often AI assistants recommend {productName} when buyers ask.</p>
@@ -390,7 +391,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
 
           <section className="mt-6 rounded-xl border bg-card p-5">
             <h2 className="text-lg">Per question</h2>
-            <div className="mt-3 overflow-x-auto">
+            <div className="table-scroll mt-3">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-left text-xs text-muted-foreground">
@@ -520,6 +521,6 @@ function VisibilityPage({ productId, productName }: { productId: string; product
           Automatic checks use the same limits and monthly budget as manual ones.
         </p>
       </section>
-    </div>
+    </PageShell>
   );
 }

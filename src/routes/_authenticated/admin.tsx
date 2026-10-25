@@ -1,4 +1,5 @@
 import { ActionRow, ActionHeader } from '@/components/ActionRow';
+import { PageShell } from '@/components/PageLayout';
 import { PageHeader } from '@/components/PageHeader';
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -84,7 +85,7 @@ function AdminContent() {
 
   const s = summary.data;
   return (
-    <div className="mx-auto max-w-4xl">
+    <PageShell>
       <PageHeader title="Admin" purpose="Invite people into the beta and keep an eye on limits. Growloop never sends emails for you." />
       {error && <p role="alert" className="mt-4 rounded-sm bg-danger-soft p-3 text-sm text-destructive">{error}</p>}
 
@@ -96,7 +97,7 @@ function AdminContent() {
             <div><p className="nav-group-label">On the waitlist</p><p className="mt-1 text-2xl font-extrabold tabular-nums">{s.waitlist_count}</p></div>
           </section>
 
-          <section aria-labelledby="seats-heading" className="mt-6">
+          <div className="page-grid"><section aria-labelledby="seats-heading" className="page-main">
             <h2 id="seats-heading" className="text-xl font-bold">Beta seats and invites</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <div className="rounded-lg border bg-card p-5">
@@ -149,7 +150,7 @@ function AdminContent() {
             <DirectInvite invites={invites.data ?? []} onInvite={invite} />
           </section>
 
-          <section aria-labelledby="ai-heading" className="mt-6">
+          <section aria-labelledby="ai-heading" className="page-context">
             <h2 id="ai-heading" className="text-xl font-bold">AI spending and limits</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <div className="rounded-lg border bg-card p-5">
@@ -172,7 +173,7 @@ function AdminContent() {
               <p className="mt-2 text-xs text-muted-foreground">AI visibility reading calls in the last 24 hours: {s.visibility_reading_calls_24h}</p>
             </div>
             </div>
-          </section>
+          </section></div>
 
           <section aria-label="Waitlist" className="mt-6">
             <h2 className="text-xl font-bold">Waitlist</h2>
@@ -235,7 +236,7 @@ function AdminContent() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </PageShell>
   );
 }
 

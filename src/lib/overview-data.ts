@@ -14,7 +14,7 @@ export const overviewQuery = (productId: string) => queryOptions({
       supabase.from("sov_checks").select("id, started_at").eq("product_id", productId).in("status", ["done", "stopped"]).order("started_at", { ascending: false }).limit(1).maybeSingle(),
       supabase.from("funnel_steps").select("id", { count: "exact", head: true }).eq("product_id", productId),
       supabase.from("leaks").select("id", { count: "exact", head: true }).eq("product_id", productId).in("status", ["doing", "done"]),
-      supabase.from("technical_audits").select("id").eq("product_id", productId).limit(1).maybeSingle(),
+      supabase.from("technical_audits").select("id, created_at").eq("product_id", productId).order("created_at", { ascending: false }).limit(1).maybeSingle(),
     ]);
     for (const r of [events, latest, visitors, audit, check, steps, worked, technical]) if (r.error) throw r.error;
     let lastCheck: { date: string; usableRuns: number; pct: number } | null = null;

@@ -13,6 +13,7 @@
 - [x] 180 mocked tests passed serially; 50 integration tests skipped; public/signed-in read-only desktop and mobile navigation checks passed with no runtime errors, data writes or publishing.
 
 # Founder d7 re-theme
+- [x] Superseded by decision d15 Brand identity 01; layout, type scale and CTA alignment retained.
 - [x] Finish d7 token audit and add shared action alignment across public and app screens.
 - [x] 204 tests passed serially; 50 integration checks disabled for no-write safety. Measured contrast and captured all six requested screens on desktop/mobile, with loaded real read-only data and no provider calls.
 - [x] Replace global tokens, typography, controls and logo/favicon; audit all visual usages without behavior changes.
@@ -84,3 +85,8 @@
 - [x] Type scale + landing rewrite (d9): shared --text-* scale in styles.css, landing reordered for SEO/GEO with JSON-LD + llms.txt, 243 tests pass, preview-only.
 - [x] Overview polish + Integrations as a feature: KPI row with 7/30/90 periods, funnel + recent activity, collapsible checklist, Coming-next integration list with mailto requests. 255 tests pass, preview-only.
 - [x] Landing review: corrected shared FAQ claims and beta engine availability; generated dated absolute llms links and feature inventory through discovery refresh. 29 tests passed, 3 skipped; all 10 visible FAQ answers match JSON-LD in preview. No data writes or publishing.
+
+# Brand identity 01 — d15
+- [ ] Replace shared visual theme, font families, radii and labels while preserving layout, type scale and actions.
+- [ ] Replace shared logo and browser/social assets; update leaf metadata and Organization.logo.
+- [ ] Update theme/type safeguards and design rules; verify contrasts and requested desktop/mobile screens with mocked serial tests, no data writes or publishing.

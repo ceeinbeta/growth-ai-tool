@@ -337,3 +337,10 @@ a.nav-item:hover { background: var(--sunken); }
 .table-scroll { overflow: auto; max-height: 360px; }
 .table-scroll thead th { position: sticky; top: 0; z-index: 1; background: var(--card); }
 .table-scroll tbody tr { height: 40px; }
+.compact-panel { min-width: 0; border: 1px solid var(--border); border-radius: var(--radius-app); background: var(--card); padding: 16px; }
+.responsive-details > summary { cursor: pointer; }
+.question-scroll { max-height: 420px; }
+.budget-progress { appearance: none; border: none; background: var(--selected); border-radius: var(--radius-control); overflow: hidden; }
+.budget-progress::-webkit-progress-bar { background: var(--selected); }
+.budget-progress::-webkit-progress-value { background: var(--foreground); }
+.budget-progress::-moz-progress-bar { background: var(--foreground); }

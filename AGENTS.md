@@ -48,4 +48,4 @@
 - Public discovery stays static: `src/lib/public-discovery.ts` owns the origin, public/private paths and llms update date; run `bun run refresh:discovery` after changes to refresh robots, sitemap without lastmod and llms.txt derived from public-features. Why: one domain and feature inventory, no private URLs or stale discovery copy.
 - Server-only libraries stay excluded from browser dep pre-bundling; why: linkedom breaks it and blanks client pages in dev.
 - Signed-in navigation lives in src/lib/nav.ts for sidebar and mobile drawer; unbuilt features carry a visible "Soon" pill and are never links.
-- Overview desktop has at most four top-level sections marked data-overview-section (tested); why: key info must fit one screen.
+- Overview has at most four top-level sections; visibility uses filtered compact results and inline details. Why: keep key data scannable.

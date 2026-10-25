@@ -1,20 +1,19 @@
-import { ActionRow, ActionHeader } from '@/components/ActionRow';
+import { ActionRow } from '@/components/ActionRow';
 import { PageShell } from '@/components/PageLayout';
+import { VisibilityResults } from '@/components/VisibilityResults';
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useActiveProduct } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { engineChoiceKey, readEngineChoice, engineFailedAllRuns, defaultEngineChoice } from "@/lib/sov-engine-choice";
 import { estimateCheckCost, usd, ENGINES, type EngineId } from "@/lib/engine-prices";
-import { shareOfVoice, questionStats, youPercent, usableSovRuns, unusableEngineReason, type SovRunRow, type SovMentionRow } from "@/lib/sov";
+import { usableSovRuns } from "@/lib/sov";
 import { getSovEngineStatus, testEngineConnection, startSovCheck, advanceSovCheckFn, setSovSchedule } from "@/lib/sov.functions";
-import { relativeTime } from "@/lib/admin";
 
 export const Route = createFileRoute("/_authenticated/ai-search-visibility")({
   head: () => ({
@@ -55,7 +54,7 @@ const sovDataQuery = (productId: string) =>
       if (!checkIds.length) {
         return { checks: [], questions: questions.data ?? [], schedule: schedule.data ?? null, runs: [], mentions: [], fixes: [] };
       }
-      const runs = await supabase.from("sov_runs").select("id, check_id, engine, question, status, answer_excerpt, error").in("check_id", checkIds);
+      const runs = await supabase.from("sov_runs").select("id, check_id, engine, question, status, answer_excerpt, error, cited_hosts, cost_usd").in("check_id", checkIds);
       if (runs.error) throw runs.error;
       const runIds = (runs.data ?? []).map((r) => r.id);
       const [mentions, fixes] = await Promise.all([
@@ -97,7 +96,6 @@ function VisibilityPage({ productId, productName }: { productId: string; product
     queryFn: () => statusFn({ data: { productId } }),
   });
 
-  const [engineFilter, setEngineFilter] = useState<"all" | EngineId>("all");
   const [runsPerQuestion, setRunsPerQuestion] = useState(3);
   const [confirming, setConfirming] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -107,7 +105,6 @@ function VisibilityPage({ productId, productName }: { productId: string; product
   const [progress, setProgress] = useState<{ finished: number; total: number } | null>(null);
 
   const checks = data?.checks ?? [];
-  const latestDone = checks.find((c) => c.status === "done" || c.status === "stopped");
   const running = checks.find((c) => c.status === "running");
   const questions = data?.questions ?? [];
   const connected = (engineStatus?.engines ?? []).filter((e) => e.connected).map((e) => e.id);
@@ -163,38 +160,6 @@ function VisibilityPage({ productId, productName }: { productId: string; product
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [running?.id]);
 
-  const latestRuns = useMemo(
-    () => (data?.runs ?? []).filter((r) => r.check_id === latestDone?.id) as unknown as SovRunRow[],
-    [data, latestDone],
-  );
-  const runIds = useMemo(() => new Set(latestRuns.map((r) => r.id)), [latestRuns]);
-  const latestMentions = useMemo(
-    () => (data?.mentions ?? []).filter((m) => runIds.has(m.run_id)) as unknown as SovMentionRow[],
-    [data, runIds],
-  );
-  const share = useMemo(
-    () => shareOfVoice(latestRuns, latestMentions, engineFilter === "all" ? undefined : engineFilter),
-    [latestRuns, latestMentions, engineFilter],
-  );
-  const stats = useMemo(() => questionStats(latestRuns, latestMentions), [latestRuns, latestMentions]);
-  const youShare = share.find((s) => s.kind === "you");
-  const others = share.filter((s) => s.kind === "other").slice(0, 5);
-  const latestFixes = data?.fixes?.find((f) => f.check_id === latestDone?.id);
-  const usableEngines = ENGINES.filter(e => latestRuns.some(r => r.engine === e.id && r.status === 'done'));
-  const unusableEngines = ENGINES.filter(e => latestDone?.engines.includes(e.id) && !usableEngines.some(usable => usable.id === e.id));
-
-  const trend = useMemo(() => {
-    const done = checks.filter((c) => c.status === "done" || c.status === "stopped");
-    return done
-      .map((c) => {
-        const runs = (data?.runs ?? []).filter((r) => r.check_id === c.id) as unknown as SovRunRow[];
-        const ids = new Set(runs.map((r) => r.id));
-        const mentions = (data?.mentions ?? []).filter((m) => ids.has(m.run_id)) as unknown as SovMentionRow[];
-        return { date: c.started_at, pct: youPercent(runs, mentions) };
-      })
-      .reverse();
-  }, [checks, data]);
-
   async function runTest(engine: EngineId) {
     setTestResults((m) => ({ ...m, [engine]: { ok: null, text: "Testing…" } }));
     try {
@@ -239,42 +204,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
 
   return (
     <PageShell>
-      <ActionHeader action={running ? <Button disabled>{progress ? `${progress.finished} of ${progress.total} runs finished` : "Check running…"}</Button> : <Button variant={confirming ? "outline" : "default"} onClick={openConfirmation} disabled={!connected.length || !questions.length}>Run a check</Button>}>
-        <h1 className="text-3xl font-extrabold">AI search visibility</h1>
-        <p className="mt-1 text-sm text-muted-foreground">See how often AI assistants recommend {productName} when buyers ask.</p>
-        {latestDone && (
-          <span className="text-sm text-muted-foreground">Last checked {relativeTime(latestDone.started_at)}</span>
-        )}
-      </ActionHeader>
-
-      <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
-        {(engineStatus?.engines ?? ENGINES.map((e) => ({ id: e.id, label: e.label, connected: false, testsToday: 0 }))).map((e) => (
-          <div key={e.id} className="grid min-w-0 grid-rows-[auto_auto_1fr_auto] gap-2 rounded-lg border bg-card p-4 text-xs">
-            <span className="font-semibold">{e.label}</span>
-            <span className={e.connected ? "text-foreground" : "text-muted-foreground"}>{e.connected ? "Connected" : "Not connected"}</span>
-            {testResults[e.id] && <div><span className="break-words text-muted-foreground">{testResults[e.id]?.text}</span></div>}
-            {e.connected && (
-              <Button variant="link" className="justify-self-start" size="sm" disabled={testResults[e.id]?.ok === null} onClick={() => runTest(e.id as EngineId)}>
-                Test connection
-              </Button>
-            )}
-          </div>
-        ))}
-      </div>
-      {budget?.scope === "platform" && (
-        <p className="mt-2 text-sm text-muted-foreground">
-          <span className="status-chip status-estimated">Estimated</span> Spent this month {usd(budget.spent_usd)} of ${budget.budget_usd} (estimated)
-          {budget.spent_usd >= budget.budget_usd * 0.8 && (
-            <span className="ml-2 font-medium text-warning">Near the monthly budget.</span>
-          )}
-        </p>
-      )}
-      {budget?.scope === "product" && (
-        <p className="mt-2 text-sm text-muted-foreground">
-          <span className="status-chip status-estimated">Estimated</span> This product's estimated spend this month: {usd(budget.own_spend_usd)} — {budget.status}.
-        </p>
-      )}
-
+      <header><h1 className="text-3xl font-extrabold">AI search visibility</h1></header>
       {message && <p className="mt-4 rounded-lg border bg-card p-3 text-sm">{message}</p>}
 
       {confirming && !running && (
@@ -335,165 +265,26 @@ function VisibilityPage({ productId, productName }: { productId: string; product
         </div>
       )}
 
-      {latestDone && (
-        <>
-          <section className="mt-6 rounded-xl border bg-card p-5">
-            <div className="flex flex-wrap items-center gap-3">
-              <h2 className="text-lg">Share of voice</h2>
-              <div className="ml-auto flex gap-1">
-                {(["all", "openai", "perplexity", "claude"] as const).map((f) => (
-                  <button
-                    key={f}
-                    onClick={() => setEngineFilter(f)}
-                    className={`rounded-full px-3 py-1 text-xs font-medium ${engineFilter === f ? "bg-selected text-foreground selected-state" : "text-muted-foreground hover:bg-sunken"}`}
-                  >
-                    {f === "all" ? "All engines" : f === "openai" ? "OpenAI" : f === "perplexity" ? "Perplexity" : "Claude"}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <p className="mt-1 text-xs text-muted-foreground">
-              <span className="status-chip status-measured">Measured</span> {usableEngines.length ? `from usable answers by asking ${usableEngines.map(e => e.label).join(', ')} your buyer questions ${latestDone.runs_per_question} times each` : 'No engine returned usable answers'} on{" "}
-              {new Date(latestDone.started_at).toLocaleDateString()}. AI answers vary, so treat this as a sample of usable answers, not a
-              ranking.
-            </p>
-            {unusableEngines.map(engine => <p key={engine.id} className="mt-2 text-sm">{engine.label}: {unusableEngineReason(latestRuns.filter(r => r.engine === engine.id))}</p>)}
-            <p className="mt-1 text-xs text-muted-foreground">
-              {latestRuns.filter((r) => r.status === "done").length} of {latestRuns.length} runs succeeded.
-            </p>
-            {engineFilter !== "all" && !latestRuns.some((r) => r.engine === engineFilter && r.status === "done") ? (
-              <div className="mt-4 text-sm"><p>No usable answers in this check</p><p className="mt-1">{ENGINES.find(e => e.id === engineFilter)?.label}: {unusableEngineReason(latestRuns.filter(r => r.engine === engineFilter))}</p></div>
-            ) : latestRuns.some((r) => r.status === "done" && (engineFilter === "all" || r.engine === engineFilter)) && !youShare && (
-              <p className="mt-4 text-sm">
-                {productName} was not recommended in these usable answers. That is common for a new product.
-              </p>
+      <VisibilityResults
+        productName={productName} checks={checks} runs={data?.runs ?? []} mentions={data?.mentions ?? []}
+        fixes={data?.fixes ?? []} budget={budget} onAddCompetitor={addCompetitor}
+        action={running ? <Button disabled>{progress ? `${progress.finished} of ${progress.total} runs finished` : "Check running…"}</Button> : <Button variant={confirming ? "outline" : "default"} onClick={openConfirmation} disabled={!connected.length || !questions.length}>Run a check</Button>}
+        settings={<>
+      <div className="mt-5 grid grid-cols-1 gap-3">
+        {(engineStatus?.engines ?? ENGINES.map((e) => ({ id: e.id, label: e.label, connected: false, testsToday: 0 }))).map((e) => (
+          <div key={e.id} className="grid min-w-0 gap-2 border-b py-3 text-xs">
+            <span className="font-semibold">{e.label}</span>
+            <span className={e.connected ? "text-foreground" : "text-muted-foreground"}>{e.connected ? "Connected" : "Not connected"}</span>
+            {testResults[e.id] && <div><span className="break-words text-muted-foreground">{testResults[e.id]?.text}</span></div>}
+            {e.connected && (
+              <Button variant="link" className="justify-self-start" size="sm" disabled={testResults[e.id]?.ok === null} onClick={() => runTest(e.id as EngineId)}>
+                Test connection
+              </Button>
             )}
-            <div className="mt-4 space-y-3">
-              {share.map((s) => (
-                <div key={`${s.kind}:${s.name}`}>
-                  <div className="flex items-baseline justify-between text-sm">
-                    <span className="font-medium">
-                      {s.name}
-                      {s.kind === "you" && <Badge className="ml-2" variant="secondary">You</Badge>}
-                    </span>
-                    <span className="text-muted-foreground">{s.pct}% ({s.count} of {s.runs} runs)</span>
-                  </div>
-                  <div className="mt-1 h-2 rounded-full bg-sunken">
-                    <div
-                      className={`h-2 rounded-full ${s.kind === "you" ? "border border-foreground bg-primary" : "bg-chart-other"}`}
-                      style={{ width: `${s.pct}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section className="mt-6 rounded-xl border bg-card p-5">
-            <h2 className="text-lg">Per question</h2>
-            <div className="table-scroll mt-3">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-left text-xs text-muted-foreground">
-                    <th className="pb-2 pr-4 font-semibold">Question</th>
-                    {stats[0]?.engines.map((e) => (
-                      <th key={e.engine} className="pb-2 pr-4 font-semibold capitalize">{e.engine}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {stats.map((row) => (
-                    <tr key={row.question} className="border-t">
-                      <td className="py-2 pr-4">{row.question}</td>
-                      {row.engines.map((e) => (
-                        <td key={e.engine} className="py-2 pr-4 text-muted-foreground">
-                          {e.total === 0
-                            ? "—"
-                            : e.mentioned === 0
-                              ? `0 of ${e.total} runs`
-                              : `${e.mentioned} of ${e.total} runs, avg rank ${e.avgRank?.toFixed(1)}`}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          <section className="mt-6 rounded-xl border bg-card p-5">
-            <h2 className="text-lg">Trend</h2>
-            {trend.length < 2 ? (
-              <p className="mt-2 text-sm text-muted-foreground">A trend appears after your second check.</p>
-            ) : (
-              <div className="mt-3 flex items-end gap-3">
-                {trend.map((t) => (
-                  <div key={t.date} className="flex flex-col items-center gap-1">
-                    <span className="text-xs font-medium">{t.pct}%</span>
-                    <div className="w-8 rounded-sm border border-foreground bg-primary" style={{ height: `${Math.max(4, t.pct)}px` }} />
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(t.date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-            <p className="mt-2 text-xs text-muted-foreground">Percentage of successful runs mentioning you, per check.</p>
-          </section>
-
-          {others.length > 0 && (
-            <section className="mt-6 rounded-xl border bg-card p-5">
-              <h2 className="text-lg">Recommended instead of you</h2>
-              <p className="mt-1 text-xs text-muted-foreground">Recommended in these runs but not on your competitor list.</p>
-              <ul className="mt-3 space-y-2">
-                {others.map((o) => (
-                  <li key={o.name} className="flex items-center justify-between text-sm">
-                    <span>{o.name} <span className="text-muted-foreground">({o.count}×)</span></span>
-                    <Button variant="outline" size="sm" onClick={() => addCompetitor(o.name)}>Add to competitors</Button>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
-          {latestFixes && (
-            <section className="mt-6 rounded-xl border bg-card p-5 learning-block">
-              <h2 className="text-lg">How to get cited</h2>
-              <p className="mt-1 text-xs text-muted-foreground"><span className="status-chip status-ai">AI-written</span> from your results. Check it before you use it.</p>
-              <ul className="mt-3 list-disc space-y-2 pl-5 text-sm">
-                {((latestFixes.text as { suggestions?: string[] })?.suggestions ?? []).map((s, i) => (
-                  <li key={i}>{s}</li>
-                ))}
-              </ul>
-            </section>
-          )}
-        </>
-      )}
-
-      {checks.length > 0 && (
-        <section className="mt-6 border-t pt-6">
-          <h2 className="text-lg">Checks — measured successful runs</h2>
-          <ul className="mt-3 space-y-4">
-            {checks.map((check) => {
-              const runs = (data?.runs ?? []).filter((run) => run.check_id === check.id);
-              return (
-                <li key={check.id} className="border-b pb-3 text-sm">
-                  <p className="font-medium">{new Date(check.started_at).toLocaleString()} — {check.status}</p>
-                  <ul className="mt-1 space-y-1 text-muted-foreground">
-                    {(check.engines as EngineId[] ?? []).map((engine) => {
-                      const engineRuns = runs.filter((run) => run.engine === engine);
-                      const succeeded = engineRuns.filter((run) => run.status === "done").length;
-                      return <li key={engine}>{ENGINES.find((e) => e.id === engine)?.label ?? engine}: {succeeded} of {engineRuns.length} runs succeeded{!succeeded && check.status !== "running" ? " — No usable answers in this check" : ""}</li>;
-                    })}
-                  </ul>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      )}
-
-      <section className="mt-6 rounded-xl border bg-card p-5">
+          </div>
+        ))}
+      </div>
+      <section className="mt-4 border-t pt-3">
         <h2 className="text-lg">Automatic checks</h2>
         <label className="mt-2 flex items-center gap-2 text-sm">
           <input
@@ -521,6 +312,8 @@ function VisibilityPage({ productId, productName }: { productId: string; product
           Automatic checks use the same limits and monthly budget as manual ones.
         </p>
       </section>
+        </>}
+      />
     </PageShell>
   );
 }

@@ -315,3 +315,25 @@ a.nav-item:hover { background: var(--sunken); }
 .announce-pill { border-radius: 999px; }
 .hero-pill { border-radius: var(--radius-public); box-shadow: var(--hero-shadow); }
 @media (min-width: 640px) { .hero-pill, .hero-pill .hero-pill-button { border-radius: 999px; } }
+
+/* Signed-in page layout: one shared frame and grid for every app page. */
+:root { --page-max: 1600px; }
+.page-shell { width: 100%; max-width: var(--page-max); margin-inline: auto; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.page-shell > * { margin-block: 0 !important; }
+.page-shell p:not([class*="max-w"]), .page-shell li > p { max-width: 75ch; }
+.page-grid { display: grid; grid-template-columns: minmax(0,1fr); gap: 16px; align-items: start; }
+.page-main, .page-context { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.page-main > *, .page-context > * { margin-block: 0 !important; }
+.card-grid { display: grid; grid-template-columns: minmax(0,1fr); gap: 16px; }
+@media (min-width: 640px) { .card-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (min-width: 1024px) {
+  .page-grid { grid-template-columns: repeat(12, minmax(0,1fr)); }
+  .page-main { grid-column: span 8 / span 8; }
+  .page-context { grid-column: span 4 / span 4; }
+  .page-grid > .page-main:only-child { grid-column: 1 / -1; }
+  .card-grid[data-cols="3"] { grid-template-columns: repeat(3, minmax(0,1fr)); }
+  .card-grid[data-cols="4"] { grid-template-columns: repeat(4, minmax(0,1fr)); }
+}
+.table-scroll { overflow: auto; max-height: 360px; }
+.table-scroll thead th { position: sticky; top: 0; z-index: 1; background: var(--card); }
+.table-scroll tbody tr { height: 40px; }

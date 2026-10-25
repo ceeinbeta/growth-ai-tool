@@ -54,7 +54,9 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
           This page didn't load
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+          {/localStorage|sessionStorage|SecurityError/i.test(String((error as Error)?.message ?? error))
+            ? "Your browser is blocking storage for this page, which sign-in needs. Open Growloop in its own tab, or allow site data."
+            : "Something went wrong on our end. You can try refreshing or head back home."}
         </p>
         <ActionRow className="mt-6">
           <Button

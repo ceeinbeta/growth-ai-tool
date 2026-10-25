@@ -116,7 +116,7 @@ export function ProductProfile({ product }: { product: Product }) {
         {(data?.questions.length ?? 0) >= 10 && <p className="mt-2 text-xs text-muted-foreground">10 questions used. Remove one to add another.</p>}
       </div>
     </>}
-    {product.profiled_at && !busy && (product.profile_confirmed_at ? <p className="mt-5 flex items-center gap-2 text-sm text-foreground"><Check className="h-4 w-4" />You confirmed this profile.</p> : <Button className="mt-5 mr-3" disabled={disabled} onClick={() => void confirmProfile()}><ThumbsUp className="mr-2 h-4 w-4" />Looks right</Button>)}
+    {product.profiled_at && !busy && (product.profile_confirmed_at ? <p className="mt-5 flex items-center gap-2 text-sm text-foreground"><Check className="h-4 w-4" />You confirmed this profile.</p> : <Button variant="outline" className="mt-5 mr-3" disabled={disabled} onClick={() => void confirmProfile()}><ThumbsUp className="mr-2 h-4 w-4" />Looks right</Button>)}
     {!busy && <Button variant="outline" className="mt-5" disabled={editing} onClick={() => product.profiled_at ? setConfirm(true) : void run()}><RefreshCw className="mr-2 h-4 w-4" />{error ? "Try again" : product.profiled_at ? "Run the profile again" : "Profile this product"}</Button>}
     <AlertDialog open={confirm} onOpenChange={setConfirm}><AlertDialogContent><AlertDialogTitle>Run the profile again?</AlertDialogTitle><AlertDialogDescription>This replaces AI-written fields and items. Anything you added or edited stays.</AlertDialogDescription><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => void run()}>Run profile</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
   </section>;

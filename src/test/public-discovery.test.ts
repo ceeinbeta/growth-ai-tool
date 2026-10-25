@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { upcomingFeatures, liveFeatures } from '@/lib/public-features';
 import { publicHead } from '@/lib/public-head';
+import { discoveryRobots, discoverySitemap } from '@/lib/public-discovery';
 
 describe('public discovery and feature availability', () => {
   it('keeps six unbuilt capabilities out of the live feature inventory', () => {
@@ -15,13 +16,26 @@ describe('public discovery and feature availability', () => {
     expect(urls).toEqual(['https://growloop-mcads.lovable.app/', 'https://growloop-mcads.lovable.app/features', 'https://growloop-mcads.lovable.app/privacy']);
     expect(xml.includes('<lastmod>')).toBe(false);
   });
-  it('preserves crawler exclusions and allows Features in each block', () => {
+  it('has a wildcard User-agent line', () => {
     const robots = readFileSync('public/robots.txt', 'utf8');
-    for (const block of robots.trim().split(/\n\s*\n/)) {
-      expect(block.includes('Allow: /features')).toBe(true);
-      for (const path of ['/auth', '/overview', '/products', '/conversion-leaks', '/integrations', '/admin', '/ai-search-visibility', '/api/']) expect(block.includes(`Disallow: ${path}`)).toBe(true);
-    }
-    expect(robots.includes('Sitemap: https://growloop-mcads.lovable.app/sitemap.xml')).toBe(true);
+    expect(robots.split('\n').filter(line => /^User-agent:/.test(line))).toEqual(['User-agent: *']);
+  });
+  it('has no duplicate nonempty crawler lines', () => {
+    const lines = readFileSync('public/robots.txt', 'utf8').split('\n').map(line => line.trim()).filter(Boolean);
+    expect(new Set(lines).size).toBe(lines.length);
+  });
+  it('disallows admin explicitly', () => {
+    expect(readFileSync('public/robots.txt', 'utf8').split('\n')).toContain('Disallow: /admin');
+  });
+  it('allows public pages and blocks every requested private route', () => {
+    const lines = readFileSync('public/robots.txt', 'utf8').split('\n');
+    expect(lines).toContain('Allow: /');
+    for (const path of ['/overview', '/settings', '/products', '/conversion-leaks', '/integrations', '/ai-search-visibility', '/auth', '/api/']) expect(lines).toContain(`Disallow: ${path}`);
+    expect(lines).toContain('Sitemap: https://growloop-mcads.lovable.app/sitemap.xml');
+  });
+  it('keeps both static discovery files synchronized with one origin setting', () => {
+    expect(readFileSync('public/robots.txt', 'utf8')).toBe(discoveryRobots());
+    expect(readFileSync('public/sitemap.xml', 'utf8')).toBe(discoverySitemap());
   });
   it('self-references Features with its own title and description', () => {
     const head = publicHead('https://growloop-mcads.lovable.app', '/features', 'Features — Growloop', 'Live Growloop features');

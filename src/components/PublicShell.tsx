@@ -22,8 +22,8 @@ function PublicAccountLink() {
 function PublicLinks({ close }: { close?: () => void }) {
   return <><Link to="/features" onClick={close} className="public-nav-link">Features</Link><Link to="/" hash="how-it-works" onClick={close} className="public-nav-link">How it works</Link><Link to="/" hash="faq" onClick={close} className="public-nav-link">FAQ</Link><Link to="/privacy" onClick={close} className="public-nav-link">Privacy</Link></>;
 }
-export function WaitlistLink({ children = 'Join the beta waitlist', onClick }: { children?: ReactNode; onClick?: () => void }) {
-  return <Button asChild size="lg" className="min-h-12 px-5"><Link to="/" hash="waitlist" onClick={onClick}>{children}<ArrowRight /></Link></Button>;
+export function WaitlistLink({ children = 'Join the beta waitlist', onClick, variant = 'default' }: { children?: ReactNode; onClick?: () => void; variant?: 'default' | 'outline' }) {
+  return <Button asChild variant={variant} size="lg" className="min-h-12 px-5"><Link to="/" hash="waitlist" onClick={onClick}>{children}<ArrowRight /></Link></Button>;
 }
 export function PublicShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -33,7 +33,7 @@ export function PublicShell({ children }: { children: ReactNode }) {
       <nav aria-label="Public" className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 py-3 sm:px-8 lg:px-12">
         <Link to="/" aria-label="Growloop home"><Logo /></Link>
         <div className="hidden items-center gap-6 lg:flex"><PublicLinks /></div>
-        <div className="hidden items-center gap-6 lg:flex"><PublicAccountLink /><WaitlistLink>Join the waitlist</WaitlistLink></div>
+        <div className="hidden items-center gap-6 lg:flex"><PublicAccountLink /><WaitlistLink variant="outline">Join the waitlist</WaitlistLink></div>
         <Sheet open={open} onOpenChange={setOpen}><SheetTrigger asChild><Button variant="ghost" size="icon" aria-label="Open navigation menu" className="min-h-11 min-w-11 lg:hidden"><Menu /></Button></SheetTrigger>
           <SheetContent className="public-site w-[min(90vw,360px)] motion-reduce:animate-none motion-reduce:transition-none"><SheetTitle className="text-left"><Logo /></SheetTitle><SheetDescription className="sr-only">Public navigation</SheetDescription><nav aria-label="Mobile public" className="mt-10 flex flex-col items-start gap-4"><PublicLinks close={() => setOpen(false)} /><PublicAccountLink /><WaitlistLink onClick={() => setOpen(false)}>Join the waitlist</WaitlistLink></nav></SheetContent>
         </Sheet>

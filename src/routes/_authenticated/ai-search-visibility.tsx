@@ -394,9 +394,9 @@ function VisibilityPage({ productId, productName }: { productId: string; product
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-left text-xs text-muted-foreground">
-                    <th className="pb-2 pr-4 font-medium">Question</th>
+                    <th className="pb-2 pr-4 font-semibold">Question</th>
                     {stats[0]?.engines.map((e) => (
-                      <th key={e.engine} className="pb-2 pr-4 font-medium capitalize">{e.engine}</th>
+                      <th key={e.engine} className="pb-2 pr-4 font-semibold capitalize">{e.engine}</th>
                     ))}
                   </tr>
                 </thead>

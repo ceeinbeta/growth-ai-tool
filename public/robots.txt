@@ -6,6 +6,7 @@ Disallow: /overview
 Disallow: /settings
 Disallow: /integrations
 Disallow: /conversion-leaks
+Disallow: /technical-audit
 Disallow: /products
 Disallow: /auth
 Disallow: /api/

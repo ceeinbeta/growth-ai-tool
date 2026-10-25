@@ -25,23 +25,24 @@
 - Manual visibility engine choices use a per-product browser preference and server-side connected-engine validation; why: remembered choices must not bypass key availability.
 - Visibility reads classify legacy empty excerpts as unusable without database writes; why: sample math must exclude empty answers while preserving historical rows and spend.
 - Funnel aggregation uses security-invoker ordered first-match chains and computed defaults; step edits use an atomic member-scoped replacement RPC to avoid reorder collisions.
-- Page audits read products and measured funnels as the caller, fetch through the shared logo safety helpers with service-only atomic hourly reservations, and save provenance with findings atomically; clients have only column-level leak-status update rights. Why: fetched content must remain bounded, same-site, and traceable without widening client privileges.
+- Page audits read products and measured funnels as the caller, fetch through the shared logo safety helpers with service-only atomic hourly reservations, and save provenance with findings atomically; clients have only column-level leak-status update rights.
 - Every shared-data write test uses temporary rows with finally cleanup or rollback, never the founder's real product rows; test files run serially so shared reservation-cap fixtures cannot interfere.
-- Website collection uses one server-only handler at /api/collect and a /api/public/collect alias used by the static snippet because published-site authentication only bypasses the public prefix.
-- Collection checks the Origin header when present and only falls back to the body hostname when absent; this prevents a copied tracking key from bypassing origin checks through a forged body.
+- Website collection uses one server-only handler at /api/collect and a /api/public/collect alias used by the static snippet.
+- Collection checks the Origin header when present and only falls back to the body hostname when absent; a forged body must not bypass origin checks.
 - Authenticated tracking-table access is read-only; collection writes stay privileged so clients cannot forge events through the Data API.
 - Database collection locks visitor and product before inserting events to enforce rolling limits and distinct custom names atomically across workers.
 - Tracking reads use member-scoped RLS and a security-invoker aggregate RPC so measured totals cannot bypass workspace access.
-- Signed-in pages live under src/routes/_authenticated (client-only gate, redirects to /auth); home and privacy are public SSR pages. Why: private sessions live in browser storage while public pages must be crawlable.
+- Signed-in pages live under src/routes/_authenticated (client-only gate, redirects to /auth); home and privacy are public SSR pages.
 - Product limits are enforced by a DB trigger raising 'product_limit_reached'; the UI maps it to a friendly message. Why: users must not bypass plan limits.
 - Workspace/membership rows are only created by the auth.users trigger; clients get SELECT only. Why: users must not edit plan limits or memberships.
 - Website input normalization lives in src/lib/website.ts with tests. Why: one rule for storage format.
-- Install checks fetch only the saved website host over https with per-hop redirect re-validation (src/lib/install-check.ts) and a server-only reserve_install_check RPC for the hourly cap. Why: prevents the server fetch from reaching internal addresses or being abused.
-- Waitlist submissions use a bounded same-origin handler and service-only atomic save/reservation RPC; public roles have no storage access. Why: consent, duplicate privacy and platform limits cannot be bypassed by clients.
-- Public pages derive canonical URLs from the current request origin; contact and optional landing tracking are centralized in public-config. Why: preview and published hosts must self-reference without enabling tracking by default.
+- Install checks fetch only the saved website host over https with per-hop redirect re-validation (src/lib/install-check.ts) and a server-only reserve_install_check RPC for the hourly cap.
+- Waitlist submissions use a bounded same-origin handler and service-only atomic save/reservation RPC; public roles have no storage access.
+- Public pages derive canonical URLs from the current request origin; contact and optional landing tracking are centralized in public-config.
 - Product logos live in a private bucket under a product-id folder, readable only by workspace members through signed URLs; site icons are fetched with the install-check URL validator, identified by file bytes, and capped by a member-callable reserve_logo_fetch RPC. Why: no public files, no unsafe fetches, no svg.
 - Product deletion goes through an owner-checked SQL function relying on foreign-key cascades; edits use the shared product-form validator. Why: one validation rule and no orphaned data.
 - Overview setup progress is computed from real rows in src/lib/setup-checklist.ts with tests. Why: completion must never be invented.
 
 - Public feature facts are shared by home and Features; public navigation uses router links with home hashes for section jumps. Why: one honest feature inventory and consistent navigation.
-- Public discovery stays static: `src/lib/public-discovery.ts` owns the origin and public/private paths; run `bun run refresh:discovery` after changing them to refresh robots and the three-page sitemap without lastmod. Why: one domain setting, no private URLs or server sitemap, and current-host canonical metadata stays independent.
+- Public discovery stays static: `src/lib/public-discovery.ts` owns the origin and public/private paths; run `bun run refresh:discovery` after changing them to refresh robots and the three-page sitemap without lastmod. Why: one domain setting, no private URLs.
+- Server-only libraries stay excluded from browser dep pre-bundling; why: linkedom breaks it and blanks client pages in dev.

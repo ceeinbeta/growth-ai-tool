@@ -12,4 +12,9 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  vite: {
+    // Server-only libraries must stay out of the browser dependency pre-bundle;
+    // linkedom fails to bundle for the browser and silently stalls every client page in dev.
+    optimizeDeps: { exclude: ["linkedom", "ai", "@ai-sdk/openai", "@ai-sdk/openai-compatible"] },
+  },
 });

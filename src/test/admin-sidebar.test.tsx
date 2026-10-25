@@ -8,6 +8,7 @@ vi.mock('@tanstack/react-router', () => ({
   Outlet: () => null,
   useNavigate: () => () => {},
   useRouteContext: () => ({ user: { email: 'founder@example.com' } }),
+  useRouterState: () => ({ pathname: '/overview', hash: '' }),
 }));
 vi.mock('@tanstack/react-query', () => ({
   queryOptions: (opts: unknown) => opts,

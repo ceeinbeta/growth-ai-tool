@@ -1,6 +1,7 @@
-import { Link, Outlet, useNavigate, useRouteContext } from "@tanstack/react-router";
+import { Link, Outlet, useNavigate, useRouteContext, useRouterState } from "@tanstack/react-router";
+import { focusHashTarget } from "@/lib/hash-focus";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { Check, ChevronsUpDown, Plus, LogOut, Menu, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/Logo";
@@ -46,7 +47,7 @@ export function SidebarNav({ isAdmin, onNavigate }: { isAdmin: boolean; onNaviga
                   <Link
                     to={item.to}
                     {...(item.hash ? { hash: item.hash } : {})}
-                    onClick={onNavigate}
+                    onClick={() => { onNavigate?.(); if (item.hash) setTimeout(() => focusHashTarget(item.hash!), 0); }}
                     className={itemClass}
                     activeOptions={item.hash ? { includeHash: true } : { exact: true, includeHash: false }}
                     activeProps={{ className: activeClass }}
@@ -70,6 +71,8 @@ export function AppShell() {
   const [activeId, setActiveId] = useState<string | null>(() => getStoredActive());
   const [drawer, setDrawer] = useState(false);
   const navigate = useNavigate();
+  const loc = useRouterState({ select: (st) => st.location });
+  useEffect(() => { if (loc.hash) void focusHashTarget(loc.hash); }, [loc.pathname, loc.hash]);
   const qc = useQueryClient();
 
   const products = data?.products ?? [];

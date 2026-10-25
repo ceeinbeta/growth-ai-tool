@@ -36,7 +36,7 @@ function Integrations() {
     {active ? <>
       <p className="mt-2 text-sm text-muted-foreground">{active.name} · {active.url}</p>
       <h2 className="mt-8 text-xl">Live now</h2>
-      <div id="tracking" className="mt-4 scroll-mt-24"><WebsiteTracking key={active.id} product={active} /></div>
+      <div id="tracking" className="mt-4 scroll-mt-24 focus:outline-none"><WebsiteTracking key={active.id} product={active} /></div>
       <EngineCards key={`e-${active.id}`} product={active} />
     </> : <div className="mt-6">{data ? <EmptyState icon={Plug} text="Add a product to get its tracking snippet." action="Add product" to="/products/new" /> : <BlockSkeleton />}</div>}
     <h2 className="mt-10 text-xl">Coming next</h2>

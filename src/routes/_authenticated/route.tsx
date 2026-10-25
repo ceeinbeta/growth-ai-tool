@@ -1,6 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
+import { PageLoading } from "@/components/PageLoading";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -10,4 +11,5 @@ export const Route = createFileRoute("/_authenticated")({
     return { user: data.user };
   },
   component: AppShell,
+  pendingComponent: PageLoading,
 });

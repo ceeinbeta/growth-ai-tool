@@ -1,38 +1,45 @@
 import { Link } from '@tanstack/react-router';
 import { useEffect, useState, type ReactNode } from 'react';
+import { Menu, ArrowRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { CONTACT_EMAIL } from '@/lib/public-config';
 import { Logo } from './Logo';
 import { Button } from './ui/button';
+import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription } from './ui/sheet';
 
-function PublicAccountLink({ footer = false }: { footer?: boolean }) {
+function PublicAccountLink() {
   const [signedIn, setSignedIn] = useState(false);
   useEffect(() => {
     let mounted = true;
     const update = () => supabase.auth.getSession().then(({ data }) => { if (mounted) setSignedIn(!!data.session); });
     void update();
-    // Root owns the single auth listener and announces identity transitions.
     window.addEventListener('focus', update);
     window.addEventListener('growloop:auth-changed', update);
     return () => { mounted = false; window.removeEventListener('focus', update); window.removeEventListener('growloop:auth-changed', update); };
   }, []);
-  return <Button asChild variant={footer ? 'link' : 'outline'}><Link to={signedIn ? '/overview' : '/auth'}>{signedIn ? 'Open Growloop' : 'Sign in'}</Link></Button>;
+  return <Button asChild variant="link" className="min-h-11 px-0 text-foreground"><Link to={signedIn ? '/overview' : '/auth'}>{signedIn ? 'Open Growloop' : 'Sign in'}</Link></Button>;
 }
-
+function PublicLinks({ close }: { close?: () => void }) {
+  return <><Link to="/features" onClick={close} className="public-nav-link">Features</Link><Link to="/" hash="how-it-works" onClick={close} className="public-nav-link">How it works</Link><Link to="/" hash="faq" onClick={close} className="public-nav-link">FAQ</Link><Link to="/privacy" onClick={close} className="public-nav-link">Privacy</Link></>;
+}
+export function WaitlistLink({ children = 'Join the beta waitlist', onClick }: { children?: ReactNode; onClick?: () => void }) {
+  return <Button asChild size="lg" className="min-h-12 px-5"><Link to="/" hash="waitlist" onClick={onClick}>{children}<ArrowRight /></Link></Button>;
+}
 export function PublicShell({ children }: { children: ReactNode }) {
-  return <>
-    <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-card focus:p-4 focus:text-primary">Skip to content</a>
-    <header className="border-b bg-card">
-      <nav aria-label="Public" className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5 md:px-10">
-        <Link to="/" aria-label="Growloop home"><Logo /></Link><PublicAccountLink />
+  const [open, setOpen] = useState(false);
+  return <div className="public-site">
+    <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:z-[60] focus:bg-card focus:p-4 focus:text-primary">Skip to content</a>
+    <header className="sticky top-0 z-40 border-b bg-card">
+      <nav aria-label="Public" className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 py-3 sm:px-8 lg:px-12">
+        <Link to="/" aria-label="Growloop home"><Logo /></Link>
+        <div className="hidden items-center gap-6 lg:flex"><PublicLinks /></div>
+        <div className="hidden items-center gap-6 lg:flex"><PublicAccountLink /><WaitlistLink>Join the waitlist</WaitlistLink></div>
+        <Sheet open={open} onOpenChange={setOpen}><SheetTrigger asChild><Button variant="ghost" size="icon" aria-label="Open navigation menu" className="min-h-11 min-w-11 lg:hidden"><Menu /></Button></SheetTrigger>
+          <SheetContent className="public-site w-[min(90vw,360px)] motion-reduce:animate-none motion-reduce:transition-none"><SheetTitle className="text-left"><Logo /></SheetTitle><SheetDescription className="sr-only">Public navigation</SheetDescription><nav aria-label="Mobile public" className="mt-10 flex flex-col items-start gap-4"><PublicLinks close={() => setOpen(false)} /><PublicAccountLink /><WaitlistLink onClick={() => setOpen(false)}>Join the waitlist</WaitlistLink></nav></SheetContent>
+        </Sheet>
       </nav>
     </header>
     {children}
-    <footer className="border-t bg-card">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-5 px-6 py-8 md:px-10">
-        <Link to="/" aria-label="Growloop home"><Logo /></Link>
-        <div className="flex flex-wrap items-center gap-5"><Link to="/privacy" className="text-sm text-primary underline-offset-4 hover:underline">Privacy</Link><PublicAccountLink footer />{CONTACT_EMAIL && <a className="text-sm text-primary" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>}</div>
-      </div>
-    </footer>
-  </>;
+    <footer className="border-t bg-card"><div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:px-12"><div className="flex flex-col justify-between gap-8 md:flex-row"><div><Link to="/" aria-label="Growloop home"><Logo /></Link><p className="mt-4 text-sm text-muted-foreground">Find the leak. Fix it. Prove it worked.</p></div><nav aria-label="Footer" className="flex flex-wrap items-center gap-x-6 gap-y-2"><Link to="/features" className="public-nav-link">Features</Link><Link to="/privacy" className="public-nav-link">Privacy</Link><PublicAccountLink />{CONTACT_EMAIL && <a className="public-nav-link" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>}</nav></div><div className="mt-10 flex items-center justify-between border-t pt-6 text-xs text-muted-foreground"><span>© 2026 Growloop</span><span className="rounded-sm bg-secondary px-2 py-1 font-semibold">Beta</span></div></div></footer>
+  </div>;
 }

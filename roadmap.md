@@ -1,7 +1,7 @@
 # Public redesign B2
-- [ ] Rebuild home, add Features, update shared public navigation/footer.
-- [ ] Add public sitemap and preserve robots exclusions.
-- [ ] Run mocked serialized tests and verify desktop/mobile without database writes; do not publish.
+- [x] Rebuild home, add Features, update shared public navigation/footer.
+- [x] Add public sitemap and preserve robots exclusions.
+- [x] Run mocked serialized tests and verify desktop/mobile without database writes; do not publish.
 
 # Slice 7
 - [x] Fix raw OpenAI text parsing and fail empty answers while preserving spend.

@@ -8,6 +8,7 @@ Disallow: /admin
 Disallow: /ai-search-visibility
 Disallow: /api/
 Allow: /$
+Allow: /features
 Allow: /privacy
 Allow: /t.js
 
@@ -21,6 +22,7 @@ Disallow: /admin
 Disallow: /ai-search-visibility
 Disallow: /api/
 Allow: /$
+Allow: /features
 Allow: /privacy
 Allow: /t.js
 
@@ -34,6 +36,7 @@ Disallow: /admin
 Disallow: /ai-search-visibility
 Disallow: /api/
 Allow: /$
+Allow: /features
 Allow: /privacy
 Allow: /t.js
 
@@ -47,6 +50,7 @@ Disallow: /admin
 Disallow: /ai-search-visibility
 Disallow: /api/
 Allow: /$
+Allow: /features
 Allow: /privacy
 Allow: /t.js
 
@@ -60,5 +64,7 @@ Disallow: /admin
 Disallow: /ai-search-visibility
 Disallow: /api/
 Allow: /$
+Allow: /features
 Allow: /privacy
 Allow: /t.js
+Sitemap: https://growloop-mcads.lovable.app/sitemap.xml

@@ -9,7 +9,7 @@ vi.mock('@tanstack/react-router', () => ({
 
 import { SidebarNav } from '@/components/AppShell';
 import { NAV_GROUPS } from '@/lib/nav';
-import { COMING_INTEGRATIONS } from '@/routes/_authenticated/integrations';
+import { COMING_INTEGRATIONS } from '@/lib/integrations';
 
 describe('sidebar navigation', () => {
   it('lists groups in the agreed order', () => {

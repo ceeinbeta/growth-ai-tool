@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { getSovEngineStatus, testEngineConnection } from '@/lib/sov.functions';
 import { ENGINES, type EngineId } from '@/lib/engine-prices';
 import type { Product } from '@/lib/workspace';
+import { COMING_INTEGRATIONS } from '@/lib/integrations';
 
 export const Route = createFileRoute('/_authenticated/integrations')({
   head: () => ({ meta: [
@@ -21,12 +22,6 @@ export const Route = createFileRoute('/_authenticated/integrations')({
   ] }), component: Integrations,
 });
 
-export const COMING_INTEGRATIONS = [
-  { name: 'PostHog', gives: 'Use your existing PostHog events in your funnel.' },
-  { name: 'Google Analytics', gives: 'Bring in visits you already measure in Google Analytics.' },
-  { name: 'Stripe', gives: 'See which visitors became paying customers.' },
-  { name: 'Google Search Console', gives: 'See which Google searches bring visitors to your site.' },
-];
 
 const ENGINE_GIVES: Record<EngineId, string> = {
   openai: 'Lets visibility checks ask OpenAI about your product.',

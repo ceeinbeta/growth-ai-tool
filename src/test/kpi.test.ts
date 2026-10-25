@@ -43,7 +43,8 @@ describe('conversionRate', () => {
 describe('formatPct', () => {
   it('rounds sensibly', () => {
     expect(formatPct(0.03)).toBe('3%');
-    expect(formatPct(0.156)).toBe('15.6%');
+    expect(formatPct(0.0345)).toBe('3.5%');
+    expect(formatPct(0.156)).toBe('16%');
     expect(formatPct(0.5)).toBe('50%');
   });
 });

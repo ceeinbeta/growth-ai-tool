@@ -93,3 +93,4 @@
 
 - [x] Type scale 1px smaller (shared tokens, 11px floor); "Coming next" label renamed to "Soon" everywhere. Rule: unbuilt features carry a visible "Soon" pill.
 - [x] Overview compacted to four sections (header+next step, KPIs, funnel|activity+setup, collapsible profile); 1280 height 1648→808.
+- [x] Homepage hero redesign: centered beta pill, two-line H1 with lime highlight, pill waitlist form (same behavior), honest line, trust chips, sample illustration.

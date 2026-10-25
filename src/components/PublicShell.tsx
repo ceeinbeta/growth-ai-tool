@@ -19,8 +19,8 @@ function PublicAccountLink() {
   }, []);
   return <Button asChild variant="link" size="lg"><Link to={signedIn ? '/overview' : '/auth'}>{signedIn ? 'Open Growloop' : 'Sign in'}</Link></Button>;
 }
-function PublicLinks({ close }: { close?: () => void }) {
-  return <><Link to="/features" onClick={close} className="public-nav-link">Features</Link><Link to="/" hash="how-it-works" onClick={close} className="public-nav-link">How it works</Link><Link to="/" hash="faq" onClick={close} className="public-nav-link">FAQ</Link><Link to="/privacy" onClick={close} className="public-nav-link">Privacy</Link></>;
+function PublicLinks({ close, mobile = false }: { close?: () => void; mobile?: boolean }) {
+  return <><Link to="/features" onClick={close} className="public-nav-link">Features</Link>{mobile && <Link to="/" hash="how-it-works" onClick={close} className="public-nav-link">How it works</Link>}<Link to="/" hash="faq" onClick={close} className="public-nav-link">FAQ</Link><Link to="/privacy" onClick={close} className="public-nav-link">Privacy</Link></>;
 }
 export function WaitlistLink({ children = 'Join the beta waitlist', onClick, variant = 'default' }: { children?: ReactNode; onClick?: () => void; variant?: 'default' | 'outline' }) {
   return <Button asChild variant={variant} size="lg" ><Link to="/" hash="waitlist" onClick={onClick}>{children}<ArrowRight /></Link></Button>;
@@ -29,13 +29,13 @@ export function PublicShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   return <div className="public-site">
     <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:z-[60] focus:bg-card focus:p-4 focus:text-foreground">Skip to content</a>
-    <header className="sticky top-0 z-40 border-b bg-card">
+    <header className="sticky top-0 z-40 border-b bg-card/95 backdrop-blur">
       <nav aria-label="Public" className="public-container flex items-center justify-between gap-6 py-3">
         <Link to="/" aria-label="Growloop home"><Logo /></Link>
         <div className="hidden items-center gap-6 lg:flex"><PublicLinks /></div>
         <div className="hidden items-center gap-6 lg:flex"><PublicAccountLink /><WaitlistLink variant="outline">Join the waitlist</WaitlistLink></div>
         <Sheet open={open} onOpenChange={setOpen}><SheetTrigger asChild><Button variant="ghost" size="icon" aria-label="Open navigation menu" className="lg:hidden"><Menu /></Button></SheetTrigger>
-          <SheetContent className="public-site w-[min(90vw,360px)] motion-reduce:animate-none motion-reduce:transition-none"><SheetTitle className="text-left"><Logo /></SheetTitle><SheetDescription className="sr-only">Public navigation</SheetDescription><nav aria-label="Mobile public" className="mt-10 flex flex-col items-start gap-4"><PublicLinks close={() => setOpen(false)} /><PublicAccountLink /><WaitlistLink onClick={() => setOpen(false)}>Join the waitlist</WaitlistLink></nav></SheetContent>
+          <SheetContent className="public-site w-[min(90vw,360px)] motion-reduce:animate-none motion-reduce:transition-none"><SheetTitle className="text-left"><Logo /></SheetTitle><SheetDescription className="sr-only">Public navigation</SheetDescription><nav aria-label="Mobile public" className="mt-10 flex flex-col items-start gap-4"><PublicLinks mobile close={() => setOpen(false)} /><PublicAccountLink /><WaitlistLink onClick={() => setOpen(false)}>Join the waitlist</WaitlistLink></nav></SheetContent>
         </Sheet>
       </nav>
     </header>

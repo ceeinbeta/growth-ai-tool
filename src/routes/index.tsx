@@ -1,7 +1,7 @@
 import { ActionRow } from '@/components/ActionRow';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
-import { ArrowRight, ChartNoAxesColumn, Droplets, ScanText, Search, MessageCircle, Target, Wrench, Users, ListChecks } from 'lucide-react';
+import { ArrowRight, ChevronRight, Cookie as CookieIcon, Rocket, ShieldCheck, Tag, ChartNoAxesColumn, Droplets, ScanText, Search, MessageCircle, Target, Wrench, Users, ListChecks } from 'lucide-react';
 import { PublicShell } from '@/components/PublicShell';
 import { WaitlistForm } from '@/components/WaitlistForm';
 import { Button } from '@/components/ui/button';
@@ -66,9 +66,17 @@ export function LandingPage() {
     return () => script.remove();
   }, []);
   return <PublicShell><main id="main-content">
-    <section className="border-b bg-background"><div className="public-container grid items-center gap-12 py-12 md:py-16 lg:grid-cols-2 lg:gap-16">
-      <div><p className="public-eyebrow">Growth for solo founders</p><p className="public-lede mt-5 text-muted-foreground">Growloop is a growth app for solo founders that finds why your product isn't growing, helps you fix it, and measures what happens next.</p><h1 className="public-h1 mt-4">Find the leak.<br />Fix it.<br />Prove it worked.</h1><ActionRow layout="section" className="mt-8"><Button asChild size="lg"><a href="#waitlist">Join the beta waitlist<ArrowRight /></a></Button><Button asChild size="lg" variant="link"><Link to="/features">See what's included</Link></Button></ActionRow><p className="mt-4 text-sm text-muted-foreground">Free while we're in beta. Invite-only. No automatic posting.</p></div>
-      <PublicProductIllustration />
+    <section className="hero-backdrop relative overflow-hidden border-b bg-background"><div className="public-container relative flex flex-col items-center pb-14 pt-10 text-center md:pt-12">
+      <a href="#features-today" className="announce-pill inline-flex max-w-full items-center gap-2 border bg-card py-1 pl-1 pr-3 text-sm text-foreground no-underline hover:bg-sunken"><span className="rounded-full bg-selected px-2 py-0.5 text-xs font-semibold">Beta</span><span className="min-w-0 truncate">Free while we're in invite-only beta</span><ChevronRight className="size-4 shrink-0" aria-hidden /></a>
+      <h1 className="public-h1 hero-h1 mt-6">Find the leak. Fix it.<br /><span className="hero-highlight">Prove it worked.</span></h1>
+      <p className="public-lede mt-5 max-w-[60ch] text-muted-foreground">Growloop is a growth app for solo founders that finds why your product isn't growing, helps you fix it, and measures what happens next.</p>
+      <div className="mt-7 w-full"><WaitlistForm variant="hero" idPrefix="hero-waitlist" /></div>
+      <p className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground"><ShieldCheck className="size-4 shrink-0 text-foreground" aria-hidden />Free while we're in beta. No card needed. You always post from your own account.</p>
+      <ul aria-label="How Growloop keeps things honest" className="mt-5 flex flex-wrap justify-center gap-2">
+        {([[Tag, 'Numbers labeled measured, estimated or sample'], [CookieIcon, 'No tracking cookies'], [Rocket, 'Works before you launch']] as const).map(([I, t]) => <li key={t} className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1.5 text-sm"><I className="size-4 shrink-0 text-brand-deep" aria-hidden />{t}</li>)}
+      </ul>
+      <p className="mt-8 text-sm text-muted-foreground">Checks how ChatGPT, Perplexity and Claude recommend you</p>
+      <div className="mt-6 flex w-full justify-center"><PublicProductIllustration /></div>
     </div></section>
     <section className="public-section bg-card border-b"><div className="public-container"><p className="public-eyebrow">The problem</p><h2 className="public-heading"><em className="human-phrase">Shipping was the easy part.</em></h2><div className="mt-10 grid gap-5 md:grid-cols-3">{[
       [Droplets, 'Traffic is not the leak', 'More visitors do not fix a signup step that loses people. First find where they drop off.'],
@@ -80,7 +88,7 @@ export function LandingPage() {
       [ScanText, 'Fix it', 'Review AI-written findings and suggested rewrites. Make the changes yourself.', false],
       [ChartNoAxesColumn, 'Prove it worked', 'Follow real visits and signups after you make a change.', true],
     ].map(([Icon, title, text, upcoming]) => { const I = Icon as typeof Droplets; return <div key={String(title)} className="border-t-2 border-foreground pt-6"><div className="flex items-center justify-between gap-3"><I className="size-6 text-foreground" /><PublicStatus upcoming={Boolean(upcoming)} /></div><h3 className="mt-6 text-xl">{String(title)}</h3><p className="mt-3 text-md text-muted-foreground">{String(text)}</p></div>; })}</div></div></section>
-    <section className="public-section border-y bg-card"><div className="public-container"><p className="public-eyebrow">Live today</p><h2 className="public-heading">What you can use today.</h2><div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{todayFeatures.map(({ icon: Icon, id, name, text }) => <article key={id} className="rounded-md border bg-background p-6"><div className="flex items-center justify-between gap-3"><Icon className="size-5 text-foreground" /><PublicStatus /></div><h3 className="mt-5 text-xl">{name}</h3><p className="mt-3 text-sm text-muted-foreground">{text}</p><p className="mt-4"><Link to="/features" hash={id} className="text-sm font-semibold text-foreground underline underline-offset-4">About {name.toLowerCase()}</Link></p></article>)}</div></div></section>
+    <section id="features-today" className="public-section border-y bg-card"><div className="public-container"><p className="public-eyebrow">Live today</p><h2 className="public-heading">What you can use today.</h2><div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{todayFeatures.map(({ icon: Icon, id, name, text }) => <article key={id} className="rounded-md border bg-background p-6"><div className="flex items-center justify-between gap-3"><Icon className="size-5 text-foreground" /><PublicStatus /></div><h3 className="mt-5 text-xl">{name}</h3><p className="mt-3 text-sm text-muted-foreground">{text}</p><p className="mt-4"><Link to="/features" hash={id} className="text-sm font-semibold text-foreground underline underline-offset-4">About {name.toLowerCase()}</Link></p></article>)}</div></div></section>
     <section className="public-section"><div className="public-container"><p className="public-eyebrow">Beyond buying more traffic</p><h2 className="public-heading">Get discovered. Grow organically.</h2><p className="public-lede mt-5 text-muted-foreground">Help the right people find your product on Google and in AI assistants, then turn those visits into signups. Start with what works today; the rest is coming next.</p><div className="mt-10 grid gap-5 sm:grid-cols-2">{[
       [Search, 'AI search visibility', 'See how often ChatGPT, Perplexity and Claude recommend you, and get suggestions for how to get cited; engines are connected one by one during the beta.', false],
       [ChartNoAxesColumn, 'Google search growth', 'Understand organic searches and improve the pages that could bring visitors.', true],

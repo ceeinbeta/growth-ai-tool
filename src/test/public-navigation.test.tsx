@@ -7,7 +7,6 @@ import { PublicShell } from '@/components/PublicShell';
 describe('public navigation destinations', () => {
   it('links home sections from another public page', () => {
     render(<PublicShell><main>Features page</main></PublicShell>);
-    expect(screen.getByRole('link', { name: 'How it works' }).getAttribute('href')).toBe('/#how-it-works');
     expect(screen.getByRole('link', { name: 'FAQ' }).getAttribute('href')).toBe('/#faq');
     expect(screen.getByRole('link', { name: 'Join the waitlist' }).getAttribute('href')).toBe('/#waitlist');
     expect(screen.getAllByRole('link', { name: 'Features' })[0]?.getAttribute('href')).toBe('/features');
@@ -17,6 +16,7 @@ describe('public navigation destinations', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Open navigation menu' }));
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     const mobile = screen.getByRole('navigation', { name: 'Mobile public' });
+    expect(mobile.querySelector('a[href="/#how-it-works"]')).not.toBeNull();
     const featureLink = mobile.querySelector('a[href="/features"]');
     expect(featureLink).not.toBeNull();
     if (!featureLink) throw new Error('Features destination missing');

@@ -1,3 +1,9 @@
+# Brambly brand switch — d16
+- [ ] Show replacement plan before implementation; preview only, preserve behavior and auth email configuration.
+- [ ] Replace shared palette/type/components, supplied logos/favicon/social assets and visible brand/copy; preserve internal identifiers.
+- [ ] Update library knowledge, architecture and brand/copy/type/discovery tests.
+- [ ] Run mocked serial tests; inspect requested desktop/mobile screenshots and page heights; report contrast, retained identifiers and verifiable credits. No rows, AI calls or publishing.
+
 # Finding conversations — Hacker News
 - [x] Plan archived; private opportunity/search-term/draft/scan storage and atomic limits applied.
 - [x] Add bounded HN scans, explainable scoring, manual status/notes and on-demand guarded reply drafts.

@@ -18,7 +18,7 @@ async function fetchSite(start: string, website: string, signal: AbortSignal): P
   let url = allowedFetchUrl(start, website);
   if (!url) return { reason: 'Its address is not a public website address.' };
   for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
-    const res = await fetch(url.href, { redirect: 'manual', signal, credentials: 'omit', headers: { 'User-Agent': 'GrowloopInstallCheck', Accept: 'text/html' } });
+    const res = await fetch(url.href, { redirect: 'manual', signal, credentials: 'omit', headers: { 'User-Agent': 'Brambly/1.0 (read-only; hello@mcads.co)', Accept: 'text/html' } });
     if (res.status >= 300 && res.status < 400) {
       await res.body?.cancel().catch(() => {});
       const loc = res.headers.get('location');

@@ -14,10 +14,10 @@ export const Route = createFileRoute("/auth")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Sign in — Growloop" },
-      { name: "description", content: "Sign in to Growloop with a one-time link sent to your email." },
-      { property: "og:title", content: "Sign in — Growloop" },
-      { property: "og:description", content: "Find the leak. Fix it. Prove it worked." },
+      { title: "Sign in — Brambly" },
+      { name: "description", content: "Sign in to Brambly with a one-time link sent to your email." },
+      { property: "og:title", content: "Sign in — Brambly" },
+      { property: "og:description", content: "Find your way to growth." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -58,7 +58,7 @@ function AuthPage() {
     <main className="flex min-h-screen items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <Logo />
-        <h1 className="mt-10 text-3xl font-extrabold leading-tight">Find the leak. Fix it. Prove it worked.</h1>
+        <h1 className="mt-10 text-3xl font-extrabold leading-tight">Find your way to growth.</h1>
         <div className="mt-8 rounded-xl border bg-card p-6">
           {sent ? (
             <div role="status">

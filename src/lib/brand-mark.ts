@@ -10,6 +10,6 @@ export const LIVING_INFINITY_PATHS = [
   'M47 13C48.5 6.5 53.5 3 61 4C60.5 11 56 15 49 16',
 ] as const;
 
-export function brandMarkSvg(stroke = 'var(--brand-green)', fill = 'var(--brand-bright)') {
+export function brandMarkSvg(stroke = 'var(--forest)', fill = 'var(--forest)') {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">${BRAND_MARK_PATHS.map(d => `<path d="${d}" stroke="${stroke}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>`).join('')}${BRAND_MARK_CIRCLES.map(c => `<circle cx="${c.cx}" cy="${c.cy}" r="${c.r}" fill="${fill}"/>`).join('')}</svg>`;
 }

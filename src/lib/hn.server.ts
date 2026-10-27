@@ -20,7 +20,7 @@ export async function fetchHn(query: string, fetcher: typeof fetch = fetch) {
  if(!allowedHnUrl(url.href)) throw new Error('This search address is not allowed.');
  const controller=new AbortController(); const timer=setTimeout(()=>controller.abort(),HN_TIMEOUT_MS);
  try {
-  const res=await fetcher(url.href,{redirect:'manual',credentials:'omit',signal:controller.signal,headers:{Accept:'application/json','User-Agent':'Growloop/1.0 (read-only; hello@mcads.co)'}});
+  const res=await fetcher(url.href,{redirect:'manual',credentials:'omit',signal:controller.signal,headers:{Accept:'application/json','User-Agent':'Brambly/1.0 (read-only; hello@mcads.co)'}});
   if(!res.ok) { await res.body?.cancel(); throw new Error(res.status>=300 && res.status<400 ? 'Hacker News redirected the search. Nothing was followed.' : 'Hacker News could not complete the search. Try again later.'); }
   if(Number(res.headers.get('content-length') ?? 0)>HN_MAX_BYTES) {await res.body?.cancel(); throw new Error('Hacker News returned too much data.');}
   const reader=res.body?.getReader(); if(!reader) throw new Error('Hacker News returned no response.');

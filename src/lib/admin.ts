@@ -70,16 +70,16 @@ export const adminInvitesQuery = queryOptions({
 
 export function inviteMessage(origin: string, email: string) {
   return {
-    subject: 'Your Growloop beta seat',
+    subject: 'Your Brambly beta seat',
     body: `Hi,
 
-You're in. Growloop is a growth app for solo founders: it shows where your visitors drop off, helps you fix it, and measures what happens next.
+You're in. Brambly is a growth app for solo founders: it shows where your visitors drop off, helps you fix it, and measures what happens next.
 
 To sign in, open ${origin}/auth and use this email address (${email}). You'll get a one-time sign-in link, no password.
 
 A few things to know:
 - It's free during the beta.
-- Growloop never posts or emails anything for you.
+- Brambly never posts or emails anything for you.
 - AI features have daily limits while we're in beta.
 - If anything is confusing or broken, just reply to this email.
 
@@ -94,7 +94,7 @@ export function adminErrorMessage(error: unknown, seatLimit?: number): string {
   if (msg.includes('cannot_remove_admin')) return "This email belongs to the founder and can't be removed.";
   if (msg.includes('invalid_email')) return 'Enter a valid email address.';
   if (msg.includes('invalid_setting_value')) return 'That number is outside the allowed range.';
-  if (msg.includes('forbidden')) return 'This page is only for the Growloop founder.';
+  if (msg.includes('forbidden')) return 'This page is only for the Brambly founder.';
   return 'Something went wrong. Please try again.';
 }
 

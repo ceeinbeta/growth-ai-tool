@@ -5,7 +5,7 @@ import { CONTACT_EMAIL } from './public-config';
 // Page canonical metadata continues to use the current request origin.
 export const DISCOVERY_ORIGIN = 'https://growloop-mcads.lovable.app';
 export const PUBLIC_DISCOVERY_PATHS = ['/', '/features', '/privacy'];
-export const DISCOVERY_LAST_UPDATED = '2026-10-25';
+export const DISCOVERY_LAST_UPDATED = '2026-10-27';
 export const PRIVATE_CRAWLER_PATHS = ['/conversations', '/admin', '/ai-search-visibility', '/overview', '/settings', '/integrations', '/conversion-leaks', '/technical-audit', '/products', '/auth', '/api/'];
 
 export function discoveryRobots() {
@@ -18,11 +18,11 @@ export function discoverySitemap() {
 
 export function discoveryLlms() {
   const pageNames = ['Home', 'Features', 'Privacy'];
-  const pageDescriptions = ['What Growloop is and how it works.', 'What is live today and what is coming soon.', 'What data is collected and how to ask for deletion.'];
+  const pageDescriptions = ['What Brambly is and how it works.', 'What is live today and what is coming soon.', 'What data is collected and how to ask for deletion.'];
   return [
-    '# Growloop', '',
-    '> Growloop is a growth app for solo founders that finds why your product is not growing, helps you fix it, and measures what happens next.', '',
-    'Growloop is in invite-only beta and is free while in beta. It never posts, sends or publishes anything for you. Numbers are labeled measured, estimated, benchmark or sample, and AI-written content is labeled.', '',
+    '# Brambly', '',
+    '> Brambly is a growth app for solo founders that finds what’s holding your product back, helps you clear it, and measures what happens next.', '',
+    'Brambly is in invite-only beta and is free while in beta. It never posts, sends or publishes anything for you. Numbers are labeled measured, estimated, benchmark or sample, and AI-written content is labeled.', '',
     `Last updated: ${DISCOVERY_LAST_UPDATED}`, '',
     'AI search visibility is built to check ChatGPT, Perplexity and Claude; engines are connected one by one during the beta, so some may show as not connected.', '',
     '## Live today', '',
@@ -32,6 +32,6 @@ export function discoveryLlms() {
     '## Pages', '',
     ...PUBLIC_DISCOVERY_PATHS.map((path, i) => `- [${pageNames[i]}](${DISCOVERY_ORIGIN}${path}): ${pageDescriptions[i]}`), '',
     '## Contact', '',
-    `- [Email](mailto:${CONTACT_EMAIL}): Contact Growloop.`, '',
+    `- [Email](mailto:${CONTACT_EMAIL}): Contact Brambly.`, '',
   ].join('\n');
 }

@@ -16,10 +16,10 @@ import { workspaceQuery } from "@/lib/workspace";
 export const Route = createFileRoute("/_authenticated/products/new")({
   head: () => ({
     meta: [
-      { title: "Add product — Growloop" },
-      { name: "description", content: "Add a product to Growloop." },
-      { property: "og:title", content: "Add product — Growloop" },
-      { property: "og:description", content: "Add a product to Growloop." },
+      { title: "Add product — Brambly" },
+      { name: "description", content: "Add a product to Brambly." },
+      { property: "og:title", content: "Add product — Brambly" },
+      { property: "og:description", content: "Add a product to Brambly." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },

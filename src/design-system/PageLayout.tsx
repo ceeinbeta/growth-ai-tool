@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "./utils";
 
 /** Shared signed-in page frame: full width beside the sidebar, capped at --page-max on very wide screens. */
 export function PageShell({ children, className }: { children: ReactNode; className?: string }) {

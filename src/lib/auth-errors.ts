@@ -4,6 +4,6 @@ export function isInviteOnlySignupError(error: { message: string }) {
 
 export function signInLinkErrorMessage(error: { message: string }) {
   return isInviteOnlySignupError(error)
-    ? "Growloop is invite-only right now. If you have been invited, use the email address you were invited with."
+    ? "Brambly is invite-only right now. If you have been invited, use the email address you were invited with."
     : "We couldn't send the link. Please try again in a minute.";
 }

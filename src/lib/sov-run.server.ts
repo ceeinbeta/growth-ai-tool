@@ -9,7 +9,7 @@ import { classifyMention, engineErrorMessage, extractionSchema, fixesSchema } fr
 // task (engine x question x run_index) is claimed by inserting a 'pending'
 // row, so an interrupted invocation can be resumed by the page, the scheduled
 // job, or a manual retry. Server-side only; the founder's product, competitors
-// and the word "Growloop" are never sent to the engines — only the buyer
+// and the word "Brambly" are never sent to the engines — only the buyer
 // question text.
 
 const BATCH_SIZE = 3;

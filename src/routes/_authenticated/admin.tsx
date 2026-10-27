@@ -29,9 +29,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 export const Route = createFileRoute('/_authenticated/admin')({
   head: () => ({
     meta: [
-      { title: 'Admin — Growloop' },
-      { name: 'description', content: 'Beta invitations and waitlist for the Growloop founder.' },
-      { property: 'og:title', content: 'Admin — Growloop' },
+      { title: 'Admin — Brambly' },
+      { name: 'description', content: 'Beta invitations and waitlist for the Brambly founder.' },
+      { property: 'og:title', content: 'Admin — Brambly' },
       { property: 'og:description', content: 'Manage beta seats and invitations.' },
       { property: 'og:type', content: 'website' },
       { name: 'twitter:card', content: 'summary' },
@@ -48,7 +48,7 @@ function AdminPage() {
     return (
       <PageShell>
         <h1 className="text-3xl font-extrabold">Admin</h1>
-        <p className="mt-6">This page is only for the Growloop founder.</p>
+        <p className="mt-6">This page is only for the Brambly founder.</p>
       </PageShell>
     );
   }
@@ -86,7 +86,7 @@ function AdminContent() {
   const s = summary.data;
   return (
     <PageShell>
-      <PageHeader title="Admin" purpose="Invite people into the beta and keep an eye on limits. Growloop never sends emails for you." />
+      <PageHeader title="Admin" purpose="Invite people into the beta and keep an eye on limits. Brambly never sends emails for you." />
       {error && <p role="alert" className="mt-4 rounded-sm bg-danger-soft p-3 text-sm text-destructive">{error}</p>}
 
       {!s ? <PageSkeleton variant="admin" embedded /> : (
@@ -329,7 +329,7 @@ function InviteDialog({ email, onClose }: { email: string | null; onClose: () =>
       <DialogContent className="max-w-xl" onOpenAutoFocus={() => { if (email) void open(email); }}>
         <DialogHeader>
           <DialogTitle>Invite message for {email}</DialogTitle>
-          <DialogDescription>Growloop does not send this for you. Paste it into your own email.</DialogDescription>
+          <DialogDescription>Brambly does not send this for you. Paste it into your own email.</DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
           <div>

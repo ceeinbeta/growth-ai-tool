@@ -47,7 +47,7 @@ export function SidebarNav({ isAdmin, onNavigate }: { isAdmin: boolean; onNaviga
                   <Link
                     to={item.to}
                     {...(item.hash ? { hash: item.hash } : {})}
-                    onClick={() => { onNavigate?.(); if (item.hash) setTimeout(() => focusHashTarget(item.hash!), 0); }}
+                    onClick={() => { onNavigate?.(); if (item.hash) { const hash = item.hash; setTimeout(() => focusHashTarget(hash), 0); } }}
                     className={itemClass}
                     activeOptions={item.hash ? { includeHash: true } : { exact: true, includeHash: false }}
                     activeProps={{ className: activeClass }}
@@ -140,16 +140,16 @@ export function AppShell() {
 
   return (
     <Ctx.Provider value={{ data, active, setActive }}>
-      <div className="flex min-h-screen w-full flex-col md:flex-row">
+      <div className="app-surface flex min-h-screen w-full flex-col md:flex-row">
         <header className="sticky top-0 z-30 flex items-center justify-between border-b bg-sidebar px-4 py-3 md:hidden">
-          <Link to="/overview" aria-label="Growloop overview" className="flex min-h-11 items-center"><Logo variant="mark-only" /></Link>
+          <Link to="/overview" aria-label="Brambly overview" className="flex min-h-11 items-center"><Logo tone="inverse" /></Link>
           <Sheet open={drawer} onOpenChange={setDrawer}>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" aria-label="Open menu"><Menu /></Button>
             </SheetTrigger>
             <SheetContent side="left" className="sidebar-panel flex flex-col overflow-y-auto bg-sidebar p-0">
               <SheetTitle className="sr-only">Menu</SheetTitle>
-              <div className="px-5 pt-5"><Logo variant="mark-only" /></div>
+              <div className="px-5 pt-5"><Logo tone="inverse" /></div>
               {switcher}
               <SidebarNav isAdmin={!!isAdmin} onNavigate={() => setDrawer(false)} />
               {account}
@@ -159,7 +159,7 @@ export function AppShell() {
 
         <aside className="hidden shrink-0 flex-col overflow-y-auto border-r bg-sidebar md:sticky md:top-0 md:flex md:h-screen md:w-[var(--sidebar-w)]">
           <div className="px-5 pt-4">
-            <Link to="/overview" className="sidebar-logo"><Logo /></Link>
+            <Link to="/overview" className="sidebar-logo"><Logo tone="inverse" /></Link>
           </div>
           {switcher}
           <SidebarNav isAdmin={!!isAdmin} />

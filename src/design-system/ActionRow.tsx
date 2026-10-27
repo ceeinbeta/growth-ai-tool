@@ -1,5 +1,5 @@
 import type { HTMLAttributes, ReactNode } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from './utils';
 
 /** Actions keep semantic DOM order; the shared layout places the primary first on mobile. */
 export function ActionRow({ className, layout = 'end', ...props }: HTMLAttributes<HTMLDivElement> & { layout?: 'end' | 'section' }) {

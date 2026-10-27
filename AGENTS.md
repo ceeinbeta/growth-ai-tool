@@ -20,13 +20,12 @@
 - Active product storage is initialized only in the client-only authenticated shell to avoid a first-product flash.
 
 
-## Growloop architecture
-- Brand identity 01 (d15) supersedes d7 through styles.css; Logo uses shared brand-mark geometry; refresh assets with scripts/refresh-brand.ts. Why: one brand source. Button owns sizing; ActionRow owns placement; preserve type scale.
+## Brambly architecture
+- Brambly d16 lives in a self-contained design-system subtree with theme, components and helpers; legacy imports re-export it. Supplied logos are immutable; src/index.ts exports only attach-safe code. Why: faithful assets and working consumer snapshots. Button owns sizing; ActionRow placement; PageShell/PageGrid layout.
 - Manual visibility engine choices use a per-product browser preference and server-side connected-engine validation; why: remembered choices must not bypass key availability.
 - Visibility reads classify legacy empty excerpts as unusable without database writes; why: sample math must exclude empty answers while preserving historical rows and spend.
 - Funnel aggregation uses security-invoker ordered first-match chains and computed defaults; step edits use an atomic member-scoped replacement RPC to avoid reorder collisions.
 - Page audits read products and measured funnels as the caller, fetch through the shared logo safety helpers with service-only atomic hourly reservations, and save provenance with findings atomically; clients have only column-level leak-status update rights.
-- Every shared-data write test uses temporary rows with finally cleanup or rollback, never the founder's real product rows; test files run serially so shared reservation-cap fixtures cannot interfere.
 - Website collection uses one server-only handler at /api/collect and a /api/public/collect alias used by the static snippet.
 - Collection checks the Origin header when present and only falls back to the body hostname when absent; a forged body must not bypass origin checks.
 - Authenticated tracking-table access is read-only; collection writes stay privileged so clients cannot forge events through the Data API.
@@ -42,11 +41,10 @@
 - Product logos live in a private bucket under a product-id folder, readable only by workspace members through signed URLs; site icons are fetched with the install-check URL validator, identified by file bytes, and capped by a member-callable reserve_logo_fetch RPC. Why: no public files, no unsafe fetches, no svg.
 - Product deletion goes through an owner-checked SQL function relying on foreign-key cascades; edits use the shared product-form validator. Why: one validation rule and no orphaned data.
 - Overview setup progress is computed from real rows in src/lib/setup-checklist.ts with tests. Why: completion must never be invented.
-- Technical audits are rule-based only (no AI calls): same-site bounded fetches, service-only hourly reservation and atomic save RPCs, hand-written fix copy in src/lib/technical-audit.ts. Why: free per run and no fabricated markup or claims.
+- Technical audits are rule-based: bounded safe fetches, service-only reservations and saves; no AI or invented claims.
 
 - Public feature facts are shared by home and Features; public navigation uses router links with home hashes for section jumps. Why: one honest feature inventory and consistent navigation.
 - Public discovery stays static: `src/lib/public-discovery.ts` owns the origin, public/private paths and llms update date; run `bun run refresh:discovery` after changes to refresh robots, sitemap without lastmod and llms.txt derived from public-features. Why: one domain and feature inventory, no private URLs or stale discovery copy.
-- Server-only libraries stay excluded from browser dep pre-bundling; why: linkedom breaks it and blanks client pages in dev.
 - Signed-in navigation lives in src/lib/nav.ts for sidebar and mobile drawer; unbuilt features carry a visible "Soon" pill and are never links.
 - Overview has at most four top-level sections; visibility uses filtered compact results and inline details. Why: keep key data scannable.
 

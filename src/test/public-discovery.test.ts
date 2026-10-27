@@ -49,10 +49,10 @@ describe('public discovery and feature availability', () => {
     const pages = llms.split('## Pages\n')[1]?.split('## Contact')[0] ?? '';
     expect([...pages.matchAll(/\]\(([^)]+)\)/g)].map(m => m[1])).toEqual(PUBLIC_DISCOVERY_PATHS.map(path => `${DISCOVERY_ORIGIN}${path}`));
     expect(llms).toContain(`Last updated: ${DISCOVERY_LAST_UPDATED}`);
-    expect(DISCOVERY_LAST_UPDATED).toBe('2026-10-25');
+    expect(DISCOVERY_LAST_UPDATED).toBe('2026-10-27');
   });
   it('self-references Features with its own title and description', () => {
-    const head = publicHead('https://growloop-mcads.lovable.app', '/features', 'Features — Growloop', 'Live Growloop features');
+    const head = publicHead('https://growloop-mcads.lovable.app', '/features', 'Features — Brambly', 'Live Brambly features');
     expect(head.links[0]?.href).toBe('https://growloop-mcads.lovable.app/features');
     expect(head.meta.find(m => m.property === 'og:url')?.content).toBe('https://growloop-mcads.lovable.app/features');
   });

@@ -7,7 +7,7 @@ describe('invite message', () => {
   it('points at the current origin sign-in page and names the invited email', () => {
     expect(msg.body).toContain('https://growloop-mcads.lovable.app/auth');
     expect(msg.body).toContain('Founder@Example.com');
-    expect(msg.subject).toBe('Your Growloop beta seat');
+    expect(msg.subject).toBe('Your Brambly beta seat');
   });
 
   it('uses the given origin without any hard-coded domain', () => {
@@ -22,8 +22,8 @@ describe('invite message', () => {
     expect(emails).toEqual(['Founder@Example.com']);
   });
 
-  it('states that Growloop never sends anything and is signed by Cilene', () => {
-    expect(msg.body).toContain('Growloop never posts or emails anything for you.');
+  it('states that Brambly never sends anything and is signed by Cilene', () => {
+    expect(msg.body).toContain('Brambly never posts or emails anything for you.');
     expect(msg.body.trim().endsWith('Cilene')).toBe(true);
   });
 });
@@ -37,7 +37,7 @@ describe('admin error messages', () => {
     expect(adminErrorMessage(new Error('cannot_remove_admin'))).toBe("This email belongs to the founder and can't be removed.");
     expect(adminErrorMessage(new Error('invalid_email'))).toBe('Enter a valid email address.');
     expect(adminErrorMessage(new Error('invalid_setting_value'))).toBe('That number is outside the allowed range.');
-    expect(adminErrorMessage(new Error('forbidden'))).toBe('This page is only for the Growloop founder.');
+    expect(adminErrorMessage(new Error('forbidden'))).toBe('This page is only for the Brambly founder.');
     expect(adminErrorMessage(new Error('something_else'))).toBe('Something went wrong. Please try again.');
   });
 });

@@ -26,10 +26,10 @@ export const Route = createFileRoute("/_authenticated/overview")({
   validateSearch: (search: Record<string, unknown>): { days?: KpiPeriod } => (search['days'] === undefined ? {} : { days: parsePeriod(search['days']) }),
   head: () => ({
     meta: [
-      { title: "Overview — Growloop" },
-      { name: "description", content: "Your product at a glance and what Growloop does next." },
-      { property: "og:title", content: "Overview — Growloop" },
-      { property: "og:description", content: "Your product at a glance and what Growloop does next." },
+      { title: "Overview — Brambly" },
+      { name: "description", content: "Your product at a glance and what Brambly does next." },
+      { property: "og:title", content: "Overview — Brambly" },
+      { property: "og:description", content: "Your product at a glance and what Brambly does next." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -47,7 +47,7 @@ function Overview() {
     return (
       <PageShell>
         <h1 className="sr-only">Overview</h1>
-        <EmptyState icon={Package} text="Add your first product. Growloop will show its setup steps and numbers here." action="Add product" to="/products/new" />
+        <EmptyState icon={Package} text="Add your first product. Brambly will show its setup steps and numbers here." action="Add product" to="/products/new" />
         <p className="mt-6 text-center text-xs text-muted-foreground">{used} of {max} products used on the Standard plan</p>
       </PageShell>
     );
@@ -264,12 +264,12 @@ function NextStepBar({ facts, next, onProfile }: { facts: NextStepFacts; next: N
         <h2 id="next-step-heading" className="min-w-0 max-w-full truncate text-md font-semibold lg:max-w-[50%] lg:shrink-0">{next.title}</h2>
         <p className="min-w-0 truncate text-sm text-muted-foreground" title={next.text}>{next.text}</p>
       </div>
-      <ol aria-label="Find, fix, prove" className="flex shrink-0 flex-wrap items-center gap-1.5">
+      <ol aria-label="Diagnose, improve, grow" className="flex shrink-0 flex-wrap items-center gap-1.5">
         {loop.map(step => (
           <li key={step.key} aria-current={step.status === "current" ? "step" : undefined}
             className={`status-chip ${step.status === "done" ? "status-live" : "status-coming"} ${step.status === "current" ? "border-foreground" : ""}`}
             title={`${step.label}: ${loopStatusText[step.status]}`}>
-            <span aria-hidden>{({ find: "Find", fix: "Fix", prove: "Prove" } as const)[step.key]}: {loopStatusText[step.status]}</span><span className="sr-only">{step.label}: {loopStatusText[step.status]}</span>
+            <span aria-hidden>{({ find: "Diagnose", fix: "Improve", prove: "Grow" } as const)[step.key]}: {loopStatusText[step.status]}</span><span className="sr-only">{step.label}: {loopStatusText[step.status]}</span>
           </li>
         ))}
       </ol>

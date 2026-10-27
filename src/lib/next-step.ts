@@ -16,7 +16,7 @@ export type NextStepKey = "profile" | "tracking" | "funnel" | "audit" | "technic
 export type NextStep = { key: NextStepKey; title: string; text: string; action: string; to: string };
 
 const STEPS: Record<NextStepKey, NextStep> = {
-  profile: { key: "profile", title: "Check your product profile", text: "Growloop uses it for audits and AI checks. Make sure it describes your product correctly.", action: "Review the profile", to: "/overview#profile" },
+  profile: { key: "profile", title: "Check your product profile", text: "Brambly uses it for audits and AI checks. Make sure it describes your product correctly.", action: "Review the profile", to: "/overview#profile" },
   tracking: { key: "tracking", title: "Install website tracking", text: "No visits have been recorded yet. Add the tracking code to your site to start measuring.", action: "Install tracking", to: "/integrations#tracking" },
   funnel: { key: "funnel", title: "Set up your funnel steps", text: "You are using the default funnel. Add the pages and events that matter for your product.", action: "Edit the funnel", to: "/conversion-leaks" },
   audit: { key: "audit", title: "Run a page audit", text: "Get AI-written suggestions for the page where visitors drop off.", action: "Run a page audit", to: "/conversion-leaks" },
@@ -44,9 +44,9 @@ export function loopSteps(f: NextStepFacts): LoopStep[] {
   const found = f.eventCount > 0 && (f.hasAudit || f.funnelSteps > 0);
   const fixing = f.leaksInProgressOrDone > 0;
   return [
-    { key: "find", label: "Find the leak", status: found ? "done" : "current" },
-    { key: "fix", label: "Fix it", status: fixing ? "done" : found ? "current" : "not-started" },
-    { key: "prove", label: "Prove it worked", status: "coming-next" },
+    { key: "find", label: "Diagnose", status: found ? "done" : "current" },
+    { key: "fix", label: "Improve", status: fixing ? "done" : found ? "current" : "not-started" },
+    { key: "prove", label: "Grow", status: "coming-next" },
   ];
 }
 

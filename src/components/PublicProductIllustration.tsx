@@ -1,7 +1,7 @@
 import { ArrowDownRight, ArrowUpRight, Droplets, Search } from 'lucide-react';
 
 export function PublicProductIllustration() {
-  return <figure aria-label="Sample Growloop funnel and AI search visibility" className="w-full max-w-2xl mx-auto">
+  return <figure aria-label="Sample Brambly funnel and AI search visibility" className="w-full max-w-2xl mx-auto">
     <div className="brand-hero-card overflow-hidden rounded-lg border bg-card">
       <div className="flex items-center justify-between border-b px-5 py-4"><span className="font-display text-sm font-bold">Your product / Overview</span><span className="status-chip status-sample">Sample data</span></div>
       <div className="p-5 sm:p-6">

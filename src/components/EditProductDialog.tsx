@@ -1,3 +1,4 @@
+import { DomainInput } from '@/design-system/DomainInput';
 import { ActionRow, ActionHeader } from '@/components/ActionRow';
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -107,7 +108,7 @@ export function EditProductDialog({ product, onDeleted }: { product: Product; on
         ) : (<>
           <form onSubmit={save} noValidate className="space-y-4">
             <div><Label htmlFor="edit-name">Product name</Label><Input id="edit-name" className="mt-2" maxLength={80} value={form.name} onChange={set("name")} aria-invalid={!!errors.name} aria-describedby="edit-name-error" />{err("name")}</div>
-            <div><Label htmlFor="edit-url">Website</Label><Input id="edit-url" className="mt-2" value={form.url} onChange={set("url")} aria-invalid={!!errors.url} aria-describedby="edit-url-error" />{err("url")}</div>
+            <div><Label htmlFor="edit-url">Website</Label><DomainInput id="edit-url" className="mt-2" value={form.url} onChange={set("url")} aria-invalid={!!errors.url} aria-describedby="edit-url-error" />{err("url")}</div>
             <fieldset><legend className="text-sm font-medium">Stage</legend><div className="mt-2 space-y-2">
               {[{ v: "live", l: "Live product" }, { v: "prelaunch", l: "Pre-launch, collecting a waitlist" }].map(o => <label key={o.v} className={`flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2.5 text-sm ${form.stage === o.v ? "border-foreground bg-selected" : ""}`}><input type="radio" name="edit-stage" value={o.v} checked={form.stage === o.v} onChange={() => setForm(f => ({ ...f, stage: o.v }))} className="accent-foreground" />{o.l}</label>)}
             </div>{err("stage")}</fieldset>

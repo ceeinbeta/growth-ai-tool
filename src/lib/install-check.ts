@@ -88,7 +88,7 @@ export function httpReason(status: number): string {
 
 export function snippetMessage(r: SnippetResult): string {
   switch (r.status) {
-    case 'found': return r.ownDomain ? 'Found. Your page loads the Growloop snippet.' : 'Found, but the script address does not point at this Growloop address. Copy the install code again.';
+    case 'found': return r.ownDomain ? 'Found. Your page loads the Brambly snippet.' : 'Found, but the script address does not point at this Brambly address. Copy the install code again.';
     case 'different_key': return 'Found, but it uses a different tracking key.';
     case 'not_found': return "Not found in your page's HTML. Some sites add scripts after the page loads, so this is not proof it is missing. Open your site in a normal browser window and press Check again to see if a visit arrives.";
     case 'unreachable': return `We couldn't reach your website. ${r.reason}`;

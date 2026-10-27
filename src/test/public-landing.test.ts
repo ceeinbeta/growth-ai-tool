@@ -41,7 +41,7 @@ describe('landing SEO and GEO metadata', () => {
   });
   it('ships an llms.txt that names live and coming-next features and the contact', () => {
     const llms = readFileSync('public/llms.txt', 'utf8');
-    expect(llms).toContain('# Growloop');
+    expect(llms).toContain('# Brambly');
     expect(llms).toContain('hello@mcads.co');
     expect(llms).toContain('Technical audit');
     expect(llms).toContain('Soon');

@@ -12,7 +12,7 @@ import { conversionQuery } from '@/lib/conversion-data';
 import { Button } from '@/components/ui/button';
 import type { Product } from '@/lib/workspace';
 export const Route = createFileRoute('/_authenticated/conversion-leaks')({
-  head: () => ({ meta: [{ title: 'Conversion leaks — Growloop' }, { name: 'description', content: 'Measured visitor funnels and AI-written page copy audits for your product.' }, { property: 'og:title', content: 'Conversion leaks — Growloop' }, { property: 'og:description', content: 'Find measured drop-offs and review specific page copy fixes.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' }, { name: 'robots', content: 'noindex' }] }),
+  head: () => ({ meta: [{ title: 'Conversion leaks — Brambly' }, { name: 'description', content: 'Measured visitor funnels and AI-written page copy audits for your product.' }, { property: 'og:title', content: 'Conversion leaks — Brambly' }, { property: 'og:description', content: 'Find measured drop-offs and review specific page copy fixes.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' }, { name: 'robots', content: 'noindex' }] }),
   component: ConversionLeaks,
 });
 function ConversionLeaks() {

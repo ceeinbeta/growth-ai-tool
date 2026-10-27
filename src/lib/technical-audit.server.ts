@@ -15,7 +15,7 @@ async function fetchText(start: string, website: string, signal: AbortSignal, ac
   if (!url) return null;
   const began = Date.now();
   for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
-    const res = await fetch(url.href, { redirect: 'manual', signal, credentials: 'omit', headers: { 'User-Agent': 'GrowloopTechnicalAudit', Accept: accept } });
+    const res = await fetch(url.href, { redirect: 'manual', signal, credentials: 'omit', headers: { 'User-Agent': 'Brambly/1.0 (read-only; hello@mcads.co)', Accept: accept } });
     if (res.status >= 300 && res.status < 400) {
       await res.body?.cancel().catch(() => {});
       const loc = res.headers.get('location');

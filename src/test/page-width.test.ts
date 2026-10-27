@@ -13,7 +13,7 @@ describe('signed-in page width', () => {
     for (const f of pages) expect(narrow.test(readFileSync(`${dir}/${f}`, 'utf8')), f).toBe(false);
   });
   it('caps the shared frame at the 1600px token', () => {
-    const css = readFileSync('src/styles.css', 'utf8');
+    const css = readFileSync('src/design-system/theme.css', 'utf8');
     expect(css).toContain('--page-max: 1600px');
     expect(css).toMatch(/\.page-shell \{[^}]*max-width: var\(--page-max\)/);
   });

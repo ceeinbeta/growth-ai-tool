@@ -22,7 +22,7 @@ describe('honest public claims', () => {
     for (const text of texts) expect(unsafeClaims(text)).toBe(false);
   });
   it('uses the requested FAQ answers without implying built experiments or fixed payment timing', () => {
-    expect(FAQS.find(f => f.q === 'How is it different from posting and scheduling tools?')?.a).toBe('Growloop helps you find what to fix: where visitors drop off, whether AI assistants recommend you, and what your visits and signups look like over time.');
+    expect(FAQS.find(f => f.q === 'How is it different from posting and scheduling tools?')?.a).toBe('Brambly helps you find what to fix: where visitors drop off, whether AI assistants recommend you, and what your visits and signups look like over time.');
     expect(FAQS.find(f => f.q === 'Which AI assistants does it check?')?.a).toBe('It is built to check ChatGPT, Perplexity and Claude. Each one is available once its connection is set up, so some may show as not connected.');
     expect(FAQS.find(f => f.q === 'What does it cost?')?.a).toBe('Free while we are in beta. A paid plan may come later; beta users will hear about it before anything changes. No card is needed to join the waitlist.');
   });

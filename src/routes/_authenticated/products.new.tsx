@@ -1,3 +1,4 @@
+import { DomainInput } from '@/design-system/DomainInput';
 import { ActionRow, ActionHeader } from '@/components/ActionRow';
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,10 +17,10 @@ import { workspaceQuery } from "@/lib/workspace";
 export const Route = createFileRoute("/_authenticated/products/new")({
   head: () => ({
     meta: [
-      { title: "Add product — Growloop" },
-      { name: "description", content: "Add a product to Growloop." },
-      { property: "og:title", content: "Add product — Growloop" },
-      { property: "og:description", content: "Add a product to Growloop." },
+      { title: "Add product — Brambly" },
+      { name: "description", content: "Add a product to Brambly." },
+      { property: "og:title", content: "Add product — Brambly" },
+      { property: "og:description", content: "Add a product to Brambly." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -96,7 +97,7 @@ function NewProduct() {
           </div>
           <div>
             <Label htmlFor="url">Website</Label>
-            <Input id="url" className="mt-2" placeholder="yourapp.com" value={form.url} onChange={set("url")} aria-invalid={!!errors.url} aria-describedby="url-error" />
+            <DomainInput id="url" className="mt-2" placeholder="yourapp.com" value={form.url} onChange={set("url")} aria-invalid={!!errors.url} aria-describedby="url-error" />
             {err("url")}
           </div>
           <div>

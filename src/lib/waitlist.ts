@@ -3,7 +3,7 @@ import { normalizeWebsite, WEBSITE_ERROR } from './website';
 
 export const WAITLIST_SUCCESS = "You're on the list. We'll email you when there's a seat. Nothing else will be sent.";
 export const WAITLIST_LIMIT = 'Lots of people are joining right now. Please try again in a few minutes.';
-export const WAITLIST_CONSENT = 'Email me about the Growloop beta. I can ask for my details to be deleted at any time.';
+export const WAITLIST_CONSENT = 'Email me about the Brambly beta. I can ask for my details to be deleted at any time.';
 export const WAITLIST_MAX_BYTES = 2048;
 const campaign = z.string().trim().max(80).regex(/^[a-zA-Z0-9 ._~-]*$/, 'Use a plain, short campaign value.').optional();
 export const waitlistSchema = z.object({

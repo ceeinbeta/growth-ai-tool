@@ -36,16 +36,16 @@ describe('shared CTA conventions', () => {
     expect(overrides('<Button className="justify-self-start">Save</Button>')).toHaveLength(0);
   });
   it('keeps sizing centralized and adopts shared rows at every action surface', () => {
-    const button = readFileSync('src/components/ui/button.tsx', 'utf8');
-    expect(button).toContain('default: "h-10 px-4 py-2 text-base"');
-    expect(button).toContain('lg: "h-12 px-6 py-2 text-md"');
+    const button = readFileSync('src/design-system/Button.tsx', 'utf8');
+    expect(button).toContain('default: "min-h-11 text-base"');
+    expect(button).toContain('lg: "min-h-12 text-md"');
     for (const path of ['src/routes/index.tsx', 'src/routes/features.tsx', 'src/routes/auth.tsx', 'src/routes/_authenticated/overview.tsx', 'src/routes/_authenticated/ai-search-visibility.tsx', 'src/routes/_authenticated/admin.tsx', 'src/routes/_authenticated/products.new.tsx', 'src/components/PageAudit.tsx', 'src/components/ProductProfile.tsx', 'src/components/InstallCheck.tsx', 'src/components/WaitlistForm.tsx', 'src/components/ui/dialog.tsx', 'src/components/ui/alert-dialog.tsx']) {
       expect(readFileSync(path, 'utf8')).toContain('ActionRow');
     }
   });
 });
 
-// The shared type scale lives in src/styles.css (--text-* tokens plus the
+// The shared type scale lives in src/design-system/theme.css (--text-* tokens plus the
 // .public-* classes). Raw sizes outside the scale fail here.
 const offScale = /(?:^|[\s:"'`])(?:[\w-]+:)*text-(?:4xl|5xl|6xl|7xl|8xl|9xl|\[[^\]]*\])(?![-\w\]])/;
 describe('shared type scale', () => {
@@ -60,17 +60,17 @@ describe('shared type scale', () => {
     expect(offScale.test('className="text-sm text-muted-foreground"')).toBe(false);
   });
   it('defines the scale tokens and public clamp classes in the theme', () => {
-    const css = readFileSync('src/styles.css', 'utf8');
-    for (const token of ['--text-xs: 11px', '--text-sm: 12px', '--text-base: 14px', '--text-md: 15px', '--text-lg: 16px', '--text-xl: 19px', '--text-3xl: 26px', '--text-nav: 13px']) expect(css).toContain(token);
-    expect(css).toContain('clamp(33px, 4.9vw, 51px)');
-    expect(css).toContain('clamp(25px, 3.3vw, 35px)');
+    const css = readFileSync('src/design-system/theme.css', 'utf8');
+    for (const token of ['--text-xs: 12px', '--text-sm: 16px', '--text-base: 16px', '--text-md: 16px', '--text-lg: 16px', '--text-xl: 20px', '--text-3xl: 32px', '--text-nav: 16px']) expect(css).toContain(token);
+    expect(css).toContain('clamp(40px, 6vw, 64px)');
+    expect(css).toContain('clamp(30px, 4vw, 44px)');
     expect(css).toContain('max-width: 1120px');
     expect(css).toContain('max-width: 68ch');
   });
   it('keeps all font roles in DM Sans without reviving the superseded fonts', () => {
-    const css = readFileSync('src/styles.css', 'utf8');
-    for (const role of ['label', 'sans', 'display', 'mono']) expect(css).toMatch(new RegExp(`--font-${role}: "DM Sans"`));
+    const css = readFileSync('src/design-system/theme.css', 'utf8');
+    for (const role of ['label', 'sans']) expect(css).toMatch(new RegExp(`--font-${role}: "DM Sans"`));
     const sourcesText = [css, ...sources('src/components').concat(sources('src/routes')).map(path => readFileSync(path, 'utf8'))].join('\n');
-    expect(sourcesText).not.toMatch(/Manrope|DM Mono|Georgia|font-family:\s*monospace/);
+    expect(sourcesText).not.toMatch(/DM Mono|Georgia|font-family:\s*monospace/);
   });
 });

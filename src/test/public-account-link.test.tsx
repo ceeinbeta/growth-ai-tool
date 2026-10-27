@@ -13,12 +13,12 @@ describe('public front door account link', () => {
     render(<PublicShell><p>x</p></PublicShell>);
     const links = await screen.findAllByRole('link', { name: 'Sign in' });
     expect(links[0]?.getAttribute('href')).toBe('/auth');
-    expect(screen.queryByText('Open Growloop')).toBeNull();
+    expect(screen.queryByText('Open Brambly')).toBeNull();
   });
-  it('shows Open Growloop linking to /overview for a signed-in visitor', async () => {
+  it('shows Open Brambly linking to /overview for a signed-in visitor', async () => {
     session.current = { access_token: 't' };
     render(<PublicShell><p>x</p></PublicShell>);
-    const links = await screen.findAllByRole('link', { name: 'Open Growloop' });
+    const links = await screen.findAllByRole('link', { name: 'Open Brambly' });
     expect(links[0]?.getAttribute('href')).toBe('/overview');
   });
   it('shows the contact email as a mailto link', () => {

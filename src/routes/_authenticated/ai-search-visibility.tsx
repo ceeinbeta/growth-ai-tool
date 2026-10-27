@@ -19,9 +19,9 @@ import { getSovEngineStatus, testEngineConnection, startSovCheck, advanceSovChec
 export const Route = createFileRoute("/_authenticated/ai-search-visibility")({
   head: () => ({
     meta: [
-      { title: "AI search visibility — Growloop" },
+      { title: "AI search visibility — Brambly" },
       { name: "description", content: "How often AI assistants recommend your product, measured from real runs." },
-      { property: "og:title", content: "AI search visibility — Growloop" },
+      { property: "og:title", content: "AI search visibility — Brambly" },
       { property: "og:description", content: "How often AI assistants recommend your product, measured from real runs." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -261,7 +261,7 @@ function VisibilityPage({ productId, productName }: { productId: string; product
         <div className="mt-6 rounded-xl border bg-card p-5 text-sm">
           <p className="font-semibold">No engine is connected yet.</p>
           <p className="mt-1 text-muted-foreground">
-            Growloop asks OpenAI, Perplexity and Claude your buyer questions. Each engine needs its own API key, added
+            Brambly asks OpenAI, Perplexity and Claude your buyer questions. Each engine needs its own API key, added
             by you in Project Settings → Secrets as OPENAI_API_KEY, PERPLEXITY_API_KEY and ANTHROPIC_API_KEY. Keys are
             stored encrypted and never shown in the browser. An engine without a key is skipped.
           </p>

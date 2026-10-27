@@ -17,7 +17,7 @@ import type { Tables } from '@/integrations/supabase/types';
 import type { Product } from '@/lib/workspace';
 
 export const Route = createFileRoute('/_authenticated/technical-audit')({
-  head: () => ({ meta: [{ title: 'Technical audit — Growloop' }, { name: 'description', content: 'Rule-based checks that remove common blockers for Google and AI assistants reading your site.' }, { property: 'og:title', content: 'Technical audit — Growloop' }, { property: 'og:description', content: 'Check whether Google and AI assistants can find, read and understand your site.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' }, { name: 'robots', content: 'noindex' }] }),
+  head: () => ({ meta: [{ title: 'Technical audit — Brambly' }, { name: 'description', content: 'Rule-based checks that remove common blockers for Google and AI assistants reading your site.' }, { property: 'og:title', content: 'Technical audit — Brambly' }, { property: 'og:description', content: 'Check whether Google and AI assistants can find, read and understand your site.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' }, { name: 'robots', content: 'noindex' }] }),
   component: TechnicalAudit,
 });
 

@@ -3,7 +3,7 @@ import { WAITLIST_CONSENT, WAITLIST_LIMIT, WAITLIST_MAX_BYTES, WAITLIST_SUCCESS,
 type SaveEntry = (entry: WaitlistEntry) => Promise<boolean>;
 export async function handleWaitlist(request: Request, save: SaveEntry): Promise<Response> {
   const json = (message: string, status = 200) => Response.json({ message }, { status, headers: { 'Cache-Control': 'no-store' } });
-  if (!isSameOrigin(request)) return json('This form must be submitted from Growloop.', 403);
+  if (!isSameOrigin(request)) return json('This form must be submitted from Brambly.', 403);
   if (!request.headers.get('content-type')?.startsWith('application/json')) return json('Please send the waitlist form again.', 415);
   if (Number(request.headers.get('content-length')) > WAITLIST_MAX_BYTES) return json('Keep your submission under 2 KB.', 413);
   let raw = '';

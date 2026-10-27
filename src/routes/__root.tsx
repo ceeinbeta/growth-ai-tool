@@ -55,7 +55,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
           {/localStorage|sessionStorage|SecurityError/i.test(String((error as Error)?.message ?? error))
-            ? "Your browser is blocking storage for this page, which sign-in needs. Open Growloop in its own tab, or allow site data."
+            ? "Your browser is blocking storage for this page, which sign-in needs. Open Brambly in its own tab, or allow site data."
             : "Something went wrong on our end. You can try refreshing or head back home."}
         </p>
         <ActionRow className="mt-6">
@@ -81,10 +81,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Growloop" },
-      { name: "description", content: "Find the leak. Fix it. Prove it worked." },
-      { property: "og:title", content: "Growloop" },
-      { property: "og:description", content: "Find the leak. Fix it. Prove it worked." },
+      { title: "Brambly" },
+      { name: "description", content: "Find your way to growth." },
+      { property: "og:title", content: "Brambly" },
+      { property: "og:description", content: "Find your way to growth." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -93,7 +93,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Manrope:wght@500;600&display=swap",
       },
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },

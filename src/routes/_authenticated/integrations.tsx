@@ -18,8 +18,8 @@ import { COMING_INTEGRATIONS, requestIntegrationHref } from '@/lib/integrations'
 export const Route = createFileRoute('/_authenticated/integrations')({
   head: () => ({ meta: [
     { name: 'robots', content: 'noindex' },
-    { title: 'Integrations — Growloop' }, { name: 'description', content: 'Install Growloop website tracking and see real visits, sources and signup activity.' },
-    { property: 'og:title', content: 'Integrations — Growloop' }, { property: 'og:description', content: 'Connect website tracking for real visits and signup activity.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' },
+    { title: 'Integrations — Brambly' }, { name: 'description', content: 'Install Brambly website tracking and see real visits, sources and signup activity.' },
+    { property: 'og:title', content: 'Integrations — Brambly' }, { property: 'og:description', content: 'Connect website tracking for real visits and signup activity.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' },
   ] }), component: Integrations,
 });
 
@@ -34,7 +34,7 @@ function Integrations() {
   const { active, data } = useActiveProduct();
   if (!data) return <PageSkeleton variant="integrations" />;
   return <PageShell>
-    <PageHeader title="Integrations" purpose="Connect the sources Growloop measures from. Only real data shows in your numbers." />
+    <PageHeader title="Integrations" purpose="Connect the sources Brambly measures from. Only real data shows in your numbers." />
     {active ? <>
       <p className="mt-2 text-sm text-muted-foreground">{active.name} · {active.url}</p>
       <section aria-labelledby="live-heading" className="flex flex-col gap-4">

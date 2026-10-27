@@ -19,7 +19,7 @@ describe('mocked founder flow with no requests or rows',()=>{
   mocks.draft.mockImplementation(async()=>{mocks.data={...mocks.data,drafts:[{id:'d1',opportunity_id:'o1',product_id:item.product_id,text:'Start by listing the documents you need to search.',edited_text:null}],opportunities:[{...item,status:'drafted'}]};return {ok:true};});
   mocks.edit.mockImplementation(async({data}:any)=>{mocks.data={...mocks.data,drafts:mocks.data.drafts.map(d=>({...d,edited_text:data.text}))};return {ok:true};});
   const copy=vi.fn(async()=>{});Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:copy}});
-  const Component=Route.component as ()=>any;const client=new QueryClient({defaultOptions:{queries:{retry:false}}});render(<QueryClientProvider client={client}><Component/></QueryClientProvider>);
+  const Component=(Route as unknown as { component: ()=>any }).component;const client=new QueryClient({defaultOptions:{queries:{retry:false}}});render(<QueryClientProvider client={client}><Component/></QueryClientProvider>);
   await screen.findByRole('button',{name:'Scan Hacker News'});
   await waitFor(()=>expect(screen.getByLabelText('One term per line · up to 10')).toHaveValue('team docs'));
   fireEvent.change(screen.getByLabelText('One term per line · up to 10'),{target:{value:'team documentation'}});

@@ -1,3 +1,4 @@
+import { DomainInput } from '@/design-system/DomainInput';
 import { ActionRow, ActionHeader } from '@/components/ActionRow';
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
@@ -96,7 +97,7 @@ function NewProduct() {
           </div>
           <div>
             <Label htmlFor="url">Website</Label>
-            <Input id="url" className="mt-2" placeholder="yourapp.com" value={form.url} onChange={set("url")} aria-invalid={!!errors.url} aria-describedby="url-error" />
+            <DomainInput id="url" className="mt-2" placeholder="yourapp.com" value={form.url} onChange={set("url")} aria-invalid={!!errors.url} aria-describedby="url-error" />
             {err("url")}
           </div>
           <div>

@@ -1,7 +1,7 @@
 import { ActionRow } from '@/components/ActionRow';
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import { ArrowRight, Check, Mail } from 'lucide-react';
+import { ArrowRight, Check, Mail, Globe } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -53,7 +53,7 @@ export function WaitlistForm({ variant = 'full', idPrefix = 'waitlist' }: { vari
       <Button type="submit" disabled={busy} size="lg" className="hero-pill-button w-full sm:w-auto">{busy ? 'Joining…' : 'Join the beta waitlist'}<ArrowRight /></Button>
     </div>
     {expanded && <div className="grid gap-3 rounded-app border bg-card p-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
-      <div><Label htmlFor={id('website')} className="sr-only">Your website (optional)</Label><Input id={id('website')} autoComplete="url" value={website} onChange={e => setWebsite(e.target.value)} className="h-10 bg-background" placeholder="Your website (optional)" /></div>
+      <div className="domain-field"><Globe aria-hidden="true"/><Label htmlFor={id('website')} className="sr-only">Your website (optional)</Label><Input id={id('website')} autoComplete="url" value={website} onChange={e => setWebsite(e.target.value)} className="h-10 bg-background" placeholder="Your website (optional)" /></div>
       <fieldset className="min-w-0"><legend className="sr-only">Where is your product? (optional)</legend>{stageGroup(true)}</fieldset>
     </div>}
     {honeypot}

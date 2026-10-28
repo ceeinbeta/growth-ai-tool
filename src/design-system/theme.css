@@ -156,7 +156,7 @@
   a:not([class*="bg-"]):not([aria-label]) { text-underline-offset: 4px; }
   main p a, main li p a { text-decoration: underline; }
   label, legend { font-family: var(--font-sans); font-size: 16px; font-weight: 500; line-height: 1.4; text-transform: none; letter-spacing: 0; color: var(--foreground); }
-  thead, thead th { font-family: var(--font-sans); font-size: 12px; font-weight: 600; text-transform: none; letter-spacing: 0; color: var(--muted-foreground); }
+  thead, thead th { font-family: var(--font-sans); font-size: 16px; font-weight: 600; text-transform: none; letter-spacing: 0; color: var(--muted-foreground); }
   dt, time { font: inherit; text-transform: none; letter-spacing: normal; }
 }
 :where(a,button,input,textarea,select,[tabindex],[role="button"],[role="checkbox"],[role="radio"]):focus-visible {
@@ -195,7 +195,7 @@
 
 .ink-field {
   --foreground: var(--white); --card-foreground: var(--white);
-  --muted-foreground: var(--white); --forest: var(--white); --border: color-mix(in srgb, var(--white) 30%, transparent);
+  --muted-foreground: var(--white); --border: color-mix(in srgb, var(--white) 30%, transparent);
   --primary-foreground: var(--white);
   --ring: var(--focus-inverse);
   background: var(--forest); color: var(--white);

@@ -1,4 +1,5 @@
 # Brambly brand switch — d16
+- [ ] Check whether the latest changes have reached ceeinbeta/growloop-mcads on GitHub; report what can be verified.
 - [ ] Show replacement plan before implementation; preview only, preserve behavior and auth email configuration.
 - [ ] Replace shared palette/type/components, supplied logos/favicon/social assets and visible brand/copy; preserve internal identifiers.
 - [ ] Update library knowledge, architecture and brand/copy/type/discovery tests.

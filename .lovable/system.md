@@ -4,7 +4,9 @@ Brambly is direct, perceptive and encouraging. Write short sentences with active
 
 ## Consumer setup
 
-This is a locally authored React library styled with Tailwind v4. Import its canonical `design-system/theme.css` once in the consumer's stylesheet. The theme registers its own component subtree for utility generation; register the consumer's own source separately. Import exported components from the attached library barrel. Keep theme and component code together: helpers use local imports, and logos are supplied assets under `assets/logos`.
+This is a locally authored React library styled with Tailwind v4. Import its canonical `design-system/theme.css` once in the consumer's stylesheet — the library barrel (`src/index.ts`) already imports it as a side effect, so importing any component brings the tokens with it. The theme registers its own component subtree for utility generation; register the consumer's own source separately. Import exported components from the attached library barrel. Keep theme and component code together: helpers use local imports, and logos are supplied assets under `assets/logos`.
+
+Fonts are not bundled. The theme's `--font-sans`/`--font-label` resolve to DM Sans and `--font-display` to Manrope; the consumer must load them from Google Fonts with `display=swap` via a `<link>` in its document head (`https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Manrope:wght@500;600&display=swap`). Never `@import` the fonts URL from CSS — Tailwind v4's Lightning CSS resolves `@import` from the filesystem only.
 
 Load Manrope weights 500/600 and DM Sans weights 400/500/600 through a document-head Google Fonts stylesheet with display=swap. Do not import a remote URL from CSS. Manrope is for display, headings and numerical emphasis; DM Sans is for body, UI and labels. No other font family belongs in Brambly.
 
